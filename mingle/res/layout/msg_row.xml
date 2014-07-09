@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+ 
+        <ImageView
+                style="@style/ChatRoomImage"
+                android:id="@+id/sender_image"/>
+ 
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/sender_image"
+                android:layout_margin="5sp"
+                android:background="@drawable/msg_bubble"
+                android:shadowColor="@color/black"
+                android:shadowDx="1"
+                android:shadowDy="1" 
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:id="@+id/msg"/>
+        <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/msg"
+                style="@style/MyListTitle"
+                android:id="@+id/timestamp"/>
+ 
+</LinearLayout>
