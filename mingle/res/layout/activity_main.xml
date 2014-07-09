@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+
+	<RelativeLayout 
+	    tools:context=".MainActivity" 
+	    android:paddingBottom="@dimen/activity_vertical_margin" 
+	    android:paddingTop="@dimen/activity_vertical_margin" 
+	    android:paddingRight="@dimen/activity_horizontal_margin" 
+	    android:paddingLeft="@dimen/activity_horizontal_margin" 
+	    android:layout_height="match_parent" 
+	    android:layout_width="match_parent" 
+	    xmlns:tools="http://schemas.android.com/tools" 
+	    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+	<ImageView 
+	    android:layout_height="80dp" 
+	    android:layout_width="80dp" 
+	    android:layout_alignEnd="@+id/button" 
+	    android:layout_alignRight="@+id/button" 
+	    android:layout_alignBottom="@+id/photoView2" 
+	    android:layout_marginLeft="20dp" 
+	    android:layout_alignParentStart="true" 
+	    android:layout_alignParentLeft="true" 
+	    android:layout_alignTop="@+id/photoView3" 
+	    android:background="@drawable/abc_ab_bottom_solid_light_holo" 
+	    android:cropToPadding="true" 
+	    android:contentDescription="used to store first photo" 
+	    android:longClickable="true" 
+	    android:id="@+id/photoView1"/>
+
+	<ImageView 
+	    android:layout_height="80dp" 
+	    android:layout_width="80dp" 
+	    android:background="@drawable/abc_ab_bottom_solid_light_holo" 
+	    android:cropToPadding="true" 
+	    android:contentDescription="used to store second photo" 
+	    android:longClickable="false" 
+	    android:id="@+id/photoView2" 
+	    android:layout_alignStart="@+id/photoView3" 
+	    android:layout_alignLeft="@+id/photoView3" 
+	    android:layout_below="@+id/photoView3" 
+	    android:layout_marginTop="23dp"/>
+
+	<Button 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="wrap_content" 
+	    android:id="@+id/button" 
+	    android:layout_centerHorizontal="true" 
+	    android:text="Mingle!!" 
+	    android:layout_alignParentBottom="true" 
+	    android:onClick="userCreateButtonPressed"/>
+	
+
+	<!--  
+	<Switch 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="wrap_content" 
+	    android:id="@+id/sex_switch" 
+	    android:layout_below="@+id/introTextView" 
+	    android:layout_marginTop="26dp" 
+	    android:layout_centerHorizontal="true" 
+	    android:text="Sex" 
+	    android:textOn="Girl" 
+	    android:textOff="Boy"/>
+	-->
+	<!-- 
+	<ImageSwitcher 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" 
+		android:id="@+id/imageSwitcher" 
+		android:layout_toLeftOf="@+id/button" 
+		android:layout_alignTop="@+id/introLabel" /> 
+	-->
+
+	<TextView
+	    android:id="@+id/introLabel"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/photoView1"
+	    android:layout_centerHorizontal="true"
+	    android:layout_marginTop="24dp"
+	    android:editable="false"
+	    android:text="Who are we?!"
+	    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	<TextView
+	    android:id="@+id/introTextView"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/introLabel"
+	    android:layout_centerHorizontal="true"
+	    android:layout_marginTop="15dp"
+	    android:editable="true"
+	    android:hint="We&apos;re awesome men"
+	    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	<ImageView
+	    android:id="@+id/photoView3"
+	    android:layout_width="80dp"
+	    android:layout_height="80dp"
+	    android:layout_marginTop="28dp"
+	    android:layout_toRightOf="@+id/introLabel"
+	    android:adjustViewBounds="false"
+	    android:background="@drawable/abc_ab_bottom_solid_light_holo"
+	    android:baselineAlignBottom="false"
+	    android:clickable="false"
+	    android:contentDescription="used to store third photo"
+	    android:cropToPadding="true"
+	    android:longClickable="false" />
+
+	<RadioGroup
+	    android:id="@+id/radioSex"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignLeft="@+id/introLabel"
+	    android:layout_below="@+id/introTextView" >
+
+	    <RadioButton
+	        android:id="@+id/radioMale"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:checked="true"
+	        android:text="@string/radio_male" />
+
+	    <RadioButton
+	        android:id="@+id/radioFemale"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/radio_female" />
+	</RadioGroup>
+
+</RelativeLayout>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">mingle</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_hunt">HuntActivity</string>
+    <string name="title_activity_chatroom">ChatroomActivity</string>
+    <string name="title_activity_chat_room">ChatRoomActivity</string>
+    
+    
+    <string name="tab1title">All</string>
+    <string name="tab2title">Mingling</string>
+    <string name="radio_male">Male</string>
+    <string name="radio_female">Female</string>
+    
+	<string name="sms"></string>
+	<string name="send">send</string>
+</resources>
