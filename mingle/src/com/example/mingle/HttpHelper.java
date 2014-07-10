@@ -2,53 +2,21 @@ package com.example.mingle;
 //package com.hmkcode.android;
 
         
-        import android.annotation.SuppressLint;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import java.net.*;
-        import io.socket.*;
+import io.socket.*;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-        import com.example.mingle.MingleUser;
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import com.example.mingle.MingleUser;        
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -65,8 +33,7 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-//import com.hmkcode.android.vo.Person;
-        import org.json.*;
+import org.json.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -151,7 +118,6 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
                 	JSONObject uid_obj = new JSONObject();
                 	try {
 						uid_obj.put("uid", uid);
-						uid_obj.put("rid", 42);
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -166,7 +132,10 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
                 		String msg_recv_uid = msg_conf_obj.getString("recv_uid");
                 		int msg_recv_counter = Integer.parseInt(msg_conf_obj.getString("msg_counter"));
                 		String msg_ts = msg_conf_obj.getString("ts");
-                		((MingleApplication) currContext.getApplicationContext()).currUser.updateMsgToRoom(msg_recv_uid, msg_recv_counter, msg_ts);
+
+                		
+            			((MingleApplication) currContext.getApplicationContext()).currUser.updateMsgToRoom(msg_recv_uid, msg_recv_counter, msg_ts);
+                		
                 	} catch (JSONException e){
                 		e.printStackTrace();
                 	}
@@ -185,7 +154,8 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 						ChatRoom chatroom = ((MingleApplication) currContext.getApplicationContext()).currUser.getChatRoom(chat_user_uid);
 						if(chatroom  == null){
 							//Instantiate a chat room
-							((MingleApplication) currContext.getApplicationContext()).currUser.addChatRoom(chat_user_uid);
+
+							((MingleApplication) currContext.getApplicationContext()).currUser.addChatRoom(chat_user_uid, (Drawable) currContext.getResources().getDrawable(R.drawable.ic_launcher));
 							((MingleApplication) currContext.getApplicationContext()).currUser.getChatRoom(chat_user_uid).setChatActive();
 						
 							//Remove from User List if available
@@ -197,7 +167,8 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 								}
 							}
 						}
-                		((MingleApplication) currContext.getApplicationContext()).currUser.getChatRoom(chat_user_uid).addRecvMsg(chat_user_uid,recv_msg_obj.getString("msg"),recv_msg_obj.getString("ts"));
+
+                		((MingleApplication) currContext.getApplicationContext()).currUser.getChatRoom(chat_user_uid).addRecvMsg(chat_user_uid,(Drawable) currContext.getResources().getDrawable(R.drawable.ic_launcher),recv_msg_obj.getString("msg"),recv_msg_obj.getString("ts"));
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -249,7 +220,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     * Sends login info along to the server, and hopefully what will be returned
     * is the unique id of the user as well as some other useful information
     */
-    public void userCreateRequest(final ArrayList<String> photos, String comment, String sex, int number, float longitude, float latitude)  {
+    public void userCreateRequest(final ArrayList<String> photos, String comment, String sex, int number, float longitude, float latitude, String rid)  {
        
     	
     	String baseURL = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080/";
@@ -258,7 +229,8 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	baseURL += "sex=" + sex + "&";
     	baseURL += "num=" + (new Integer(number)).toString() + "&";
     	baseURL += "loc_long=" + (new Float(longitude)).toString() + "&";
-    	baseURL += "loc_lat=" + (new Float(latitude)).toString();
+    	baseURL += "loc_lat=" + (new Float(latitude)).toString() + "&";
+    	baseURL += "rid=" + rid;
     	
     	final String cpy = baseURL;
        

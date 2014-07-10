@@ -7,6 +7,8 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +45,8 @@ public class ChatRoomAdapter extends ArrayAdapter {
       	  holder = new NewsHolder();
 
       	  holder.msg_view = (TextView)row.findViewById(R.id.msg);
-      	  holder.icon=(ImageView)row.findViewById(R.id.sender_image);
+
+      	  holder.user_pic=(ImageView)row.findViewById(R.id.sender_image);
       	  
       	  row.setTag(holder);
         } else {
@@ -52,6 +55,8 @@ public class ChatRoomAdapter extends ArrayAdapter {
 
         ChatRoom room_data = (ChatRoom)data.get(position);
         holder.msg_view.setText(room_data.getLastMsg());
+
+        holder.user_pic.setImageDrawable(room_data.getPic());
        
         return row;
 
@@ -60,6 +65,7 @@ public class ChatRoomAdapter extends ArrayAdapter {
     
     static class NewsHolder{
   	  TextView msg_view;
-  	  ImageView icon;
+
+  	  ImageView user_pic;
     }
 }

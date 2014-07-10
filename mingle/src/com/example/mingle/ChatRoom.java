@@ -1,24 +1,26 @@
 package com.example.mingle;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.graphics.drawable.Drawable;
 
 class ChatRoom{
 	
-	private ArrayList<JSONObject> msg_list;
+	private ArrayList<Message> msg_list;
 	private String recv_uid;
 	private boolean just_created;
+	private Drawable user_pic;
 	
-	public ChatRoom(String uid){
-		msg_list =  new ArrayList<JSONObject>();
+	public ChatRoom(String uid, Drawable image){
+		msg_list =  new ArrayList<Message>();
 		recv_uid = uid;
 		just_created = true;
+		user_pic = image;
 	}
 	
 	public boolean isJustCreated(){
@@ -33,83 +35,69 @@ class ChatRoom{
 		return recv_uid;
 	}
 	
-	public void addMsg(String send_uid, String msg, int msg_counter, int status){
+
+	public void addMsg(String send_uid, Drawable image, String msg, int msg_counter, int status){
 		Date date= new Date();
 		Timestamp timestamp = (new Timestamp(date.getTime()));
-		JSONObject msg_obj = new JSONObject();
-    	try {
-    		msg_obj.put("send_uid", send_uid);
-			msg_obj.put("msg", msg);
-			msg_obj.put("msg_counter", msg_counter);
-			msg_obj.put("ts", timestamp);
-			msg_obj.put("status", 0);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Message msg_obj = new Message(send_uid, image, msg, msg_counter, timestamp, 0);
 		msg_list.add(msg_obj);
 		Collections.sort(msg_list, new MsgComparator());
 	}
 	
-	public void addRecvMsg(String send_uid, String msg, String timestamp){
-		JSONObject msg_obj = new JSONObject();
-    	try {
-    		msg_obj.put("send_uid", send_uid);
-			msg_obj.put("msg", msg);
-			msg_obj.put("msg_counter", -1);
-			msg_obj.put("ts", timestamp);
-			msg_obj.put("status", 1);
-		} catch (JSONException e) {
+
+	public void addRecvMsg(String send_uid, Drawable image, String msg, String msg_ts){
+		try {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+			Date parsedDate = dateFormat.parse(msg_ts);
+			Timestamp timestamp = new Timestamp(parsedDate.getTime());
+			
+			Message msg_obj = new Message(send_uid, image, msg, -1, timestamp, 1);
+			msg_list.add(msg_obj);
+			Collections.sort(msg_list, new MsgComparator());
+		} catch (java.text.ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		msg_list.add(msg_obj);
-		Collections.sort(msg_list, new MsgComparator());
 	}
 	
-	public ArrayList<JSONObject> getMsgList(){
+	public ArrayList<Message> getMsgList(){
 		return msg_list;
 	}
 	
-	public boolean updateMsg(String send_uid, int counter, String ts){
-		for(JSONObject obj : msg_list){
-			try {
-				if(obj.getString("send_uid").equals(send_uid) && obj.getString("msg_counter").equals(new Integer(counter).toString())){
-					obj.remove("status");
-					obj.put("status", 1);
-					obj.remove("ts");
-					obj.put("ts", ts);
-					Collections.sort(msg_list, new MsgComparator());
-					return true;
-				}
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}		
+	public boolean updateMsg(String send_uid, int counter, String msg_ts){
+		for(Message obj : msg_list){
+			if(obj.getUid().equals(send_uid) && obj.getCounter()==counter){
+				obj.setStatus(1);
+        		try {
+    				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+    				Date parsedDate = dateFormat.parse(msg_ts);
+    				Timestamp timestamp = new Timestamp(parsedDate.getTime());
+    				
+    				obj.setTimestamp(timestamp);
+    				Collections.sort(msg_list, new MsgComparator());
+    			} catch (java.text.ParseException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+				return true;
+			}	
 		}
 		return false;
 	}
 	
 	public String getLastMsg(){
-		try {
-			if(msg_list.size() > 0) return msg_list.get(msg_list.size() - 1).getString("msg");
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if(msg_list.size() > 0) return msg_list.get(msg_list.size() - 1).getContent();
 		return "";
+	}
+	
+	public Drawable getPic(){
+		return user_pic;
 	}
 	
 }
 
-class MsgComparator implements Comparator<JSONObject> {
-    public int compare(JSONObject msg1, JSONObject msg2) {
-    	try {
-	        return msg1.getString("ts").compareTo(msg2.getString("ts"));
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	return -1;
+class MsgComparator implements Comparator<Message> {
+    public int compare(Message msg1, Message msg2) {
+    	return (msg1.getTimestamp()).compareTo(msg2.getTimestamp());
     }
 }

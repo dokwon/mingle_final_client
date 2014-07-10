@@ -1,6 +1,8 @@
 package com.example.mingle;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -9,7 +11,10 @@ import org.json.JSONObject;
 
 import android.app.ListActivity;
 import android.content.Intent;
+
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -53,10 +58,10 @@ public class ChatroomActivity extends ListActivity {
 		//Associate this chat room's message list to adapter
 		adapter=new MsgAdapter(this,
                 R.layout.msg_row,
-                ((MingleApplication) this.getApplication()).currUser.getChatRoom(recv_uid).getMsgList());
-        setListAdapter(adapter);
-        
+                ((MingleApplication) this.getApplication()).currUser.getChatRoom(recv_uid).getMsgList(), this);
 		
+        setListAdapter(adapter);
+         		
 		setContentView(R.layout.activity_chatroom);
     }
     
@@ -72,27 +77,22 @@ public class ChatroomActivity extends ListActivity {
 		System.out.println(send_uid + " "+ recv_uid+" "+msg_counter);
 		
 		boolean response_msg = true;
-		ArrayList<JSONObject> list = ((MingleApplication) this.getApplication()).currUser.getChatRoom(recv_uid).getMsgList();
-		try {
-			String last_msg_uid;
-			if(list.size() <= 0) last_msg_uid = "";
-			else last_msg_uid = list.get(list.size()-1).getString("send_uid");
-			System.out.println(list.size());
-			System.out.println(last_msg_uid);
-			System.out.println(((MingleApplication) this.getApplication()).currUser.getUid());
-			if(last_msg_uid.equals(((MingleApplication) this.getApplication()).currUser.getUid())){
-				response_msg = false;
-				DatabaseHelper db = ((MingleApplication) this.getApplication()).dbHelper;
-				// Stores messages in DB
-				db.insertMessages(recv_uid, send_uid,SMS , new Timestamp(System.currentTimeMillis()).toString());
-			}
-			
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+		ArrayList<Message> list = ((MingleApplication) this.getApplication()).currUser.getChatRoom(recv_uid).getMsgList();
+
+		String last_msg_uid;
+		if(list.size() <= 0) last_msg_uid = "";
+		else last_msg_uid = list.get(list.size()-1).getUid();
+
+		if(last_msg_uid.equals(((MingleApplication) this.getApplication()).currUser.getUid())){
+			response_msg = false;
+			DatabaseHelper db = ((MingleApplication) this.getApplication()).dbHelper;
+			// Stores messages in DB
+			db.insertMessages(recv_uid, send_uid,SMS , new Timestamp(System.currentTimeMillis()).toString());
 		}
+			
 		//Save MSG and show it is in the process of getting sent.
-		((MingleApplication) this.getApplication()).currUser.addMsgToRoom(recv_uid, send_uid, SMS, msg_counter, 0);
+		((MingleApplication) this.getApplication()).currUser.addMsgToRoom(recv_uid, send_uid, (Drawable) getResources().getDrawable(R.drawable.ic_launcher), SMS, msg_counter, 0);
 		adapter.notifyDataSetChanged();
 		
 		//Send MSG to Server
@@ -114,8 +114,8 @@ public class ChatroomActivity extends ListActivity {
 			String msg_send_uid = recv_msg_obj.getString("send_uid");
 			String msg = recv_msg_obj.getString("msg");
 			String msg_ts = recv_msg_obj.getString("ts");
-			System.out.println("recved msg: "+msg_send_uid+" "+msg+" "+msg_ts);
-			((MingleApplication) this.getApplication()).currUser.addRecvMsgToRoom(msg_send_uid, msg, msg_ts);
+
+			((MingleApplication) this.getApplication()).currUser.addRecvMsgToRoom(msg_send_uid, (Drawable) getResources().getDrawable(R.drawable.ic_launcher), msg, msg_ts);
 			// Save to local storage
 			((MingleApplication) this.getApplication()).dbHelper.insertMessages(send_uid, send_uid, msg, msg_ts);
 			adapter.notifyDataSetChanged();
@@ -124,5 +124,4 @@ public class ChatroomActivity extends ListActivity {
 			e.printStackTrace();
 		}
     }
-    
 }

@@ -118,7 +118,8 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  return getData(cursor, COLUMN_UID);
 	  }
 	  
-	  public Cursor getMsgList(String uid){
+
+	  public Cursor getMsgList(String uid) {
 		  SQLiteDatabase db = this.getReadableDatabase();
 		  String[] msg_columns={DatabaseHelper.COLUMN_SENDUID, DatabaseHelper.COLUMN_MSG, DatabaseHelper.COLUMN_TIMESTAMP};
 		  Cursor cursor = db.query(uid,msg_columns,null,null,null,null,null);
@@ -140,8 +141,10 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  SQLiteDatabase db = this.getReadableDatabase();
 		  String[] myuid_columns={DatabaseHelper.COLUMN_MYUID};
 		  Cursor cursor = db.query(DatabaseHelper.TABLE_MYUID,myuid_columns,null,null,null,null,null);
-		  if(cursor.getCount()==0) return true;
-		  return false;
+		  
+		  /*if(cursor.getCount() == 0) return true;
+		  return false;*/
+		  return true;
 	  }
 
 }

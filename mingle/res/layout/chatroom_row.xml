@@ -11,7 +11,7 @@
             style="@style/MyListFrontContent">
  
         <ImageView
-                style="@style/MyListImage"
+                style="@style/ChatRoomImage"
                 android:id="@+id/sender_image"/>
         
         <TextView

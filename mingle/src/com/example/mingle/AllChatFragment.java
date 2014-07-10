@@ -85,9 +85,10 @@ public class AllChatFragment extends Fragment {
              
               
               //Instantiate a chat room
-              currentUser.addChatRoom(chat_user_uid);
+
+              currentUser.addChatRoom(chat_user_uid, (Drawable) getResources().getDrawable(R.drawable.ic_launcher));
               // Create chatroom in local sqlite
-              ((MingleApplication) parent.getApplication()).dbHelper.insertNewUID(chat_user_uid);
+              //((MingleApplication) parent.getApplication()).dbHelper.insertNewUID(chat_user_uid);
              
            	  //Remove selected user from ChattableUser list
            	  ((MingleApplication) parent.getApplication()).currUser.removeChattableUser(position);

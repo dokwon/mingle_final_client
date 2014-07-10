@@ -10,22 +10,28 @@
             style="@style/MyListFrontContent">
  
         <ImageView
-                style="@style/MyListImage"
+                style="@style/UserListImage"
+                android:layout_centerHorizontal="true"
+                android:src="@android:drawable/ic_menu_gallery"
                 android:id="@+id/user_pic"/>
- 
+
         <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/user_pic"
-                style="@style/MyListTitle"
-                android:id="@+id/user_num"/>
-        
+            android:id="@+id/user_num"
+            style="@style/MyListTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/user_pic"
+            android:layout_below="@+id/user_pic"
+            android:layout_marginLeft="35dp" />
+
         <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/user_num"
-                style="@style/MyListTitle"
-                android:id="@+id/user_comment"/>
+            android:id="@+id/user_comment"
+            style="@style/MyListTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/user_pic"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@+id/user_num" />
  
     </RelativeLayout>
 </FrameLayout>

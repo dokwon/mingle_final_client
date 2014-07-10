@@ -4,9 +4,11 @@ package com.example.mingle;
 import android.app.Application;
 import android.os.Bundle;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 import android.graphics.*;
+import android.graphics.drawable.Drawable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,7 +28,8 @@ class MingleUser extends MingleApplication {
     private float latitude;
     private float longitude;
     private int dist_lim;
-
+    private String rid;
+    
     private ArrayList<ChattableUser> users = new ArrayList<ChattableUser>();
     private HashMap<String,ChatRoom> chat_room_map = new HashMap<String,ChatRoom>();
 
@@ -82,6 +85,10 @@ class MingleUser extends MingleApplication {
         return dist_lim;
     }
 
+    public String getRid(){
+    	return rid;
+    }
+    
     public void setUid(String uid_var){
         uid = uid_var;
     }
@@ -110,6 +117,10 @@ class MingleUser extends MingleApplication {
         dist_lim = dist_lim_var;
     }
 
+    public void setRid(String rid_var){
+    	rid = rid_var;
+    }
+    
     public boolean isValid() {
         if (photoPaths == null) {
             photoPaths = new ArrayList<String>();
@@ -149,8 +160,9 @@ class MingleUser extends MingleApplication {
         return users;
     }
     
-    public void addMsgToRoom(String recv_uid, String send_uid, String msg, int msg_counter, int status){
-    	chat_room_map.get(recv_uid).addMsg(send_uid, msg, msg_counter, status);
+
+    public void addMsgToRoom(String recv_uid, String send_uid, Drawable image, String msg, int msg_counter, int status){
+    	chat_room_map.get(recv_uid).addMsg(send_uid, image, msg, msg_counter, status);
     }
     
     public void updateMsgToRoom(String recv_uid, int msg_counter, String ts){
@@ -158,12 +170,13 @@ class MingleUser extends MingleApplication {
     	if(!update_success) System.out.println("msg doesn't exist??!?!?!");
     }
     
-    public void addRecvMsgToRoom(String send_uid, String msg, String ts){
-    	chat_room_map.get(send_uid).addRecvMsg(send_uid, msg, ts);
+
+    public void addRecvMsgToRoom(String send_uid, Drawable image, String msg, String ts){
+    	chat_room_map.get(send_uid).addRecvMsg(send_uid, image, msg, ts);
     }
     
-    public void addChatRoom(String uid){
-    	ChatRoom cr = new ChatRoom(uid);
+    public void addChatRoom(String uid, Drawable image){
+    	ChatRoom cr = new ChatRoom(uid, image);
     	chat_room_map.put(uid, cr);
     }
     

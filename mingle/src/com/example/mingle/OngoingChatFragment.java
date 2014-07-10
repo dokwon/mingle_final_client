@@ -35,7 +35,7 @@ public class OngoingChatFragment extends Fragment {
 		currentlychattinglistview= (ListView)(rootView.findViewById(R.id.mingling)) ;
 		
         // Stores 
-		chat_room_list = ((MingleApplication) parent.getApplication()).currUser.getChatRoomList();;
+		chat_room_list = ((MingleApplication) parent.getApplication()).currUser.getChatRoomList();
         adapter = new ChatRoomAdapter(parent, R.layout.chatroom_row, chat_room_list);
         adapter.notifyDataSetChanged();
         
