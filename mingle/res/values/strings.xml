@@ -14,9 +14,9 @@
     <string name="tab2title">Mingling</string>
     <string name="radio_male">Male</string>
     <string name="radio_female">Female</string>
-
     <string name="sms"></string>
     <string name="send">send</string>
     <string name="title_activity_setting">SettingActivity</string>
+    <string name="title_activity_photo_view">PhotoViewActivity</string>
 
 </resources>

@@ -5,8 +5,11 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -15,7 +18,8 @@ import android.widget.TextView;
 
 
 public class AllChatAdapter extends ArrayAdapter {
-	 
+	public final static String INDEX = "com.example.mingle.INDEX";	//Intent data to pass on when new Chatroom Activity started
+	
     List data;
     Context context;
     int layoutResID;
@@ -31,7 +35,7 @@ public class AllChatAdapter extends ArrayAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
   	  NewsHolder holder = null;
   	  View row = convertView;
@@ -54,10 +58,22 @@ public class AllChatAdapter extends ArrayAdapter {
       	  holder = (NewsHolder)row.getTag();
         }
         ChattableUser itemdata = ((ArrayList<ChattableUser>)data).get(position);
-        holder.user_num.setText(Integer.toString(itemdata.getNum()));
+        holder.user_num.setText(Integer.toString(itemdata.getNum()) + "  " + Integer.toString(itemdata.getPhotoNum()));
         holder.user_comment.setText(itemdata.getComment());
-        if(itemdata.hasPic())
-        	holder.user_pic.setImageDrawable(itemdata.getPic(1));
+        Drawable main_drawable = itemdata.getPic(0);
+        if(main_drawable == null) holder.user_pic.setImageDrawable((Drawable) context.getResources().getDrawable(R.drawable.ic_launcher));
+        else holder.user_pic.setImageDrawable(main_drawable);
+        holder.user_pic.setOnClickListener(new OnClickListener()
+        {
+
+        	@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+        		Intent photo_view_intent = new Intent(context, PhotoViewActivity.class);
+                photo_view_intent.putExtra(INDEX, position);
+                context.startActivity(photo_view_intent);
+			}
+        });
         
         return row;
 

@@ -18,11 +18,11 @@
 	    android:layout_width="80dp" 
 	    android:layout_alignEnd="@+id/button" 
 	    android:layout_alignRight="@+id/button" 
-	    android:layout_alignBottom="@+id/photoView2" 
+	    android:layout_alignBottom="@+id/photoView3" 
 	    android:layout_marginLeft="20dp" 
 	    android:layout_alignParentStart="true" 
 	    android:layout_alignParentLeft="true" 
-	    android:layout_alignTop="@+id/photoView3" 
+	    android:layout_alignTop="@+id/photoView2" 
 	    android:background="@drawable/abc_ab_bottom_solid_light_holo" 
 	    android:cropToPadding="true" 
 	    android:contentDescription="used to store first photo" 
@@ -36,10 +36,10 @@
 	    android:cropToPadding="true" 
 	    android:contentDescription="used to store second photo" 
 	    android:longClickable="false" 
-	    android:id="@+id/photoView2" 
-	    android:layout_alignStart="@+id/photoView3" 
-	    android:layout_alignLeft="@+id/photoView3" 
-	    android:layout_below="@+id/photoView3" 
+	    android:id="@+id/photoView3" 
+	    android:layout_alignStart="@+id/photoView2" 
+	    android:layout_alignLeft="@+id/photoView2" 
+	    android:layout_below="@+id/photoView2" 
 	    android:layout_marginTop="23dp"/>
 
 	<Button 
@@ -96,7 +96,7 @@
 	    android:textAppearance="?android:attr/textAppearanceMedium" />
 
 	<ImageView
-	    android:id="@+id/photoView3"
+	    android:id="@+id/photoView2"
 	    android:layout_width="80dp"
 	    android:layout_height="80dp"
 	    android:layout_marginTop="28dp"

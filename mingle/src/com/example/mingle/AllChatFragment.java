@@ -2,6 +2,7 @@ package com.example.mingle;
 
 import java.util.ArrayList;
 
+import org.apache.commons.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -85,8 +86,10 @@ public class AllChatFragment extends Fragment {
              
               
               //Instantiate a chat room
-
-              currentUser.addChatRoom(chat_user_uid, (Drawable) getResources().getDrawable(R.drawable.ic_launcher));
+              Drawable user_pic = chat_user_obj.getPic(0);
+              if(user_pic == null) user_pic = (Drawable) getResources().getDrawable(R.drawable.ic_launcher);
+              currentUser.addChatRoom(chat_user_uid, user_pic);
+              
               // Create chatroom in local sqlite
               //((MingleApplication) parent.getApplication()).dbHelper.insertNewUID(chat_user_uid);
              
@@ -201,8 +204,8 @@ public class AllChatFragment extends Fragment {
 		protected void onCancelled() {
 			// Notify the loading more operation has finished
 			allchatlistview.onLoadMoreComplete();
-		}
-	}
+	    }
+  }
   
   private class ApplicationWrapper {
 		Application curApp;
@@ -210,7 +213,50 @@ public class AllChatFragment extends Fragment {
 			curApp = app;
 		}
 	}
-	
+  
+  private class ImageDownloader extends AsyncTask<Void, Void, Void> {
+	  	
+	  	private Application curApp;
+	  	private String url;
+	  	private int index;
+	  	
+	  	public ImageDownloader(Application app, String url, int index) {
+	  		curApp = app;
+	  		this.url = url;
+	  		this.index = index;
+
+	  	}
+	  	
+			@Override
+			protected Void doInBackground(Void... params) {
+
+				if (isCancelled()) {
+					return null;
+				}
+
+		        
+				
+				Bitmap bm = ((MingleApplication) curApp).connectHelper.getBitmapFromURL(url);
+				MingleUser currUser = ((MingleApplication) curApp).currUser;
+				currUser.getChattableUser(index).addpic((Drawable) new BitmapDrawable(getResources(),bm));
+
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(Void result) {
+
+				// We need notify the adapter that the data have been changed
+				adapter.notifyDataSetChanged();
+
+				super.onPostExecute(result);
+			}
+
+			@Override
+			protected void onCancelled() {
+		    }
+  }
+  
   public int convertDpToPixel(float dp) {
       DisplayMetrics metrics = getResources().getDisplayMetrics();
       float px = dp * (metrics.densityDpi / 160f);
@@ -236,17 +282,12 @@ public class AllChatFragment extends Fragment {
           try {
               JSONObject shownUser = listData.getJSONObject(i);
              
-              ChattableUser new_user = new ChattableUser(shownUser.getString("UID"), shownUser.getString("COMM"), Integer.valueOf(shownUser.getString("NUM")));
-             
-              for(int j = 1; j <= 3; j++) {
-            	  if(shownUser.has("PIC" + Integer.toString(j))) {
-            		  byte[] picArr = shownUser.getString("PIC" + Integer.toString(j)).getBytes();
-            		  BitmapDrawable picmap = new BitmapDrawable(parent.getApplication().getResources(), 
-            				  									BitmapFactory.decodeByteArray(picArr , 0,
-            				  											picArr.length)); 
-            		  new_user.addpic(picmap);
-            	  }
-              }
+              ChattableUser new_user = new ChattableUser(shownUser.getString("UID"), shownUser.getString("COMM"), Integer.valueOf(shownUser.getString("NUM")), Integer.valueOf(shownUser.getString("PHOTO_NUM")));
+              
+              String url = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080/photos/";
+              url += shownUser.getString("UID");
+              url += "/photo_1.png";
+              new ImageDownloader(parent.getApplication(), url, ((MingleApplication) parent.getApplication()).currUser.getChattableUsers().size()).execute();
               
               ((MingleApplication) parent.getApplication()).currUser.addChattableUser(new_user);
           } catch (JSONException e){

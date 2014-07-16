@@ -47,6 +47,7 @@ import com.example.mingle.HttpHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+
 import android.widget.*;
 import android.widget.ImageView.ScaleType;
 
@@ -54,6 +55,7 @@ import com.example.mingle.MingleApplication;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 //import com.google.android.gms.maps.model.Location;
+
 
 
 
@@ -96,27 +98,53 @@ public class MainActivity extends ActionBarActivity {
     
     //Server Address
     private static final String server_url = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080";
-	private static final int SELECT_FILE = 0;
+	public final int SELECT_FILE = 0;
     
-	private Bitmap rotatedBitmap(Bitmap source) {
+	private Bitmap rotatedBitmap(Bitmap source, String photoPath) {
 		Matrix matrix = new Matrix();
-
-		matrix.postRotate(90);
+		ExifInterface ei = null;
+		try {
+			ei = new ExifInterface(photoPath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+		System.out.println(Integer.toString(orientation));
+		switch(orientation) {
+		    case ExifInterface.ORIENTATION_ROTATE_90:
+		    	matrix.postRotate(90);
+		        break;
+		    case ExifInterface.ORIENTATION_ROTATE_180:
+		    	matrix.postRotate(180);
+		        break;
+		    case ExifInterface.ORIENTATION_ROTATE_270:
+		    	matrix.postRotate(270);
+		    	break;
+		    // etc.
+		}
 		matrix.postScale(0.5f, 0.5f);
 		return Bitmap.createBitmap(source , 0, 0, source .getWidth(), source .getHeight(), matrix, true);
 	}	
+	
+	private ImageView FindAppropriateImageView() {
+		ImageView imageView = (ImageView) findViewById(R.id.photoView1);
+        if (imageView.getDrawable() != null) {
+        	imageView = (ImageView) findViewById(R.id.photoView2);
+        } 
+        if (imageView.getDrawable() != null) {
+        	imageView = (ImageView) findViewById(R.id.photoView3);
+        }
+        return imageView;
+	}
+	
+	
+	
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //InputStream stream = null;
     	if (resultCode == RESULT_OK) {
-    		ImageView imageView = (ImageView) findViewById(R.id.photoView1);
-            if (imageView.getDrawable() != null) {
-            	imageView = (ImageView) findViewById(R.id.photoView2);
-            } 
-            if (imageView.getDrawable() != null) {
-            	imageView = (ImageView) findViewById(R.id.photoView3);
-            }
-    		
+    		ImageView imageView = FindAppropriateImageView();
     		if (requestCode == REQUEST_IMAGE_CAPTURE) {   // If the user requested taking a photo
             	
             	Uri selectedImage = imageUri;
@@ -128,7 +156,7 @@ public class MainActivity extends ActionBarActivity {
                      Bitmap taken_photo_bitmap = android.provider.MediaStore.Images.Media
                      .getBitmap(cr, selectedImage);
                      
-                     imageView.setImageBitmap(rotatedBitmap(taken_photo_bitmap));
+                     imageView.setImageBitmap(rotatedBitmap(taken_photo_bitmap, selectedImage.getPath()));
                     ((MingleApplication) this.getApplication()).currUser.addPhotoPath(selectedImage.getPath());
                     
                     Toast.makeText(this, selectedImage.toString(),
@@ -217,30 +245,24 @@ public class MainActivity extends ActionBarActivity {
             	else sex_option="M";
             }
         });
+        
         ImageView photoView1 = (ImageView) findViewById(R.id.photoView1);
-        photoView1.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				getUserPhoto();
-			}
-        });
         ImageView photoView2 = (ImageView) findViewById(R.id.photoView2);
-        photoView2.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				getUserPhoto();
-			}
-        });
         ImageView photoView3 = (ImageView) findViewById(R.id.photoView3);
-        photoView3.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				getUserPhoto();
-			}
-        });
+        ArrayList<ImageView> views = new ArrayList<ImageView>();
+        views.add(photoView1);
+        views.add(photoView2);
+        views.add(photoView3);
+
+        photoView1.setOnClickListener(new MinglePhotoClickListener( this, views));
+        photoView2.setOnClickListener(new MinglePhotoClickListener(this, views));
+        photoView3.setOnClickListener(new MinglePhotoClickListener(this, views));
+       
     }
     
-    //아니 이게 말이 되냐고ㅋㅋㅋㅋ앱이 처음구동되는데 뭐가 어케 다 있어 로컬에ㅋㅋㅋㅋ
+    
+    
+    
     private boolean AppOnFirstTime() {
     	DatabaseHelper db = ((MingleApplication) this.getApplication()).dbHelper;
     	MingleApplication mingleApp = (MingleApplication) this.getApplication();
@@ -259,32 +281,6 @@ public class MainActivity extends ActionBarActivity {
     	return false;
     }
     
-    public int getCameraPhotoOrientation(Context context, Uri imageUri, String imagePath){
-        int rotate = 0;
-        try {
-            context.getContentResolver().notifyChange(imageUri, null);
-            File imageFile = new File(imagePath);
-
-            ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
-            switch (orientation) {
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                rotate = 270;
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                rotate = 180;
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                rotate = 90;
-                break;
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return rotate;
-    }
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -330,39 +326,13 @@ public class MainActivity extends ActionBarActivity {
         } else {
         	//Start activity for Mingle Market
         	System.out.println("++++++++++++++++++2");
-            Intent i = new Intent(this, HuntActivity.class);
+           Intent i = new Intent(this, HuntActivity.class);
             startActivity(i);
         }        
     }
 
     
-    private void getUserPhoto() {
-        final CharSequence[] items = { "Take Photo", "Choose from Library",
-        "Cancel" };
-
-		AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-		builder.setTitle("Add Photo!");
-		builder.setItems(items, new DialogInterface.OnClickListener() {
-		    @Override
-		    public void onClick(DialogInterface dialog, int item) {
-		        if (items[item].equals("Take Photo")) {
-		            takePicture();
-		        } else if (items[item].equals("Choose from Library")) {
-		            Intent intent = new Intent(
-		                    Intent.ACTION_PICK,
-		                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-		            intent.setType("image/*");
-		            startActivityForResult(
-		                    Intent.createChooser(intent, "Select File"),
-		                    SELECT_FILE);
-		        } else if (items[item].equals("Cancel")) {
-		            dialog.dismiss();
-		        }
-		    }
-		});
-		builder.show();
-
-    }
+    
     
     //On user creation request, get user's info and send request to server
     public void userCreateButtonPressed(View view) {
@@ -407,23 +377,19 @@ public class MainActivity extends ActionBarActivity {
         startActivity(i);
     }
     
-   /* private byte[] compressPicture(Bitmap pic) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        pic.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-        return byteArray;
-    }*/
+    
    
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private Uri imageUri;
     
     
-    private void takePicture() {
+    public void takePicture() {
     	 Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
     	  File photo = new File(Environment.getExternalStorageDirectory(),  "Pic.jpg");
     	  intent.putExtra(MediaStore.EXTRA_OUTPUT,
     	            Uri.fromFile(photo));
     	 imageUri = Uri.fromFile(photo);
+    	 System.out.println(imageUri.toString());
     	 startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
     }
 

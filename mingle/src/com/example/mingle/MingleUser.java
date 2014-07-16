@@ -43,6 +43,10 @@ class MingleUser extends MingleApplication {
         setDist(dist_lim_var);
     }
     
+    public void removePhotoPathAtIndex(int index) {
+    	photoPaths.remove(index);
+    }
+    
     public void addPhotoPath(String photoPath) {
     	photoPaths.add(photoPath);
     }
@@ -154,6 +158,14 @@ class MingleUser extends MingleApplication {
     
     public ChattableUser getChattableUser(int pos){
         return users.get(pos);
+    }
+    
+    public ChattableUser getChattableUser(String uid){
+    	for(int i = 0; i < users.size(); i++){
+    		ChattableUser cu= users.get(i);
+    		if(cu.getUid().equals(uid)) return cu;
+    	}
+    	return null;
     }
 
     public ArrayList<ChattableUser> getChattableUsers (){

@@ -94,6 +94,10 @@ class ChatRoom{
 		return user_pic;
 	}
 	
+	public void setPic(Drawable user_pic){
+		this.user_pic = user_pic;
+	}
+	
 }
 
 class MsgComparator implements Comparator<Message> {

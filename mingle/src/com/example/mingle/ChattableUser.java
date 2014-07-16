@@ -8,16 +8,17 @@ public class ChattableUser {
 	String user_uid;
 	String comment;
 	int num;
+	int photo_num;
 	ArrayList<Drawable> pics;
     
 
-    public ChattableUser(String user_uid, String comment, int num) {
+    public ChattableUser(String user_uid, String comment, int num, int photo_num) {
           super();
           this.user_uid = user_uid;
           this.comment = comment;
           this.num = num;
+          this.photo_num = photo_num;
           this.pics = new ArrayList<Drawable>();
-          
     }
     
     public void addPics(ArrayList<Drawable> friendPics) {
@@ -48,12 +49,13 @@ public class ChattableUser {
 	  	this.num = num;
   	}
   
-    public Drawable getPic(int index) {
-          return pics.get(index);
+    public int getPhotoNum(){
+    	return photo_num;
     }
     
-    public boolean hasPic() {
-    	return pics.size() > 0;
+    public Drawable getPic(int index) {
+    	  if(pics.size() <= index) return null;
+          return pics.get(index);
     }
     
     public void addpic(Drawable pic) {

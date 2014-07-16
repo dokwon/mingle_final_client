@@ -3,20 +3,28 @@ package com.example.mingle;
 
         
 import android.annotation.SuppressLint;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+
 import java.net.*;
+
 import io.socket.*;
+
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
 import com.example.mingle.MingleUser;        
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -34,8 +42,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.*;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.String;
 
@@ -151,20 +161,30 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
                 	JSONObject recv_msg_obj = (JSONObject) args[0];
 					try {
 						String chat_user_uid = recv_msg_obj.getString("send_uid");
-						ChatRoom chatroom = ((MingleApplication) currContext.getApplicationContext()).currUser.getChatRoom(chat_user_uid);
+						MingleUser curr_user = ((MingleApplication) currContext.getApplicationContext()).currUser;
+						ChatRoom chatroom = curr_user.getChatRoom(chat_user_uid);
 						if(chatroom  == null){
 							//Instantiate a chat room
-
-							((MingleApplication) currContext.getApplicationContext()).currUser.addChatRoom(chat_user_uid, (Drawable) currContext.getResources().getDrawable(R.drawable.ic_launcher));
-							((MingleApplication) currContext.getApplicationContext()).currUser.getChatRoom(chat_user_uid).setChatActive();
+							curr_user.addChatRoom(chat_user_uid, (Drawable) currContext.getResources().getDrawable(R.drawable.ic_launcher));
+							curr_user.getChatRoom(chat_user_uid).setChatActive();
 						
 							//Remove from User List if available
-							int pos = ((MingleApplication) currContext.getApplicationContext()).currUser.getChattableUserPos(chat_user_uid);
+							int pos = curr_user.getChattableUserPos(chat_user_uid);
 							if(pos >= 0){
+								ChattableUser chat_user_obj = curr_user.getChattableUser(pos);
+								Drawable user_pic = chat_user_obj.getPic(0);
+					            if(user_pic == null) user_pic = (Drawable) currContext.getResources().getDrawable(R.drawable.ic_launcher);
+					            curr_user.getChatRoom(chat_user_uid).setPic(user_pic);
+					            
 								((MingleApplication) currContext.getApplicationContext()).currUser.removeChattableUser(pos);
 								if(currContext instanceof HuntActivity){
 									((HuntActivity)currContext).listsUpdate();
 								}
+							} else {
+								String url = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080/photos/";
+					            url += chat_user_uid;
+					            url += "/photo_1.png";
+					            new ImageDownloader((Application) currContext.getApplicationContext(), url, chat_user_uid).execute();
 							}
 						}
 
@@ -194,28 +214,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
         };
         socket.connect(iocb);
     }
-    
-    
-    
-    private void postPhoto(final ArrayList<String> photoPaths, final String UID) {
 
-    	final String baseURL = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080/";
-    	
-        new Thread(new Runnable() {
-    		public void run() {
-    			try {
-					String response = PhotoPoster.postPhoto(photoPaths, UID, baseURL);
-					System.out.println(response);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-    		
-    		}
-    	}).start();
-
-    }
-    
     /*
     * Sends login info along to the server, and hopefully what will be returned
     * is the unique id of the user as well as some other useful information
@@ -224,41 +223,30 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
        
     	
     	String baseURL = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080/";
-    	baseURL += "user_create?";
+    	baseURL += "create_user?";
     	baseURL += "comm=" +comment + "&";
     	baseURL += "sex=" + sex + "&";
     	baseURL += "num=" + (new Integer(number)).toString() + "&";
     	baseURL += "loc_long=" + (new Float(longitude)).toString() + "&";
     	baseURL += "loc_lat=" + (new Float(latitude)).toString() + "&";
+    	baseURL += "photo_num=" + (new Integer(photos.size())).toString() + "&";
     	baseURL += "rid=" + rid;
     	
     	final String cpy = baseURL;
-       
-    	//Start Thread that receives HTTP Response
+    	
     	new Thread(new Runnable() {
     		public void run() {
-    			HttpClient client = new DefaultHttpClient();
-    	        HttpGet poster = new HttpGet(cpy);
-    	        HttpResponse response = null;
-				try {
-					response = client.execute(poster);
-				} catch (ClientProtocolException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
+    			try {
+					HttpResponse response = PhotoPoster.postPhoto(photos, cpy);
+					JSONObject user_info = new JSONObject(HttpResponseBody(response));
+					System.out.println(user_info);
+					((MingleApplication) ((MainActivity)currContext).getApplication()).dbHelper.setMyUID(user_info.getString("UID"));
+		        	((MainActivity)currContext).joinMingle(user_info);
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
-				try{
-					 
-		    		JSONObject user_info = new JSONObject(HttpResponseBody(response));
-		    		postPhoto(photos, user_info.getString("UID"));
-		    		((MingleApplication) ((MainActivity)currContext).getApplication()).dbHelper.setMyUID(user_info.getString("UID"));
-		        	((MainActivity)currContext).joinMingle(user_info);
-		    	} catch (JSONException je){
-		    		je.printStackTrace();
-		    	}
+    		
     		}
     	}).start();
     }
@@ -266,6 +254,9 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     //Fetch data from HttpResponse
     public String HttpResponseBody(HttpResponse response) { 
     	//System.out.println(Integer.valueOf(response.getStatusLine().getStatusCode()).toString());
+    	if(response == null) {
+    		return "";
+    	}
     	if(response.getStatusLine().getStatusCode() == 200)
         {
 			HttpEntity entity = response.getEntity();
@@ -293,6 +284,27 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
      */
     public void changeContext (Context context){
         this.currContext = context;
+    }
+    
+    public Bitmap getBitmapFromURL(String link) {
+        /*--- this method downloads an Image from the given URL, 
+         *  then decodes and returns a Bitmap object
+         ---*/
+        try {
+            URL url = new URL(link);
+            HttpURLConnection connection = (HttpURLConnection) url
+                    .openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+
+            return myBitmap;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void requestUserList(String uid, String sex, float latitude, float longitude, int dist_lim, int num_of_users) {
@@ -383,5 +395,49 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     //Override
     protected void onPostExecute(Long result) {
         //showDialog("Downloaded " + result + " bytes");
+    }
+    
+    private class ImageDownloader extends AsyncTask<Void, Void, Void> {
+	  	
+	  	private Application curApp;
+	  	private String url;
+	  	private String uid;
+	  	
+	  	public ImageDownloader(Application app, String url, String uid) {
+	  		curApp = app;
+	  		this.url = url;
+	  		this.uid = uid;
+	  	}
+	  	
+			@Override
+			protected Void doInBackground(Void... params) {
+
+				if (isCancelled()) {
+					return null;
+				}
+
+		        
+				
+				Bitmap bm = ((MingleApplication) curApp).connectHelper.getBitmapFromURL(url);
+				MingleUser currUser = ((MingleApplication) curApp).currUser;
+				currUser.getChatRoom(uid).setPic((Drawable) new BitmapDrawable(currContext.getResources(),bm));
+
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(Void result) {
+
+				// We need notify the adapter that the data have been changed
+				if(currContext instanceof HuntActivity){
+					((HuntActivity)currContext).listsUpdate();
+				}
+
+				super.onPostExecute(result);
+			}
+
+			@Override
+			protected void onCancelled() {
+		    }
     }
 }
