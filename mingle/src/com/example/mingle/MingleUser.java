@@ -30,8 +30,8 @@ class MingleUser extends MingleApplication {
     private int dist_lim;
     private String rid;
     
-    private ArrayList<ChattableUser> users = new ArrayList<ChattableUser>();
-    private HashMap<String,ChatRoom> chat_room_map = new HashMap<String,ChatRoom>();
+    private ArrayList<ChattableUser> chattable_users = new ArrayList<ChattableUser>();
+    private ArrayList<ChattableUser> chatting_users = new ArrayList<ChattableUser>();
 
     public void setAttributes(String uid_var, String sex_var, int num_var, String comment_var, float latitude_var, float longitude_var, int dist_lim_var){
         setUid(uid_var);
@@ -141,62 +141,62 @@ class MingleUser extends MingleApplication {
     }
 
     public void addChattableUser(ChattableUser user){
-        users.add(user);
+        chattable_users.add(user);
     }
     
     public void removeChattableUser(int pos){
-    	users.remove(pos);
+    	chattable_users.remove(pos);
     }
     
     public int getChattableUserPos(String uid){
-    	for(int i = 0; i < users.size(); i++){
-    		ChattableUser cu= users.get(i);
+    	for(int i = 0; i < chattable_users.size(); i++){
+    		ChattableUser cu= chattable_users.get(i);
     		if(cu.getUid().equals(uid)) return i;
     	}
     	return -1;
     }
     
     public ChattableUser getChattableUser(int pos){
-        return users.get(pos);
+        return chattable_users.get(pos);
     }
     
     public ChattableUser getChattableUser(String uid){
-    	for(int i = 0; i < users.size(); i++){
-    		ChattableUser cu= users.get(i);
+    	for(int i = 0; i < chattable_users.size(); i++){
+    		ChattableUser cu= chattable_users.get(i);
     		if(cu.getUid().equals(uid)) return cu;
     	}
     	return null;
     }
 
-    public ArrayList<ChattableUser> getChattableUsers (){
-        return users;
+    public ArrayList<ChattableUser> getChattableUserList(){
+        return chattable_users;
     }
     
-
-    public void addMsgToRoom(String recv_uid, String send_uid, Drawable image, String msg, int msg_counter, int status){
-    	chat_room_map.get(recv_uid).addMsg(send_uid, image, msg, msg_counter, status);
+    public void addChattingUser(ChattableUser cu){
+    	cu.createChatRoom(getUid());
+    	chatting_users.add(cu);
     }
     
-    public void updateMsgToRoom(String recv_uid, int msg_counter, String ts){
-    	boolean update_success = chat_room_map.get(recv_uid).updateMsg(getUid(), msg_counter, ts);
-    	if(!update_success) System.out.println("msg doesn't exist??!?!?!");
+    public ChattableUser getChattingUser(String uid){
+    	for(int i = 0; i < chatting_users.size(); i++){
+    		ChattableUser cu= chatting_users.get(i);
+    		if(cu.getUid().equals(uid)) return cu;
+    	}
+    	return null;
     }
     
-
-    public void addRecvMsgToRoom(String send_uid, Drawable image, String msg, String ts){
-    	chat_room_map.get(send_uid).addRecvMsg(send_uid, image, msg, ts);
+    public ArrayList<ChattableUser> getChattingUserList(){
+    	return chatting_users;
     }
     
-    public void addChatRoom(String uid, Drawable image){
-    	ChatRoom cr = new ChatRoom(uid, image);
-    	chat_room_map.put(uid, cr);
+    public ChattableUser getUser(String uid){
+    	ChattableUser cu = getChattableUser(uid);
+    	if(cu == null) cu = getChattingUser(uid);
+    	return cu;
     }
-    
-    public ChatRoom getChatRoom(String uid){
-    	return chat_room_map.get(uid);
-    }
-    
-    public ArrayList<ChatRoom> getChatRoomList(){
-    	return new ArrayList<ChatRoom>(chat_room_map.values());
+    public void switchChattableToChatting(int index){
+    	ChattableUser cu = getChattableUser(index);
+    	addChattingUser(cu);
+    	removeChattableUser(index);
     }
 }

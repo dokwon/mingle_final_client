@@ -50,7 +50,7 @@ public class AllChatFragment extends Fragment {
 	  View rootView = inflater.inflate(R.layout.fragment_all_chat, container, false);
 	  
 	  allchatlistview=  (SwipeListView)(rootView.findViewById(R.id.All));
-      user_list = ((MingleApplication) parent.getApplication()).currUser.getChattableUsers();
+      user_list = ((MingleApplication) parent.getApplication()).currUser.getChattableUserList();
       adapter=new AllChatAdapter(parent, R.layout.allchat_row,user_list);
 	  
       
@@ -81,20 +81,12 @@ public class AllChatFragment extends Fragment {
               
               MingleUser currentUser = ((MingleApplication) parent.getApplication()).currUser;
               ChattableUser chat_user_obj = currentUser.getChattableUser(position);
-              String chat_user_uid = chat_user_obj.getUid();
-              
-             
-              
-              //Instantiate a chat room
-              Drawable user_pic = chat_user_obj.getPic(0);
-              if(user_pic == null) user_pic = (Drawable) getResources().getDrawable(R.drawable.ic_launcher);
-              currentUser.addChatRoom(chat_user_uid, user_pic);
+                           
+              currentUser.switchChattableToChatting(position);
               
               // Create chatroom in local sqlite
               //((MingleApplication) parent.getApplication()).dbHelper.insertNewUID(chat_user_uid);
              
-           	  //Remove selected user from ChattableUser list
-           	  ((MingleApplication) parent.getApplication()).currUser.removeChattableUser(position);
            	  ((HuntActivity)parent).listsUpdate();
               
               Intent chat_intent = new Intent(curActivity, ChatroomActivity.class);
@@ -214,48 +206,7 @@ public class AllChatFragment extends Fragment {
 		}
 	}
   
-  private class ImageDownloader extends AsyncTask<Void, Void, Void> {
-	  	
-	  	private Application curApp;
-	  	private String url;
-	  	private int index;
-	  	
-	  	public ImageDownloader(Application app, String url, int index) {
-	  		curApp = app;
-	  		this.url = url;
-	  		this.index = index;
 
-	  	}
-	  	
-			@Override
-			protected Void doInBackground(Void... params) {
-
-				if (isCancelled()) {
-					return null;
-				}
-
-		        
-				
-				Bitmap bm = ((MingleApplication) curApp).connectHelper.getBitmapFromURL(url);
-				MingleUser currUser = ((MingleApplication) curApp).currUser;
-				currUser.getChattableUser(index).addpic((Drawable) new BitmapDrawable(getResources(),bm));
-
-				return null;
-			}
-
-			@Override
-			protected void onPostExecute(Void result) {
-
-				// We need notify the adapter that the data have been changed
-				adapter.notifyDataSetChanged();
-
-				super.onPostExecute(result);
-			}
-
-			@Override
-			protected void onCancelled() {
-		    }
-  }
   
   public int convertDpToPixel(float dp) {
       DisplayMetrics metrics = getResources().getDisplayMetrics();
@@ -263,38 +214,5 @@ public class AllChatFragment extends Fragment {
       return (int) px;
   }
   
-  public void updateUserList(){
-  	parent.runOnUiThread(new Runnable() {
-  		public void run() {
-  			adapter.notifyDataSetChanged();
-  		}
-  	});
-  }
-  
-  /* 
-   * Retrieve data from HttpHelper. Content of data is the list of nearby users of opposite sex.
-   * This method also appends the new data to the list and shows them on the screen.
-   */
-  public void updateList(JSONArray listData){
-  	System.out.println("showlist!");
-  	System.out.println(listData.toString());
-      for(int i = 0 ; i < listData.length(); i++) {
-          try {
-              JSONObject shownUser = listData.getJSONObject(i);
-             
-              ChattableUser new_user = new ChattableUser(shownUser.getString("UID"), shownUser.getString("COMM"), Integer.valueOf(shownUser.getString("NUM")), Integer.valueOf(shownUser.getString("PHOTO_NUM")));
-              
-              String url = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080/photos/";
-              url += shownUser.getString("UID");
-              url += "/photo_1.png";
-              new ImageDownloader(parent.getApplication(), url, ((MingleApplication) parent.getApplication()).currUser.getChattableUsers().size()).execute();
-              
-              ((MingleApplication) parent.getApplication()).currUser.addChattableUser(new_user);
-          } catch (JSONException e){
-              e.printStackTrace();
-          }
-      }
-    updateUserList();
-  }
   
 }

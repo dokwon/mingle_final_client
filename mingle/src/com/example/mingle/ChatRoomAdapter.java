@@ -53,10 +53,10 @@ public class ChatRoomAdapter extends ArrayAdapter {
       	  holder = (NewsHolder)row.getTag();
         }
 
-        ChatRoom room_data = (ChatRoom)data.get(position);
-        holder.msg_view.setText(room_data.getLastMsg());
+        ChattableUser cu = (ChattableUser)data.get(position);
+        holder.msg_view.setText(cu.getChatRoom().getLastMsg());
 
-        holder.user_pic.setImageDrawable(room_data.getPic());
+        holder.user_pic.setImageDrawable(cu.getPic(0));
        
         return row;
 

@@ -61,8 +61,7 @@ public class AllChatAdapter extends ArrayAdapter {
         holder.user_num.setText(Integer.toString(itemdata.getNum()) + "  " + Integer.toString(itemdata.getPhotoNum()));
         holder.user_comment.setText(itemdata.getComment());
         Drawable main_drawable = itemdata.getPic(0);
-        if(main_drawable == null) holder.user_pic.setImageDrawable((Drawable) context.getResources().getDrawable(R.drawable.ic_launcher));
-        else holder.user_pic.setImageDrawable(main_drawable);
+        holder.user_pic.setImageDrawable(main_drawable);
         holder.user_pic.setOnClickListener(new OnClickListener()
         {
 

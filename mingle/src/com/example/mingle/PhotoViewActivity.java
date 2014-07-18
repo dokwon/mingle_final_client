@@ -41,14 +41,15 @@ public class PhotoViewActivity extends Activity {
                  photo_num = cu.getPhotoNum();
                  uid = cu.getUid();
                  
+                 ((MingleApplication) this.getApplication()).connectHelper.changeContext(this);
+                 
                  LayoutInflater inflater = getLayoutInflater();
                  for(int i = 0; i < photo_num; i++){
                 	 LinearLayout single_photo_layout = (LinearLayout) inflater
                          .inflate(R.layout.single_photo, null);
                 	 ImageView photo_view = (ImageView) single_photo_layout.findViewById(R.id.photoView);
                 	 Drawable photo_drawable = cu.getPic(i);
-                	 if(photo_drawable == null) photo_view.setImageDrawable((Drawable) getResources().getDrawable(R.drawable.ic_launcher));
-                	 else photo_view.setImageDrawable(photo_drawable);
+                	 photo_view.setImageDrawable(photo_drawable);
                 	 
                 	 viewFlipper.addView(single_photo_layout);
                  }
@@ -90,7 +91,7 @@ public class PhotoViewActivity extends Activity {
                              // if right to left swipe on screen
                              if (lastX > currentX)
                              {
-                                 if (viewFlipper.getDisplayedChild() == 1)
+                                 if (viewFlipper.getDisplayedChild() == photo_num)
                                      break;
                                  // set the required Animation type to ViewFlipper
                                  // The Next screen will come in form Right and current Screen will go OUT from Left 
@@ -110,62 +111,23 @@ public class PhotoViewActivity extends Activity {
     	System.out.println("photo index: " + photo_index);
     	if(photo_index < 0 || photo_index >= photo_num) return;
     	
-    	MingleUser currUser = ((MingleApplication) getApplication()).currUser;
-		ChattableUser cu = currUser.getChattableUser(uid);
-   	 	Drawable photo_drawable = cu.getPic(photo_index);
-   	 	if(photo_drawable != null) return;
-    	
-    	String url = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080/photos/";
-        url += uid;
-        url += "/photo_" + String.valueOf(photo_index+1) + ".png";
-        System.out.println(url);
-        new ImageDownloader(getApplication(), url, photo_index).execute();
-    }
+    	MingleUser curr_user = ((MingleApplication) getApplication()).currUser;
+		ChattableUser cu = curr_user.getUser(uid);
+		if(!cu.isPicAvail(photo_index)){
+			System.out.println("download image!");
+			((MingleApplication) this.getApplication()).connectHelper.downloadPic(getApplication(), uid, photo_index);
+		}
+	}
     
-private class ImageDownloader extends AsyncTask<Void, Void, Void> {
-	  	
-	  	private Application curApp;
-	  	private String url;
-	  	private int photo_index;
-	  	private Bitmap bm;
-	  	
-	  	public ImageDownloader(Application app, String url, int photo_index) {
-	  		curApp = app;
-	  		this.url = url;
-	  		this.photo_index = photo_index;
-	  	}
-	  	
-			@Override
-			protected Void doInBackground(Void... params) {
-
-				if (isCancelled()) {
-					return null;
-				}
-
-				bm = ((MingleApplication) curApp).connectHelper.getBitmapFromURL(url);
-				
-
-				return null;
-			}
-
-			@Override
-			protected void onPostExecute(Void result) {
-				
-				LinearLayout curr_layout = (LinearLayout) viewFlipper.getCurrentView();
-				ImageView photo_view = (ImageView) curr_layout.findViewById(R.id.photoView);
-				
-				MingleUser currUser = ((MingleApplication) curApp).currUser;
-				ChattableUser cu = currUser.getChattableUser(uid);
-				cu.addpic((Drawable) new BitmapDrawable(getResources(),bm));
-           	 	Drawable photo_drawable = cu.getPic(photo_index);
-           	 	if(photo_drawable == null) photo_view.setImageDrawable((Drawable) getResources().getDrawable(R.drawable.ic_launcher));
-           	 	else photo_view.setImageDrawable(photo_drawable);
-				super.onPostExecute(result);
-			}
-
-			@Override
-			protected void onCancelled() {
-		    }
-  }
+    public void updateView(int index){
+    	LinearLayout curr_layout = (LinearLayout) viewFlipper.getCurrentView();
+		ImageView photo_view = (ImageView) curr_layout.findViewById(R.id.photoView);
+		
+		MingleUser currUser = ((MingleApplication) this.getApplication()).currUser;
+		ChattableUser cu = currUser.getUser(uid);
+		Drawable pic_to_update = cu.getPic(index);
+		
+    	photo_view.setImageDrawable(pic_to_update);
+    }
 
 }

@@ -60,15 +60,11 @@ public class MsgAdapter extends ArrayAdapter {
  
           LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) holder.msg_view.getLayoutParams();
           boolean is_me = false;
-          try {
-              JSONObject msg_data = (JSONObject)data.get(position);
-              if(msg_data.getString("send_uid").equals(((MingleApplication) parent_act.getApplication()).currUser.getUid())) is_me = true;
-              holder.msg_view.setText(msg_data.getString("msg"));
-              holder.timestamp_view.setText(msg_data.getString("ts"));
-          } catch (JSONException e) {
-        	  // TODO Auto-generated catch block
-        	  e.printStackTrace();
-          }
+          Message msg_data = (Message)data.get(position);
+          if(msg_data.getUid().equals(((MingleApplication) parent_act.getApplication()).currUser.getUid())) is_me = true;
+          holder.msg_view.setText(msg_data.getContent());
+          holder.timestamp_view.setText(msg_data.getTimestamp().toString());
+
 
           
           if(is_me) lp.gravity = Gravity.RIGHT;

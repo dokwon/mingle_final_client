@@ -12,15 +12,15 @@ import android.graphics.drawable.Drawable;
 class ChatRoom{
 	
 	private ArrayList<Message> msg_list;
-	private String recv_uid;
 	private boolean just_created;
-	private Drawable user_pic;
+	private String send_uid;
+	private String recv_uid;
 	
-	public ChatRoom(String uid, Drawable image){
+	public ChatRoom(String send_uid, String recv_uid){
 		msg_list =  new ArrayList<Message>();
-		recv_uid = uid;
 		just_created = true;
-		user_pic = image;
+		this.send_uid = send_uid;
+		this.recv_uid = recv_uid;
 	}
 	
 	public boolean isJustCreated(){
@@ -30,72 +30,53 @@ class ChatRoom{
 	public void setChatActive(){
 		just_created = false;
 	}
-	
-	public String getRecvUid(){
-		return recv_uid;
-	}
-	
 
-	public void addMsg(String send_uid, Drawable image, String msg, int msg_counter, int status){
+	public void addMsg(String msg, int msg_counter, int status){
 		Date date= new Date();
 		Timestamp timestamp = (new Timestamp(date.getTime()));
-		Message msg_obj = new Message(send_uid, image, msg, msg_counter, timestamp, 0);
+		Message msg_obj = new Message(send_uid, null, msg, msg_counter, timestamp.toString(), 0);
 		msg_list.add(msg_obj);
 		Collections.sort(msg_list, new MsgComparator());
 	}
 	
-
-	public void addRecvMsg(String send_uid, Drawable image, String msg, String msg_ts){
-		try {
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-			Date parsedDate = dateFormat.parse(msg_ts);
-			Timestamp timestamp = new Timestamp(parsedDate.getTime());
-			
-			Message msg_obj = new Message(send_uid, image, msg, -1, timestamp, 1);
-			msg_list.add(msg_obj);
-			Collections.sort(msg_list, new MsgComparator());
-		} catch (java.text.ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public ArrayList<Message> getMsgList(){
-		return msg_list;
-	}
-	
-	public boolean updateMsg(String send_uid, int counter, String msg_ts){
+	public boolean updateMsgOnConf(int counter, String msg_ts){
 		for(Message obj : msg_list){
-			if(obj.getUid().equals(send_uid) && obj.getCounter()==counter){
+			if(obj.getCounter()==counter){
 				obj.setStatus(1);
-        		try {
-    				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-    				Date parsedDate = dateFormat.parse(msg_ts);
-    				Timestamp timestamp = new Timestamp(parsedDate.getTime());
+
+        		System.out.println("msg conf at: " + msg_ts);
     				
-    				obj.setTimestamp(timestamp);
-    				Collections.sort(msg_list, new MsgComparator());
-    			} catch (java.text.ParseException e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
-    			}
+    			obj.setTimestamp(msg_ts);
+    			Collections.sort(msg_list, new MsgComparator());
+
 				return true;
 			}	
 		}
 		return false;
 	}
 	
+
+	public void addRecvMsg(Drawable image, String msg, String msg_ts){
+		System.out.println("recv at: " + msg_ts);
+		/*SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+		Date parsedDate = dateFormat.parse(msg_ts);
+		Timestamp timestamp = new Timestamp(parsedDate.getTime());
+		*/
+			
+		Message msg_obj = new Message(recv_uid, image, msg, -1, msg_ts, 1);
+		msg_list.add(msg_obj);
+		Collections.sort(msg_list, new MsgComparator());
+
+	}
+	
+	public ArrayList<Message> getMsgList(){
+		return msg_list;
+	}
+	
+	
 	public String getLastMsg(){
 		if(msg_list.size() > 0) return msg_list.get(msg_list.size() - 1).getContent();
 		return "";
-	}
-	
-	public Drawable getPic(){
-		return user_pic;
-	}
-	
-	public void setPic(Drawable user_pic){
-		this.user_pic = user_pic;
 	}
 	
 }

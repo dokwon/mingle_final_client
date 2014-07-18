@@ -11,7 +11,6 @@ import org.json.JSONObject;
 
 import android.app.ListActivity;
 import android.content.Intent;
-
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -19,6 +18,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
@@ -32,10 +32,12 @@ public class ChatroomActivity extends ListActivity {
 
     //DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
     MsgAdapter adapter;
+    ListView msg_lv;
     
     String send_uid;
     String recv_uid;
     int msg_counter;
+    ChattableUser recv_user;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,14 +55,18 @@ public class ChatroomActivity extends ListActivity {
         send_uid = ((MingleApplication) this.getApplication()).currUser.getUid();
 		//for testing purpose, set myself as receiver
 		//recv_uid = send_uid;
+        
+        recv_user = ((MingleApplication) this.getApplication()).currUser.getChattingUser(recv_uid);
 		msg_counter = -1;
 		
 		//Associate this chat room's message list to adapter
 		adapter=new MsgAdapter(this,
                 R.layout.msg_row,
-                ((MingleApplication) this.getApplication()).currUser.getChatRoom(recv_uid).getMsgList(), this);
+                recv_user.getChatRoom().getMsgList(), this);
 		
         setListAdapter(adapter);
+        
+        msg_lv = (ListView) findViewById(android.R.id.list);
          		
 		setContentView(R.layout.activity_chatroom);
     }
@@ -78,7 +84,7 @@ public class ChatroomActivity extends ListActivity {
 		
 		boolean response_msg = true;
 
-		ArrayList<Message> list = ((MingleApplication) this.getApplication()).currUser.getChatRoom(recv_uid).getMsgList();
+		ArrayList<Message> list = recv_user.getChatRoom().getMsgList();
 
 		String last_msg_uid;
 		if(list.size() <= 0) last_msg_uid = "";
@@ -92,8 +98,8 @@ public class ChatroomActivity extends ListActivity {
 		}
 			
 		//Save MSG and show it is in the process of getting sent.
-		((MingleApplication) this.getApplication()).currUser.addMsgToRoom(recv_uid, send_uid, (Drawable) getResources().getDrawable(R.drawable.ic_launcher), SMS, msg_counter, 0);
-		adapter.notifyDataSetChanged();
+		recv_user.addMsgToChatRoom(SMS, msg_counter, 0);
+		updateMessageList();
 		
 		//Send MSG to Server
 		((MingleApplication) this.getApplication()).connectHelper.sendMessageToServer(send_uid, recv_uid, SMS, msg_counter,response_msg);
@@ -105,6 +111,14 @@ public class ChatroomActivity extends ListActivity {
     	runOnUiThread(new Runnable() {
     		public void run() {
     			adapter.notifyDataSetChanged();
+    			msg_lv.post(new Runnable() {
+    		        @Override
+    		        public void run() {
+    		            // Select the last row so it will scroll into view...
+    		        	System.out.println("msg last: "+String.valueOf(adapter.getCount()-1));
+    		            msg_lv.setSelection(adapter.getCount()-1);
+    		        }
+    		    });
     		}
     	});
     }
@@ -115,10 +129,10 @@ public class ChatroomActivity extends ListActivity {
 			String msg = recv_msg_obj.getString("msg");
 			String msg_ts = recv_msg_obj.getString("ts");
 
-			((MingleApplication) this.getApplication()).currUser.addRecvMsgToRoom(msg_send_uid, (Drawable) getResources().getDrawable(R.drawable.ic_launcher), msg, msg_ts);
+			recv_user.recvMsgToChatRoom(msg, msg_ts);
 			// Save to local storage
 			((MingleApplication) this.getApplication()).dbHelper.insertMessages(send_uid, send_uid, msg, msg_ts);
-			adapter.notifyDataSetChanged();
+			updateMessageList();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

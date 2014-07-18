@@ -11,10 +11,10 @@ public class Message {
 	private Drawable pic;
 	private String content;
 	private int counter;
-	private Timestamp timestamp;
+	private String timestamp;
 	private int status;
 	
-	public Message(String uid, Drawable pic, String content, int counter, Timestamp timestamp, int status){
+	public Message(String uid, Drawable pic, String content, int counter, String timestamp, int status){
 		this.uid = uid;
 		this.pic = pic;
 		this.content = content;
@@ -39,11 +39,11 @@ public class Message {
 		return counter;
 	}
 	
-	public void setTimestamp(Timestamp timestamp){
+	public void setTimestamp(String timestamp){
 		this.timestamp = timestamp;
 	}
 	
-	public Timestamp getTimestamp(){
+	public String getTimestamp(){
 		return timestamp;
 	}
 	

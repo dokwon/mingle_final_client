@@ -202,12 +202,11 @@ public class MainActivity extends ActionBarActivity {
         float lat = 0;
         float lon = 0;
         if(location != null){
-        	
         	lat =(float) location.getLatitude();
         	lon =(float) location.getLongitude();
         } 
         ((MingleApplication) this.getApplication()).currUser.setLat(lat);
-    	((MingleApplication) this.getApplication()).currUser.setLat(lon);
+    	((MingleApplication) this.getApplication()).currUser.setLong(lon);
      
     	
     	// In case we want to register for location updates

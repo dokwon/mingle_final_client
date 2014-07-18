@@ -20,7 +20,7 @@ public class OngoingChatFragment extends Fragment {
 	public final static String USER_UID = "com.example.mingle.USER_SEL";	//Intent data to pass on when new Chatroom Activity started
 
 	public ListView currentlychattinglistview;
-	private ArrayList<ChatRoom> chat_room_list;
+	private ArrayList<ChattableUser> chatting_user_list;
 	private ChatRoomAdapter adapter;
 	
 	private Activity parent; 
@@ -35,8 +35,8 @@ public class OngoingChatFragment extends Fragment {
 		currentlychattinglistview= (ListView)(rootView.findViewById(R.id.mingling)) ;
 		
         // Stores 
-		chat_room_list = ((MingleApplication) parent.getApplication()).currUser.getChatRoomList();
-        adapter = new ChatRoomAdapter(parent, R.layout.chatroom_row, chat_room_list);
+		chatting_user_list = ((MingleApplication) parent.getApplication()).currUser.getChattingUserList();
+        adapter = new ChatRoomAdapter(parent, R.layout.chatroom_row, chatting_user_list);
         adapter.notifyDataSetChanged();
         
         final Activity curActivity = parent;
@@ -45,10 +45,10 @@ public class OngoingChatFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 // TODO Auto-generated method stub
-            	ChatRoom curr_chatroom = chat_room_list.get(position);
+            	ChattableUser cu = chatting_user_list.get(position);
         			
                 Intent chat_intent = new Intent(curActivity, ChatroomActivity.class);
-                chat_intent.putExtra(USER_UID, curr_chatroom.getRecvUid());
+                chat_intent.putExtra(USER_UID, cu.getUid());
                 curActivity.startActivity(chat_intent);
             	System.out.println(parent + "   " + v + "   " + position + "   " + id);
             }
