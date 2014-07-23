@@ -24,9 +24,9 @@ public class CandidateFragment extends Fragment {
   public static final String ARG_SECTION_NUMBER = "placeholder_text";
   public final static String USER_UID = "com.example.mingle.USER_SEL";	//Intent data to pass on when new Chatroom Activity started
 
-  public SwipeListView allchatlistview;	//Listview for chattable users
+  public SwipeListView candidatelistview;	//Listview for chattable users
   private ArrayList<ChattableUser>user_list;
-  private AllChatAdapter adapter;
+  private CandidateAdapter adapter;
   
   private boolean is_first_time = true;
   
@@ -40,15 +40,15 @@ public class CandidateFragment extends Fragment {
 	  
 	  View rootView = inflater.inflate(R.layout.candidate_fragment, container, false);
 	  
-	  allchatlistview=  (SwipeListView)(rootView.findViewById(R.id.All));
+	  candidatelistview=  (SwipeListView)(rootView.findViewById(R.id.All));
       user_list = ((MingleApplication) parent.getApplication()).currUser.getChattableUserList();
-      adapter=new AllChatAdapter(parent, R.layout.allchat_row,user_list);
+      adapter=new CandidateAdapter(parent, R.layout.candidate_row,user_list);
 	  
       
       
       final Activity curActivity = parent;
       
-      allchatlistview.setSwipeListViewListener(new BaseSwipeListViewListener() {
+      candidatelistview.setSwipeListViewListener(new BaseSwipeListViewListener() {
           @Override
           public void onOpened(int position, boolean toRight) {
           }
@@ -68,7 +68,7 @@ public class CandidateFragment extends Fragment {
           @Override
           public void onStartOpen(int position, int action, boolean right) {
               Log.d("swipe", String.format("onStartOpen %d - action %d", position, action)); 
-              allchatlistview.openAnimate(position); //when you touch front view it will open
+              candidatelistview.openAnimate(position); //when you touch front view it will open
               
               MingleUser currentUser = ((MingleApplication) parent.getApplication()).currUser;
               ChattableUser chat_user_obj = currentUser.getChattableUser(position);
@@ -101,7 +101,7 @@ public class CandidateFragment extends Fragment {
           public void onClickBackView(int position) {
               Log.d("swipe", String.format("onClickBackView %d", position));
   
-              allchatlistview.closeAnimate(position);//when you touch back view it will close
+              candidatelistview.closeAnimate(position);//when you touch back view it will close
           }
   
           @Override
@@ -113,17 +113,17 @@ public class CandidateFragment extends Fragment {
       
       //These are the swipe listview settings. you can change these
       //setting as your requirement
-      allchatlistview.setSwipeMode(SwipeListView.SWIPE_MODE_LEFT); // there are five swiping modes
-      allchatlistview.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_REVEAL); //there are four swipe actions
-      allchatlistview.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
-      allchatlistview.setOffsetLeft(convertDpToPixel(0f)); // left side offset
-      allchatlistview.setOffsetRight(convertDpToPixel(0f)); // right side offset
-      allchatlistview.setAnimationTime(50); // animation time
-      allchatlistview.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
+      candidatelistview.setSwipeMode(SwipeListView.SWIPE_MODE_LEFT); // there are five swiping modes
+      candidatelistview.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_REVEAL); //there are four swipe actions
+      candidatelistview.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
+      candidatelistview.setOffsetLeft(convertDpToPixel(0f)); // left side offset
+      candidatelistview.setOffsetRight(convertDpToPixel(0f)); // right side offset
+      candidatelistview.setAnimationTime(50); // animation time
+      candidatelistview.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
       
-      allchatlistview.setAdapter(adapter);
+      candidatelistview.setAdapter(adapter);
      final ApplicationWrapper wrapper = new ApplicationWrapper(parent.getApplication());
-      allchatlistview.setOnLoadMoreListener(new OnLoadMoreListener() {
+      candidatelistview.setOnLoadMoreListener(new OnLoadMoreListener() {
           public void onLoadMore() {
           	new LoadDataTask(wrapper.curApp, 5).execute();
           }
@@ -134,7 +134,7 @@ public class CandidateFragment extends Fragment {
     	  is_first_time = false;
     	  loadNewMatches();
       }
-      System.out.println("AllchatFrag oncreate compleate");
+      System.out.println("candidateFrag oncreate compleate");
     return rootView;
   }
   
@@ -183,14 +183,14 @@ public class CandidateFragment extends Fragment {
 			adapter.notifyDataSetChanged();
 
 			// Call onLoadMoreComplete when the LoadMore task, has finished
-			allchatlistview.onLoadMoreComplete();
+			candidatelistview.onLoadMoreComplete();
 			super.onPostExecute(result);
 		}
 
 		@Override
 		protected void onCancelled() {
 			// Notify the loading more operation has finished
-			allchatlistview.onLoadMoreComplete();
+			candidatelistview.onLoadMoreComplete();
 	    }
   }
   

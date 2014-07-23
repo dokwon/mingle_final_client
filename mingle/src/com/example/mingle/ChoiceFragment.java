@@ -1,9 +1,6 @@
 package com.example.mingle;
 
 import java.util.ArrayList;
-
-import com.fortysevendeg.swipelistview.SwipeListView;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
@@ -12,16 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class OngoingChatFragment extends Fragment {
+public class ChoiceFragment extends Fragment {
 	public final static String USER_UID = "com.example.mingle.USER_SEL";	//Intent data to pass on when new Chatroom Activity started
 
 	public ListView currentlychattinglistview;
 	private ArrayList<ChattableUser> chatting_user_list;
-	private ChatRoomAdapter adapter;
+	private ChoiceAdapter adapter;
 	
 	private Activity parent; 
 	
@@ -30,13 +26,13 @@ public class OngoingChatFragment extends Fragment {
 		 System.out.println("ongoing chatview create complete");
 		parent = getActivity();
 		
-		View rootView = inflater.inflate(R.layout.ongoing_chat_fragment, container, false);
+		View rootView = inflater.inflate(R.layout.choice_fragment, container, false);
 		
 		currentlychattinglistview= (ListView)(rootView.findViewById(R.id.mingling)) ;
 		
         // Stores 
 		chatting_user_list = ((MingleApplication) parent.getApplication()).currUser.getChattingUserList();
-        adapter = new ChatRoomAdapter(parent, R.layout.chatroom_row, chatting_user_list);
+        adapter = new ChoiceAdapter(parent, R.layout.chatroom_row, chatting_user_list);
         adapter.notifyDataSetChanged();
         
         final Activity curActivity = parent;

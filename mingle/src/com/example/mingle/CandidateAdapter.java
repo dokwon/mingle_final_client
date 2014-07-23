@@ -17,14 +17,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
-public class AllChatAdapter extends ArrayAdapter {
+public class CandidateAdapter extends ArrayAdapter {
 	public final static String PROFILE_UID = "com.example.mingle.PROFILE_UID";	//Intent data to pass on when new Profile Activity started
 	
     List data;
     Context context;
     int layoutResID;
 
-    public AllChatAdapter(Context context, int layoutResourceId,List data) {
+    public CandidateAdapter(Context context, int layoutResourceId,List data) {
   	  super(context, layoutResourceId, data);
 
   	  this.data=data;
@@ -49,10 +49,7 @@ public class AllChatAdapter extends ArrayAdapter {
       	  holder.user_num = (TextView)row.findViewById(R.id.user_num);
       	  holder.user_name = (TextView)row.findViewById(R.id.user_name);
       	  holder.user_pic=(ImageView)row.findViewById(R.id.user_pic);
-      	  
-      	  //holder.button1=(Button)row.findViewById(R.id.swipe_button1);
-      	  //holder.button2=(Button)row.findViewById(R.id.swipe_button2);
-      	  //holder.button3=(Button)row.findViewById(R.id.swipe_button3);
+
       	  row.setTag(holder);
         } else {
       	  holder = (NewsHolder)row.getTag();
@@ -85,9 +82,6 @@ public class AllChatAdapter extends ArrayAdapter {
   	  TextView user_num;
   	  TextView user_name;
   	  ImageView user_pic;
-  	  Button button1;
-  	  Button button2;
-  	  Button button3;
     }
 }
 

@@ -31,7 +31,7 @@ public class ProfileActivity extends Activity {
          viewFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
          
          Intent intent = getIntent();
-         String uid = intent.getExtras().getString(AllChatAdapter.PROFILE_UID);
+         String uid = intent.getExtras().getString(CandidateAdapter.PROFILE_UID);
          cu = ((MingleApplication) this.getApplication()).currUser.getUser(uid);
          photo_num = cu.getPhotoNum();
          uid = cu.getUid();

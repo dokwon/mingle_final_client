@@ -30,7 +30,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 public class HuntActivity extends FragmentActivity implements ActionBar.TabListener	 {
 
 	 public CandidateFragment candidateFragment;		//Fragment for list of chattable users
-	 public OngoingChatFragment ongoingChatFragment;	//Fragment for list of users whom current user is chatting with
+	 public ChoiceFragment ongoingChatFragment;	//Fragment for list of users whom current user is chatting with
 	 public VoteFragment voteFragment;					//Fragment for list of top male and female users
 	 
 	@Override
@@ -138,7 +138,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 			  
 		  } else if(tab.getTag().equals(R.string.tab3title)) {
 			  System.out.println("ongoing chat fragment on view");
-			  if(ongoingChatFragment == null) ongoingChatFragment = new OngoingChatFragment();
+			  if(ongoingChatFragment == null) ongoingChatFragment = new ChoiceFragment();
 			  
 			  getFragmentManager().beginTransaction()
 		        .replace(R.id.fragment_container, ongoingChatFragment).commit();

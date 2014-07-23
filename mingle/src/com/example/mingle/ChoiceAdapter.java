@@ -1,14 +1,8 @@
 package com.example.mingle;
 
 import java.util.List;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Context;
-
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +10,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ChatRoomAdapter extends ArrayAdapter {
+public class ChoiceAdapter extends ArrayAdapter {
 	 
     List data;
     Context context;
     int layoutResID;
 
-    public ChatRoomAdapter(Context context, int layoutResourceId,List data) {
+    public ChoiceAdapter(Context context, int layoutResourceId,List data) {
   	  super(context, layoutResourceId, data);
 
   	  this.data=data;
@@ -65,7 +59,6 @@ public class ChatRoomAdapter extends ArrayAdapter {
     
     static class NewsHolder{
   	  TextView msg_view;
-
   	  ImageView user_pic;
     }
 }

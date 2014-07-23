@@ -1572,7 +1572,7 @@ containing a value of this type.
         public static final int powered_by_google_light=0x7f02007b;
     }
     public static final class id {
-        public static final int All=0x7f07006a;
+        public static final int All=0x7f070066;
         public static final int action_bar=0x7f070034;
         public static final int action_bar_activity_content=0x7f070027;
         public static final int action_bar_container=0x7f070033;
@@ -1587,7 +1587,7 @@ containing a value of this type.
         public static final int action_settings=0x7f070082;
         public static final int activity_chooser_view_content=0x7f07003d;
         public static final int always=0x7f07001e;
-        public static final int back=0x7f07006b;
+        public static final int back=0x7f070067;
         public static final int beginning=0x7f070023;
         public static final int book_now=0x7f070010;
         public static final int both=0x7f07002c;
@@ -1614,7 +1614,7 @@ containing a value of this type.
         public static final int femaleTopLogo=0x7f070078;
         public static final int female_vote_rl=0x7f07007b;
         public static final int fragment_container=0x7f070057;
-        public static final int front=0x7f070066;
+        public static final int front=0x7f070068;
         public static final int grayscale=0x7f070012;
         public static final int holo_dark=0x7f070005;
         public static final int holo_light=0x7f070006;
@@ -1696,9 +1696,9 @@ containing a value of this type.
         public static final int txt_inputText=0x7f070055;
         public static final int up=0x7f070039;
         public static final int useLogo=0x7f070016;
-        public static final int user_name=0x7f070069;
-        public static final int user_num=0x7f070068;
-        public static final int user_pic=0x7f070067;
+        public static final int user_name=0x7f07006b;
+        public static final int user_num=0x7f07006a;
+        public static final int user_pic=0x7f070069;
         public static final int view_flipper=0x7f070061;
         public static final int vote_button=0x7f070064;
         public static final int withText=0x7f07001f;
@@ -1759,19 +1759,20 @@ containing a value of this type.
         public static final int activity_hunt=0x7f030019;
         public static final int activity_main=0x7f03001a;
         public static final int activity_profile=0x7f03001b;
-        public static final int allchat_row=0x7f03001c;
-        public static final int candidate_fragment=0x7f03001d;
+        public static final int candidate_fragment=0x7f03001c;
+        public static final int candidate_row=0x7f03001d;
         public static final int chatroom_row=0x7f03001e;
-        public static final int custom_title_bar=0x7f03001f;
-        public static final int fragment_main=0x7f030020;
-        public static final int load_more_footer=0x7f030021;
-        public static final int msg_row=0x7f030022;
-        public static final int my_msg_row=0x7f030023;
-        public static final int ongoing_chat_fragment=0x7f030024;
-        public static final int single_photo=0x7f030025;
-        public static final int support_simple_spinner_dropdown_item=0x7f030026;
-        public static final int vote_fragment=0x7f030027;
-        public static final int vote_row=0x7f030028;
+        public static final int choice_fragment=0x7f03001f;
+        public static final int custom_title_bar=0x7f030020;
+        public static final int fragment_main=0x7f030021;
+        public static final int load_more_footer=0x7f030022;
+        public static final int msg_row=0x7f030023;
+        public static final int my_msg_row=0x7f030024;
+        public static final int ongoing_chat_fragment=0x7f030025;
+        public static final int single_photo=0x7f030026;
+        public static final int support_simple_spinner_dropdown_item=0x7f030027;
+        public static final int vote_fragment=0x7f030028;
+        public static final int vote_row=0x7f030029;
     }
     public static final class menu {
         public static final int chat=0x7f0c0000;
