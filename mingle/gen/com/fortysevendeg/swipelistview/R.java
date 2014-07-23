@@ -35,12 +35,12 @@ public final class R {
 		public static final int choice = 0x7f070031;
 		public static final int dismiss = 0x7f070030;
 		public static final int left = 0x7f07002e;
-		public static final int load_more_footer = 0x7f07006b;
-		public static final int load_more_progressBar = 0x7f07006d;
+		public static final int load_more_footer = 0x7f070071;
+		public static final int load_more_progressBar = 0x7f070073;
 		public static final int none = 0x7f070000;
 		public static final int reveal = 0x7f07002f;
 		public static final int right = 0x7f07002d;
-		public static final int top_line = 0x7f07006c;
+		public static final int top_line = 0x7f070072;
 	}
 	public static final class layout {
 		public static final int load_more_footer = 0x7f030021;

@@ -25,7 +25,7 @@
             android:layout_marginLeft="35dp" />
 
         <TextView
-            android:id="@+id/user_comment"
+            android:id="@+id/user_name"
             style="@style/MyListTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

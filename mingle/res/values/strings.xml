@@ -10,13 +10,17 @@
     <string name="title_activity_hunt">HuntActivity</string>
     <string name="title_activity_chatroom">ChatroomActivity</string>
     <string name="title_activity_chat_room">ChatRoomActivity</string>
-    <string name="tab1title">All</string>
-    <string name="tab2title">Mingling</string>
+    <string name="tab1title">Top</string>
+    <string name="tab2title">All</string>
+    <string name="tab3title">Mingling</string>
+    <string name="tab4title">Region</string>
     <string name="radio_male">Male</string>
     <string name="radio_female">Female</string>
     <string name="sms"></string>
     <string name="send">send</string>
     <string name="title_activity_setting">SettingActivity</string>
     <string name="title_activity_photo_view">PhotoViewActivity</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_region_chatroom">RegionChatroomActivity</string>
 
 </resources>

@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 
 public class AllChatAdapter extends ArrayAdapter {
-	public final static String INDEX = "com.example.mingle.INDEX";	//Intent data to pass on when new Chatroom Activity started
+	public final static String PROFILE_UID = "com.example.mingle.PROFILE_UID";	//Intent data to pass on when new Profile Activity started
 	
     List data;
     Context context;
@@ -35,7 +35,7 @@ public class AllChatAdapter extends ArrayAdapter {
     }
 
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
 
   	  NewsHolder holder = null;
   	  View row = convertView;
@@ -47,7 +47,7 @@ public class AllChatAdapter extends ArrayAdapter {
       	  holder = new NewsHolder();
 
       	  holder.user_num = (TextView)row.findViewById(R.id.user_num);
-      	  holder.user_comment = (TextView)row.findViewById(R.id.user_comment);
+      	  holder.user_name = (TextView)row.findViewById(R.id.user_name);
       	  holder.user_pic=(ImageView)row.findViewById(R.id.user_pic);
       	  
       	  //holder.button1=(Button)row.findViewById(R.id.swipe_button1);
@@ -59,18 +59,20 @@ public class AllChatAdapter extends ArrayAdapter {
         }
         ChattableUser itemdata = ((ArrayList<ChattableUser>)data).get(position);
         holder.user_num.setText(Integer.toString(itemdata.getNum()) + "  " + Integer.toString(itemdata.getPhotoNum()));
-        holder.user_comment.setText(itemdata.getComment());
+        holder.user_name.setText(itemdata.getName());
         Drawable main_drawable = itemdata.getPic(0);
         holder.user_pic.setImageDrawable(main_drawable);
+        
+        final String profile_uid = itemdata.getUid();
         holder.user_pic.setOnClickListener(new OnClickListener()
         {
 
         	@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-        		Intent photo_view_intent = new Intent(context, PhotoViewActivity.class);
-                photo_view_intent.putExtra(INDEX, position);
-                context.startActivity(photo_view_intent);
+        		Intent profile_intent = new Intent(context, ProfileActivity.class);
+                profile_intent.putExtra(PROFILE_UID, profile_uid);
+                context.startActivity(profile_intent);
 			}
         });
         
@@ -81,7 +83,7 @@ public class AllChatAdapter extends ArrayAdapter {
     
     static class NewsHolder{
   	  TextView user_num;
-  	  TextView user_comment;
+  	  TextView user_name;
   	  ImageView user_pic;
   	  Button button1;
   	  Button button2;

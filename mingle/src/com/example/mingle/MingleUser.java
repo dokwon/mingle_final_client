@@ -24,7 +24,7 @@ class MingleUser extends MingleApplication {
     private String uid;
     private String sex;
     private int num;
-    private String comment;
+    private String name;
     private float latitude;
     private float longitude;
     private int dist_lim;
@@ -32,12 +32,16 @@ class MingleUser extends MingleApplication {
     
     private ArrayList<ChattableUser> chattable_users = new ArrayList<ChattableUser>();
     private ArrayList<ChattableUser> chatting_users = new ArrayList<ChattableUser>();
+    
+    private ArrayList<String> voted_users = new ArrayList<String>();
 
-    public void setAttributes(String uid_var, String sex_var, int num_var, String comment_var, float latitude_var, float longitude_var, int dist_lim_var){
+    private ArrayList<ArrayList<ChattableUser>> top_users = new ArrayList<ArrayList<ChattableUser>>();
+
+    public void setAttributes(String uid_var, String sex_var, int num_var, String name_var, float latitude_var, float longitude_var, int dist_lim_var){
         setUid(uid_var);
         setSex(sex_var);
         setNum(num_var);
-        setComm(comment_var);
+        setName(name_var);
         setLat(latitude_var);
         setLong(longitude_var);
         setDist(dist_lim_var);
@@ -73,8 +77,8 @@ class MingleUser extends MingleApplication {
         return num;
     }
 
-    public String getComm(){
-        return comment;
+    public String getName(){
+        return name;
     }
 
     public float getLat(){
@@ -105,8 +109,8 @@ class MingleUser extends MingleApplication {
         num = num_var;
     }
 
-    public void setComm(String comment_var){
-        comment = comment_var;
+    public void setName(String name_var){
+        name = name_var;
     }
 
     public void setLat(float latitude_var){
@@ -198,5 +202,43 @@ class MingleUser extends MingleApplication {
     	ChattableUser cu = getChattableUser(index);
     	addChattingUser(cu);
     	removeChattableUser(index);
+    }
+    
+    public void addVotedUser(String uid){
+    	voted_users.add(uid);
+    }
+    
+    public boolean alreadyVoted(String uid){
+    	for(int i = 0; i < voted_users.size(); i++){
+    		if(voted_users.get(i).equals(uid)) return true;
+    	}
+    	return false;
+    }
+    
+    public ArrayList<ArrayList<ChattableUser>> getTopList(){
+    	return top_users;
+    }
+    
+    public void addTopUsers(ChattableUser female_cu, ChattableUser male_cu){
+    	ArrayList<ChattableUser> rank_list = new ArrayList<ChattableUser>();
+    	rank_list.add(female_cu);
+    	rank_list.add(male_cu);
+    	top_users.add(rank_list);
+    	System.out.println("size: " + rank_list.size() + "  total size: " + top_users.size());
+    }
+    
+    public void emptyTopList(){
+    	top_users.clear();
+    }
+    
+    public ChattableUser getTopUser(String uid){
+    	for(int i = 0; i < top_users.size(); i++){
+    		ArrayList<ChattableUser> rank_list= top_users.get(i);
+    		ChattableUser female_user = rank_list.get(0);
+    		ChattableUser male_user = rank_list.get(1);
+    		if(female_user != null && female_user.getUid().equals(uid)) return female_user;
+    		if(male_user != null && rank_list.get(1).getUid().equals(uid)) return male_user;
+    	}
+    	return null;
     }
 }

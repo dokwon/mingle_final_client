@@ -56,7 +56,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 
     private SocketIO socket = null;
     private Context currContext = null;
-    private ArrayList<ChatRoom> chat_room_list;
+
     
     public HttpHelper(String url, Context context){
     	
@@ -150,7 +150,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
                 		e.printStackTrace();
                 	}
                 	if(currContext instanceof ChatroomActivity){
-                		System.out.println("on chatroom activity updating list");
+                		System.out.println("msg_from_user_conf: on chatroom activity updating list");
                 		((ChatroomActivity)currContext).updateMessageList();
                 	}
                 	//
@@ -168,11 +168,12 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 							
 							//first message from none existing user
 							if(cu == null){
+								System.out.println("new user's message!");
 								ChattableUser new_user = new ChattableUser(chat_user_uid, "", 0, 1, (Drawable) currContext.getResources().getDrawable(R.drawable.ic_launcher));
 		    	              
 								curr_user.addChattingUser(new_user);
 								
-								downloadPic(currContext.getApplicationContext(), chat_user_uid, 0);
+								downloadPic(currContext.getApplicationContext(), new_user.getUid(), 0, false);
 								
 								//download profile also
 							}
@@ -182,20 +183,26 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 							curr_user.switchChattableToChatting(curr_user.getChattableUserPos(chat_user_uid));
 							cu = curr_user.getChattingUser(chat_user_uid);
 							cu.getChatRoom().setChatActive();
-							if(currContext instanceof HuntActivity){
-								((HuntActivity)currContext).listsUpdate();
-							}
 						}
 
-                		curr_user.getChattingUser(chat_user_uid).recvMsgToChatRoom(recv_msg_obj.getString("msg"),recv_msg_obj.getString("ts"));
+						System.out.println("Http helper recv uid: " +chat_user_uid);
+						String msg = recv_msg_obj.getString("msg");
+						String msg_ts = recv_msg_obj.getString("ts");
+                		curr_user.getChattingUser(chat_user_uid).recvMsgToChatRoom(msg, msg_ts);
+                		// Save to local storage
+            			//((MingleApplication)currContext.getApplicationContext()).dbHelper.insertMessages(chat_user_uid, chat_user_uid, msg, msg_ts);
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					
+					if(currContext instanceof HuntActivity){
+						((HuntActivity)currContext).listsUpdate();
+					}
+					
 					if(currContext instanceof ChatroomActivity){
-                		System.out.println("on chatroom activity updating list");
-                		((ChatroomActivity)currContext).updateMessageList();
+						System.out.println("msg to user: on chatroom activity updating list");
+						((ChatroomActivity)currContext).updateMessageList();
                 	}
                 	socket.emit("msg_to_user_conf");
                 }
@@ -218,12 +225,12 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     * Sends login info along to the server, and hopefully what will be returned
     * is the unique id of the user as well as some other useful information
     */
-    public void userCreateRequest(final ArrayList<String> photos, String comment, String sex, int number, float longitude, float latitude, String rid)  {
+    public void userCreateRequest(final ArrayList<String> photos, String name, String sex, int number, float longitude, float latitude, String rid)  {
        
     	
     	String baseURL = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080/";
     	baseURL += "create_user?";
-    	baseURL += "comm=" +comment + "&";
+    	baseURL += "name=" + name + "&";
     	baseURL += "sex=" + sex + "&";
     	baseURL += "num=" + (new Integer(number)).toString() + "&";
     	baseURL += "loc_long=" + (new Float(longitude)).toString() + "&";
@@ -246,6 +253,32 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 					e.printStackTrace();
 				}
     		
+    		}
+    	}).start();
+    }
+    
+    public void voteUser(String uid)  {
+    	String baseURL = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080/";
+    	baseURL += "vote?";
+    	baseURL += "uid=" + uid;
+    	
+    	final String voteURL = baseURL;
+    	new Thread(new Runnable() {
+    		public void run() {
+    			System.out.println(voteURL);
+    			HttpClient client = new DefaultHttpClient();
+    	        HttpGet poster = new HttpGet(voteURL);
+    	        HttpResponse response = null;
+				try {
+					response = client.execute(poster);
+					System.out.println(response.toString());
+				} catch (ClientProtocolException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
     		}
     	}).start();
     }
@@ -347,7 +380,8 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 				
 				//update ChattableUser list and dispatch image downloader
 				try{
-		    		final JSONArray list_of_users = new JSONArray(HttpResponseBody(response));
+		    		JSONArray list_of_users = new JSONArray(HttpResponseBody(response));
+		    		System.out.println(list_of_users.toString());
 		    		for(int i = 0 ; i < list_of_users.length(); i++) {
 		    	          try {
 		    	              JSONObject shownUser = list_of_users.getJSONObject(i);    	             
@@ -355,13 +389,87 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 
 		    	              ((MingleApplication) currContext.getApplicationContext()).currUser.addChattableUser(new_user);
 		    	              
-		    	              downloadPic(currContext.getApplicationContext(), shownUser.getString("UID"), 0);
+		    	              downloadPic(currContext.getApplicationContext(), new_user.getUid(), 0, false);
 		    	          } catch (JSONException e){
 		    	              e.printStackTrace();
 		    	          }
 		    	    }
 		    		if(currContext instanceof HuntActivity){
+		    			System.out.println("update");
 						((HuntActivity)currContext).listsUpdate();
+					}
+		    	} catch (JSONException je){
+		    		je.printStackTrace();
+		    	}
+    		}
+    	}).start();
+    }
+    
+ public void requestVoteList() {
+        
+    	String baseURL = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080/";
+    	baseURL += "get_vote";
+        
+    	final String getVoteURL = baseURL;
+       
+    	//Start Thread that receives HTTP Response
+    	new Thread(new Runnable() {
+    		public void run() {
+    			System.out.println(getVoteURL);
+    			HttpClient client = new DefaultHttpClient();
+    	        HttpGet poster = new HttpGet(getVoteURL);
+    	        HttpResponse response = null;
+				try {
+					response = client.execute(poster);
+					System.out.println(response.toString());
+				} catch (ClientProtocolException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				//update ChattableUser list and dispatch image downloader
+				try{
+		    		JSONArray list_of_top = new JSONArray(HttpResponseBody(response));
+		    		System.out.println("vote list: " +list_of_top.toString());
+		    		ArrayList<ChattableUser> female_list = new ArrayList<ChattableUser>();
+		    		ArrayList<ChattableUser> male_list = new ArrayList<ChattableUser>();
+		    		for(int i = 0 ; i < list_of_top.length(); i++) {
+		    	          try {
+		    	              JSONObject shownUser = list_of_top.getJSONObject(i);    	             
+		    	              ChattableUser new_user = new ChattableUser(shownUser.getString("UID"), shownUser.getString("COMM"), Integer.valueOf(shownUser.getString("NUM")), Integer.valueOf(shownUser.getString("PHOTO_NUM")), (Drawable) currContext.getResources().getDrawable(R.drawable.ic_launcher));
+
+		    	              if(shownUser.getString("SEX").equals("F")) female_list.add(new_user);
+		    	              else male_list.add(new_user);
+		    	              
+		    	          } catch (JSONException e){
+		    	              e.printStackTrace();
+		    	          }
+		    	    }
+		    		
+		    		//add female and male top users to list
+		    		((MingleApplication) currContext.getApplicationContext()).currUser.emptyTopList();
+		    		for(int i = 0; i < female_list.size() || i < male_list.size(); i++){
+		    			ChattableUser female_cu = null;
+		    			ChattableUser male_cu = null;
+		    			if(i < female_list.size()){
+		    				female_cu = female_list.get(i);
+		    				System.out.println("female in"+i + " "+female_cu.getUid());
+		    			}
+		    			if(i < male_list.size()){
+		    				male_cu = male_list.get(i);
+		    				System.out.println("male in"+i +" "+male_cu.getUid());
+		    			}
+		    			((MingleApplication) currContext.getApplicationContext()).currUser.addTopUsers(female_cu, male_cu);
+		    			if(female_cu != null) downloadPic(currContext.getApplicationContext(), female_cu.getUid(), 0, true);
+		    			if(male_cu != null) downloadPic(currContext.getApplicationContext(), male_cu.getUid(), 0, true);
+
+		    		}
+		    		
+		    		if(currContext instanceof HuntActivity){
+						((HuntActivity)currContext).topListUpdate();
 					}
 		    	} catch (JSONException je){
 		    		je.printStackTrace();
@@ -394,8 +502,8 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
         socket.emit("msg_from_user", msgObject);
     }
     
-    public void downloadPic(Context context, String uid, int photo_index){
-    	new ImageDownloader(context, uid, photo_index).execute();
+    public void downloadPic(Context context, String uid, int photo_index, boolean top_list){
+    	new ImageDownloader(context, uid, photo_index, top_list).execute();
     }
 
     //@Override
@@ -421,15 +529,19 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 	  	private String uid;
 	  	private int pic_index;
 	  	private Bitmap bm;
+	  	private boolean top_list;
 	  	
-	  	public ImageDownloader(Context context, String uid, int pic_index) {
+	  	public ImageDownloader(Context context, String uid, int pic_index, boolean top_list) {
 	  		this.context = context;
 	  		String temp_url = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080/photos/";
 	  		temp_url += uid;
-	  		temp_url += "/photo_" + String.valueOf(pic_index+1) + ".png";
+	  		if(pic_index < 0) temp_url += "/thumb.png";
+	  		else temp_url += "/photo_" + String.valueOf(pic_index+1) + ".png";
+	  		System.out.println(temp_url);
 	  		this.url = temp_url;
 	  		this.uid = uid;
 	  		this.pic_index = pic_index;
+	  		this.top_list = top_list;
 	  	}
 	  	
 			@Override
@@ -447,14 +559,19 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 			@Override
 			protected void onPostExecute(Void result) {
 				MingleUser currUser = ((MingleApplication) context).currUser;
-				currUser.getUser(uid).setPic(pic_index, (Drawable) new BitmapDrawable(currContext.getResources(),bm));
+				ChattableUser cu;
+				System.out.println("recev" + uid);
+				if(top_list) cu = currUser.getTopUser(uid);
+				else cu = currUser.getUser(uid);
+				cu.setPic(pic_index, (Drawable) new BitmapDrawable(currContext.getResources(),bm));
 				
 				if(currContext instanceof HuntActivity){
 					((HuntActivity)currContext).listsUpdate();
+					((HuntActivity)currContext).topListUpdate();
 				}
 				
-				if(currContext instanceof PhotoViewActivity){
-					((PhotoViewActivity)currContext).updateView(pic_index);
+				if(currContext instanceof ProfileActivity){
+					((ProfileActivity)currContext).updateView(pic_index);
 				}
 
 				super.onPostExecute(result);

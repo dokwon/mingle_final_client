@@ -6,17 +6,17 @@ import android.graphics.drawable.Drawable;
 
 public class ChattableUser {
 	String user_uid;
-	String comment;
+	String name;
 	int num;
 	ArrayList<Drawable> pics;
 	ArrayList<Boolean> pics_bool;
 	ChatRoom chat_room;
     
 
-    public ChattableUser(String user_uid, String comment, int num, int photo_num, Drawable default_img) {
+    public ChattableUser(String user_uid, String name, int num, int photo_num, Drawable default_img) {
           super();
           this.user_uid = user_uid;
-          this.comment = comment;
+          this.name = name;
           this.num = num;
           this.pics = new ArrayList<Drawable>();
           this.pics_bool = new ArrayList<Boolean>();
@@ -36,12 +36,12 @@ public class ChattableUser {
         this.user_uid = user_uid;
   	}
   
-    public String getComment() {
-          return comment;
+    public String getName() {
+          return name;
     }
     
-    public void setComment(String comment) {
-          this.comment = comment;
+    public void setName(String name) {
+          this.name = name;
     }
     
     public int getNum() {
@@ -83,6 +83,6 @@ public class ChattableUser {
     }
     
     public void recvMsgToChatRoom(String msg, String msg_ts){
-    	this.chat_room.addRecvMsg(getPic(0), msg, msg_ts);
+    	this.chat_room.addRecvMsg(getPic(0), name, msg, msg_ts);
     }
 }

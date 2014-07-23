@@ -49,7 +49,7 @@ public class ChatroomActivity extends ListActivity {
         
         
         Intent intent = getIntent();
-        recv_uid = intent.getExtras().getString(AllChatFragment.USER_UID);
+        recv_uid = intent.getExtras().getString(CandidateFragment.USER_UID);
         
         //Set basic information required for this chat room
         send_uid = ((MingleApplication) this.getApplication()).currUser.getUid();
@@ -61,7 +61,7 @@ public class ChatroomActivity extends ListActivity {
 		
 		//Associate this chat room's message list to adapter
 		adapter=new MsgAdapter(this,
-                R.layout.msg_row,
+                R.layout.msg_row, R.layout.my_msg_row,
                 recv_user.getChatRoom().getMsgList(), this);
 		
         setListAdapter(adapter);
@@ -111,31 +111,15 @@ public class ChatroomActivity extends ListActivity {
     	runOnUiThread(new Runnable() {
     		public void run() {
     			adapter.notifyDataSetChanged();
-    			msg_lv.post(new Runnable() {
-    		        @Override
-    		        public void run() {
-    		            // Select the last row so it will scroll into view...
-    		        	System.out.println("msg last: "+String.valueOf(adapter.getCount()-1));
-    		            msg_lv.setSelection(adapter.getCount()-1);
-    		        }
-    		    });
     		}
     	});
-    }
-
-    public void recvMessage(JSONObject recv_msg_obj){
-    	try {
-			String msg_send_uid = recv_msg_obj.getString("send_uid");
-			String msg = recv_msg_obj.getString("msg");
-			String msg_ts = recv_msg_obj.getString("ts");
-
-			recv_user.recvMsgToChatRoom(msg, msg_ts);
-			// Save to local storage
-			((MingleApplication) this.getApplication()).dbHelper.insertMessages(send_uid, send_uid, msg, msg_ts);
-			updateMessageList();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	msg_lv.post(new Runnable() {
+	        @Override
+	        public void run() {
+	            // Select the last row so it will scroll into view...
+	        	System.out.println("msg last: "+String.valueOf(adapter.getCount()));
+	            msg_lv.setSelection(adapter.getCount());
+	        }
+	    });
     }
 }

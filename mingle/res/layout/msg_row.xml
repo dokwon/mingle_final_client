@@ -1,29 +1,45 @@
-<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
  
-        <ImageView
-                style="@style/ChatRoomImage"
+    	<ImageView
+    	    	android:layout_width="wrap_content"
+            	android:layout_height="wrap_content"
+                android:src="@drawable/ic_launcher"
                 android:id="@+id/sender_image"/>
- 
+
         <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/sender_image"
-                android:layout_margin="5sp"
-                android:background="@drawable/msg_bubble"
-                android:shadowColor="@color/black"
-                android:shadowDx="1"
-                android:shadowDy="1" 
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:id="@+id/msg"/>
+            android:id="@+id/msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/name"
+            android:layout_margin="5sp"
+            android:layout_toRightOf="@+id/sender_image"
+            android:background="@drawable/msg_bubble"
+            android:shadowColor="@color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:text="msg"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
         <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/msg"
-                style="@style/MyListTitle"
-                android:id="@+id/timestamp"/>
+            android:id="@+id/name"
+            style="@style/MyListTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/msg"
+            android:text="name" />
+
+        <TextView
+            android:id="@+id/timestamp"
+            style="@style/MyListTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/msg"
+            android:layout_toRightOf="@+id/msg"
+            android:text="timestamp" />
  
-</LinearLayout>
+</RelativeLayout>

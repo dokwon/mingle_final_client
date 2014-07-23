@@ -9,18 +9,24 @@ import android.graphics.drawable.Drawable;
 public class Message {
 	private String uid;
 	private Drawable pic;
+	private String name;
 	private String content;
 	private int counter;
 	private String timestamp;
 	private int status;
 	
-	public Message(String uid, Drawable pic, String content, int counter, String timestamp, int status){
+	public Message(String uid, Drawable pic, String name, String content, int counter, String timestamp, int status){
 		this.uid = uid;
 		this.pic = pic;
+		this.name = name;
 		this.content = content;
 		this.counter = counter;
 		this.timestamp = timestamp;
 		this.status = status;
+	}
+	
+	public String getName(){
+		return name;
 	}
 	
 	public String getUid(){

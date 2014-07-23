@@ -34,7 +34,7 @@ class ChatRoom{
 	public void addMsg(String msg, int msg_counter, int status){
 		Date date= new Date();
 		Timestamp timestamp = (new Timestamp(date.getTime()));
-		Message msg_obj = new Message(send_uid, null, msg, msg_counter, timestamp.toString(), 0);
+		Message msg_obj = new Message(send_uid, null, "", msg, msg_counter, timestamp.toString(), 0);
 		msg_list.add(msg_obj);
 		Collections.sort(msg_list, new MsgComparator());
 	}
@@ -56,14 +56,14 @@ class ChatRoom{
 	}
 	
 
-	public void addRecvMsg(Drawable image, String msg, String msg_ts){
+	public void addRecvMsg(Drawable image, String name, String msg, String msg_ts){
 		System.out.println("recv at: " + msg_ts);
 		/*SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
 		Date parsedDate = dateFormat.parse(msg_ts);
 		Timestamp timestamp = new Timestamp(parsedDate.getTime());
 		*/
 			
-		Message msg_obj = new Message(recv_uid, image, msg, -1, msg_ts, 1);
+		Message msg_obj = new Message(recv_uid, image, name, msg, -1, msg_ts, 1);
 		msg_list.add(msg_obj);
 		Collections.sort(msg_list, new MsgComparator());
 

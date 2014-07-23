@@ -2,6 +2,7 @@ package com.example.mingle;
 
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.location.Criteria;
 import android.location.Location;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View.OnClickListener;
+import android.view.Window;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -41,6 +43,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import com.example.mingle.HttpHelper;
@@ -68,15 +71,18 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 
 
+
+
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
     //public static int REQUEST_CODE = 1;
     //private Bitmap taken_photo_bitmap;		//Bitmap to save photo just taken
     //private ArrayList<Bitmap> photo_list;	//List of user's photos
     private String sex_option;				//Sex identity of user
-    private String comment_option;			//Comment written by user
+    private String name_option;			//Comment written by user
     private int num_option;					//Number of people with user
     
     //For GCM below
@@ -284,7 +290,13 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        //check if custom title is supported BEFORE setting the content view!
+        boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+        
         setContentView(R.layout.activity_main);
+        
+       if(customTitleSupported) getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title_bar);
         
         MingleApplication mingleApp = (MingleApplication) this.getApplication();
         
@@ -336,7 +348,7 @@ public class MainActivity extends ActionBarActivity {
     //On user creation request, get user's info and send request to server
     public void userCreateButtonPressed(View view) {
         //hard coded. need to be replaced later on
-        comment_option = "hi";
+    	name_option = "hi";
         num_option = 4;
         
         MingleUser user =  ((MingleApplication) this.getApplication()).currUser;
@@ -345,7 +357,7 @@ public class MainActivity extends ActionBarActivity {
         //Check validity of user input and send user creation request to server
         if (user.isValid()) {
         	((MingleApplication) this.getApplication()).connectHelper.userCreateRequest(user.getPhotoPaths(), 
-        																			comment_option, 
+        																			name_option, 
         																			sex_option, 
         																			num_option,
         																			user.getLong(), user.getLat(), user.getRid());
