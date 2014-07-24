@@ -43,6 +43,7 @@ public class ChoiceFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 // TODO Auto-generated method stub        			
                 Intent chat_intent = new Intent(curActivity, ChatroomActivity.class);
+         		chat_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 chat_intent.putExtra(USER_UID, choice_list.get(position));
                 curActivity.startActivity(chat_intent);
             }

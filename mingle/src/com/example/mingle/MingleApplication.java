@@ -3,10 +3,15 @@ package com.example.mingle;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Application;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.mingle.HttpHelper;
@@ -16,6 +21,8 @@ import com.example.mingle.HttpHelper;
  */
 
 public class MingleApplication extends Application {
+    public final static String UPDATE_MSG_LIST = "com.example.mingle.UPDATE_MSG_LIST";
+	
     public HttpHelper connectHelper;
     public Socket socketHelper;
     public DatabaseHelper dbHelper;
@@ -184,4 +191,69 @@ public class MingleApplication extends Application {
     public void emptyPopList(){
     	pop_users.clear();
     }
+    
+    public void handleIncomingMsg(JSONObject get_msg_obj){
+		try {
+			//MingleApplication curr_user = ((MingleApplication) this.getApplicationContext());
+			String chat_user_uid = get_msg_obj.getString("send_uid");
+
+			MingleUser user = this.getMingleUser(chat_user_uid);
+			if(user == null){
+				String sex = "M";
+				if(my_user.getSex().equals("M")) sex = "F";
+				MingleUser new_user = new MingleUser(chat_user_uid, "", 0, 1, (Drawable) this.getResources().getDrawable(R.drawable.ic_launcher),sex);
+				
+				this.addMingleUser(new_user);
+				this.addChoice(chat_user_uid);
+				
+				new ImageDownloader(this.getApplicationContext(), new_user.getUid(), 0);
+				
+				//download profile also
+			} else {
+				int candidate_pos = this.getCandidatePos(chat_user_uid);
+				if(candidate_pos >= 0){
+					this.switchCandidateToChoice(candidate_pos);
+				} else {
+					int choice_pos = this.getChoicePos(chat_user_uid);
+					if(choice_pos < 0) this.addChoice(chat_user_uid);
+				}
+			}
+			
+			String msg = get_msg_obj.getString("msg");
+			String msg_ts = get_msg_obj.getString("ts");
+    		this.getMingleUser(chat_user_uid).recvMsg(msg, msg_ts);
+    		// Save to local storage
+			//((MingleApplication)currContext.getApplicationContext()).dbHelper.insertMessages(chat_user_uid, chat_user_uid, msg, msg_ts);
+    		
+    		if(this.getMingleUser(chat_user_uid).isInChat()) {
+				Intent dispatcher = new Intent(this, ChatroomActivity.class);
+				dispatcher.setAction(UPDATE_MSG_LIST);
+				LocalBroadcastManager.getInstance(this).sendBroadcast(dispatcher);
+    		}
+        	
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    public void handleMsgConf(JSONObject msg_conf_obj){
+    	try{
+    		String msg_recv_uid = msg_conf_obj.getString("recv_uid");
+    		int msg_recv_counter = Integer.parseInt(msg_conf_obj.getString("msg_counter"));
+    		String msg_ts = msg_conf_obj.getString("ts");
+
+    		this.getMingleUser(msg_recv_uid).updateMsgOnConf(msg_recv_counter, msg_ts);
+    		
+    	   	if(this.getMingleUser(msg_recv_uid).isInChat()) {
+    			Intent dispatcher = new Intent(this, ChatroomActivity.class);
+    			dispatcher.setAction(UPDATE_MSG_LIST);
+    			LocalBroadcastManager.getInstance(this).sendBroadcast(dispatcher);
+    		}   
+    	   	
+    	} catch (JSONException e){
+    		e.printStackTrace();
+    	} 
+    }
+    
 }

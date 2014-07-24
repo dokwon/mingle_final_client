@@ -27,11 +27,6 @@ public class Socket extends AsyncTask<String, MingleApplication, Integer>  {
     private SocketIO socket = null;
     private MingleApplication app; 
 	
-    public final static String MSG_CONF = "com.example.mingle.MSG_CONF";	//Intent data to pass on when new Chatroom Activity started
-    public final static String HANDLE_MSG_CONF = "com.example.mingle.HANDLE_MSG_CONF";	//Intent data to pass on when new Chatroom Activity started
-    public final static String GET_MSG = "com.example.mingle.GET_MSG";	//Intent data to pass on when new Chatroom Activity started
-    public final static String HANDLE_GET_MSG = "com.example.mingle.HANDLE_GET_MSG";	//Intent data to pass on when new Chatroom Activity started
-    
     public Socket(String url, MingleApplication currApp){
     	//Set up default settings for socket communication with server
         try {
@@ -105,21 +100,14 @@ public class Socket extends AsyncTask<String, MingleApplication, Integer>  {
                 } else if(event.equals("msg_from_user_conf")){
                 	JSONObject msg_conf_obj = (JSONObject) args[0];
                 	
-					Intent dispatcher = new Intent(app, ChatroomActivity.class);
-					dispatcher.putExtra(MSG_CONF, msg_conf_obj.toString());
-					dispatcher.setAction(HANDLE_MSG_CONF);
-					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher);
-					               
+                	app.handleMsgConf(msg_conf_obj);
+                    
                 //When server delivers a message from other user, update ChatRoom's message list
                 //and send confirmation to server so that it knows client received the message
                 } else if(event.equals("msg_to_user")){
                 	JSONObject get_msg_obj = (JSONObject) args[0];
-
-					Intent dispatcher = new Intent(app, ChatroomActivity.class);
-					dispatcher.putExtra(GET_MSG,get_msg_obj.toString());
-					dispatcher.setAction(HANDLE_GET_MSG);
-					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher);
-					
+                	
+                	app.handleIncomingMsg(get_msg_obj);
                 	socket.emit("msg_to_user_conf");
                 }
             }

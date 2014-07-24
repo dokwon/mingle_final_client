@@ -6,6 +6,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.graphics.drawable.Drawable;
 
 public class MingleUser {
@@ -17,7 +20,7 @@ public class MingleUser {
 	String sex;
 	boolean voted;
 	ArrayList<Message> msg_list;
-    
+    boolean inChat;
 
     public MingleUser(String uid, String name, int num, int photo_num, Drawable default_img, String sex) {
           super();
@@ -29,7 +32,7 @@ public class MingleUser {
           this.msg_list = new ArrayList<Message>();
           this.pics = new ArrayList<Drawable>();
           this.pics_bool = new ArrayList<Boolean>();
-          
+          this.inChat = false;
           for (int i = 0; i < photo_num; i++){
         	  pics.add(default_img);
         	  pics_bool.add(false);
@@ -37,6 +40,13 @@ public class MingleUser {
           
     }
     
+    public void setInChat(boolean inChat){
+    	this.inChat = inChat;
+    }
+    
+    public boolean isInChat(){
+    	return inChat;
+    }
     
     public String getUid() {
         return uid;

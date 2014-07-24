@@ -52,7 +52,10 @@ public class GcmIntentService extends IntentService {
             // If it's a regular GCM message, do some work.
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 Log.i(TAG, "Received: " + extras.toString());
-            	sendNotification(extras);
+                String send_uid = extras.getString("send_uid");
+                MingleApplication curr_user = ((MingleApplication)this.getApplicationContext());
+                if(!curr_user.getMingleUser(send_uid).isInChat())
+                	sendNotification(extras);
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
@@ -66,6 +69,7 @@ public class GcmIntentService extends IntentService {
         mNotificationManager = (NotificationManager)this.getSystemService(NOTIFICATION_SERVICE);
    
 		Intent chat_intent = new Intent(this, ChatroomActivity.class);
+ 		chat_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		chat_intent.putExtra(ChatroomActivity.USER_UID, data.getString("send_uid"));		
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, chat_intent, PendingIntent.FLAG_UPDATE_CURRENT);
         CharSequence tickerTxt = (CharSequence)("Mingle: " + data.getString("msg"));
