@@ -21,13 +21,15 @@ public class VoteAdapter extends ArrayAdapter {
     List data;
     Context context;
     int layoutResID;
+    MingleApplication app;
 
-    public VoteAdapter(Context context, int layoutResourceId,List data) {
+    public VoteAdapter(Context context, int layoutResourceId,List data, MingleApplication currApp) {
   	  super(context, layoutResourceId, data);
 
   	  this.data=data;
   	  this.context=context;
   	  this.layoutResID=layoutResourceId;
+  	  this.app = currApp;
 
   	  // TODO Auto-generated constructor stub
     }
@@ -54,14 +56,19 @@ public class VoteAdapter extends ArrayAdapter {
       	  holder = (NewsHolder)row.getTag();
         }
 
-        ArrayList<ChattableUser> rank_list = (ArrayList<ChattableUser>) data.get(position);
-        if(rank_list.get(0) != null){
-        	holder.female_name.setText(rank_list.get(0).getName());
-        	holder.female_pic.setImageDrawable(rank_list.get(0).getPic(0));
+        ArrayList<String> rank_list = (ArrayList<String>) data.get(position);
+        String female_uid = rank_list.get(0);
+        String male_uid = rank_list.get(1);
+        
+        if(!female_uid.equals("")){
+        	MingleUser female_pop = app.getMingleUser(female_uid);
+        	holder.female_name.setText(female_pop.getName());
+        	holder.female_pic.setImageDrawable(female_pop.getPic(0));
         }
-        if(rank_list.get(1) != null){
-        	holder.male_name.setText(rank_list.get(1).getName());
-        	holder.male_pic.setImageDrawable(rank_list.get(1).getPic(0));
+        if(!male_uid.equals("")){
+        	MingleUser male_pop = app.getMingleUser(male_uid);
+        	holder.male_name.setText(male_pop.getName());
+        	holder.male_pic.setImageDrawable(male_pop.getPic(0));
         }
         return row;
 

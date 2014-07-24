@@ -1,11 +1,18 @@
 package com.example.mingle;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.LocalBroadcastManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,16 +28,24 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.Toast;
 import android.app.ActionBar;
+import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 public class HuntActivity extends FragmentActivity implements ActionBar.TabListener	 {
 
 	 public CandidateFragment candidateFragment;		//Fragment for list of chattable users
-	 public ChoiceFragment ongoingChatFragment;	//Fragment for list of users whom current user is chatting with
+	 public ChoiceFragment choiceFragment;	//Fragment for list of users whom current user is chatting with
 	 public VoteFragment voteFragment;					//Fragment for list of top male and female users
 	 
 	@Override
@@ -51,20 +66,14 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
                 .setTabListener(this).setTag(R.string.tab3title));
         
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        System.out.println("hunt navigation set");
-        // Change the current activity to HuntActivity in HttpHelper
         
-        ((MingleApplication) this.getApplication()).connectHelper.changeContext(this);
+        LocalBroadcastManager.getInstance(this).registerReceiver(userListReceiver,
+      		  new IntentFilter(HttpHelper.HANDLE_CANDIDATE));
+        
+        LocalBroadcastManager.getInstance(this).registerReceiver(popListReceiver,
+        		  new IntentFilter(HttpHelper.HANDLE_POP));
 
-        //Load first 10 chattable users
-        //allChatFragment.loadNewMatches(this);
-        
-        ((MingleApplication) this.getApplication()).connectHelper.connectSocket();
-    }
-	
-	//?????
-    public String getMyUid(){
-    	return ((MingleApplication) this.getApplication()).currUser.getUid();
+        ((MingleApplication) this.getApplication()).socketHelper.connectSocket();
     }
     
 	@Override
@@ -138,32 +147,149 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 			  
 		  } else if(tab.getTag().equals(R.string.tab3title)) {
 			  System.out.println("ongoing chat fragment on view");
-			  if(ongoingChatFragment == null) ongoingChatFragment = new ChoiceFragment();
+			  if(choiceFragment == null) choiceFragment = new ChoiceFragment();
 			  
 			  getFragmentManager().beginTransaction()
-		        .replace(R.id.fragment_container, ongoingChatFragment).commit();
+		        .replace(R.id.fragment_container, choiceFragment).commit();
 		  }	
+	  }
+	  
+	  
+	  @Override
+	  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    
+	   
+	  }
+	  
+	   private BroadcastReceiver userListReceiver = new BroadcastReceiver() {
+	    	@Override
+	    	public void onReceive(Context context, Intent intent) {
+	    	   // Extract data included in the Intent
+	    	   String data = intent.getStringExtra(HttpHelper.USER_LIST);
+	    	   Log.d("receiver", "Got message: " + data);
+	    	   
+	    	   try {
+	    		   JSONArray user_list_arr = new JSONArray(data);
+	    		   handleCandidateList(user_list_arr);
+	    	   } catch (JSONException e) {
+	    		   // TODO Auto-generated catch block
+	    		   e.printStackTrace();
+	    	   }
+	    	   
+	    	  }
+	    };
+	  
+	    private BroadcastReceiver popListReceiver = new BroadcastReceiver() {
+	    	@Override
+	    	public void onReceive(Context context, Intent intent) {
+	    	   // Extract data included in the Intent
+	    	   String data = intent.getStringExtra(HttpHelper.POP_LIST);
+	    	   Log.d("receiver", "Got message: " + data);
+	    	   
+	    	   try {
+	    		   JSONArray pop_list_arr = new JSONArray(data);
+	    		   handlePopList(pop_list_arr);
+	    	   } catch (JSONException e) {
+	    		   // TODO Auto-generated catch block
+	    		   e.printStackTrace();
+	    	   }
+	    	   
+	    	  }
+	    };
+	  public void handleCandidateList(JSONArray list_of_users){
+		//update ChattableUser list and dispatch image downloader
+	    MingleApplication app = ((MingleApplication) this.getApplicationContext());
+	    for(int i = 0 ; i < list_of_users.length(); i++) {
+	    	try {
+	    		JSONObject shownUser = list_of_users.getJSONObject(i);
+	    	    if(app.getMingleUser(shownUser.getString("UID")) == null){
+	    	     	  String sex_var = "M";
+	    	       	  if(app.getMyUser().getSex().equals("M")) sex_var = "F";
+	    	       	  MingleUser new_user = new MingleUser(shownUser.getString("UID"), shownUser.getString("COMM"), Integer.valueOf(shownUser.getString("NUM")), Integer.valueOf(shownUser.getString("PHOTO_NUM")), (Drawable) this.getResources().getDrawable(R.drawable.ic_launcher),sex_var);
+
+	    	          app.addMingleUser(new_user);
+	    	          new ImageDownloader(this.getApplicationContext(), new_user.getUid(), 0);
+	    	    }
+	    	    app.addCandidate(shownUser.getString("UID"));
+	        } catch (JSONException e){
+	        	e.printStackTrace();
+	        }
+	    }
+	    candidateListUpdate();
+	  }
+	  
+	  public void handlePopList(JSONArray list_of_top){
+		MingleApplication app = ((MingleApplication) this.getApplicationContext());
+		    
+		//update MingleUser list and dispatch image downloader
+	    ArrayList<String> female_list = new ArrayList<String>();
+	    ArrayList<String> male_list = new ArrayList<String>();
+	    
+	    for(int i = 0 ; i < list_of_top.length(); i++) {
+	    	try {
+	    			JSONObject shownUser = list_of_top.getJSONObject(i);
+	    		MingleUser pop_user = app.getMingleUser(shownUser.getString("UID"));
+	    		if(pop_user == null){
+	    			MingleUser new_user = new MingleUser(shownUser.getString("UID"), shownUser.getString("COMM"), Integer.valueOf(shownUser.getString("NUM")), Integer.valueOf(shownUser.getString("PHOTO_NUM")), (Drawable) this.getResources().getDrawable(R.drawable.ic_launcher),shownUser.getString("SEX"));
+	    			app.addMingleUser(new_user);
+	    			new ImageDownloader(this.getApplicationContext(), new_user.getUid(), 0);
+	    		}
+	    	
+	    	   	if(shownUser.getString("SEX").equals("F")) female_list.add(shownUser.getString("UID"));
+	    	   	else male_list.add(shownUser.getString("UID"));
+	    	    
+	    	} catch (JSONException e){
+	    		e.printStackTrace();
+	    	}
+	    }
+	    		
+	    //add female and male pop users to list
+	    app.emptyPopList();
+	    for(int i = 0; i < female_list.size() || i < male_list.size(); i++){
+	    	String female_uid = "";
+	    	String male_uid = "";
+	    	if(i < female_list.size()){
+	    		female_uid = female_list.get(i);
+	    	}
+	    	if(i < male_list.size()){
+	    		male_uid = male_list.get(i);
+	    	}
+	    	app.addPopUsers(female_uid, male_uid);
+	    }
+	    	
+	    popListUpdate();
 	  }
 	  
 	  //Update allChatFragment and ongoingChatFragment's lists
 	  public void listsUpdate(){
-		  if(candidateFragment != null) candidateFragment.listDataChanged();
-		  else System.out.println("allchatfrag null");
-		  if(ongoingChatFragment != null) ongoingChatFragment.listDataChanged();
-		  else System.out.println("ongoingchatfrag null");
+		  candidateListUpdate();
+		  choiceListUpdate();
 	  }
 	  
-	  public void topListUpdate(){
+	  public void candidateListUpdate(){
+		  if(candidateFragment != null) candidateFragment.listDataChanged();
+	  }
+	  
+	  public void choiceListUpdate(){
+		  if(choiceFragment != null) choiceFragment.listDataChanged();
+	  }
+	  
+	  public void popListUpdate(){
 		  if(voteFragment != null) voteFragment.listDataChanged();
 	  }
 	  
 	  @Override
 	  public void onRestart(){
 	        super.onRestart();
-	        // Change the current activity to HuntActivity in HttpHelper
-	        System.out.println(this);
-	        ((MingleApplication) this.getApplication()).connectHelper.changeContext(this);
 	        listsUpdate();
-	 }
+	  }
+	 
+	  @Override
+	  public void onDestroy(){
+		  LocalBroadcastManager.getInstance(this).unregisterReceiver(userListReceiver);
+		  LocalBroadcastManager.getInstance(this).unregisterReceiver(popListReceiver);  
+
+		  super.onDestroy();
+	  }
 }
 

@@ -22,10 +22,9 @@ import android.view.ViewGroup;
 
 public class CandidateFragment extends Fragment {
   public static final String ARG_SECTION_NUMBER = "placeholder_text";
-  public final static String USER_UID = "com.example.mingle.USER_SEL";	//Intent data to pass on when new Chatroom Activity started
 
   public SwipeListView candidatelistview;	//Listview for chattable users
-  private ArrayList<ChattableUser>user_list;
+  private ArrayList<String>candidate_list;
   private CandidateAdapter adapter;
   
   private boolean is_first_time = true;
@@ -41,8 +40,8 @@ public class CandidateFragment extends Fragment {
 	  View rootView = inflater.inflate(R.layout.candidate_fragment, container, false);
 	  
 	  candidatelistview=  (SwipeListView)(rootView.findViewById(R.id.All));
-      user_list = ((MingleApplication) parent.getApplication()).currUser.getChattableUserList();
-      adapter=new CandidateAdapter(parent, R.layout.candidate_row,user_list);
+      candidate_list = ((MingleApplication) parent.getApplication()).getCandidateList();
+      adapter=new CandidateAdapter(parent, R.layout.candidate_row,candidate_list, (MingleApplication)parent.getApplicationContext());
 	  
       
       
@@ -70,18 +69,20 @@ public class CandidateFragment extends Fragment {
               Log.d("swipe", String.format("onStartOpen %d - action %d", position, action)); 
               candidatelistview.openAnimate(position); //when you touch front view it will open
               
-              MingleUser currentUser = ((MingleApplication) parent.getApplication()).currUser;
-              ChattableUser chat_user_obj = currentUser.getChattableUser(position);
-                           
-              currentUser.switchChattableToChatting(position);
-              
+              MingleApplication currentUser = ((MingleApplication) parent.getApplication());
+                                         
               // Create chatroom in local sqlite
               //((MingleApplication) parent.getApplication()).dbHelper.insertNewUID(chat_user_uid);
              
            	  ((HuntActivity)parent).listsUpdate();
+           	  
+              String user_uid = currentUser.getCandidate(position);
               
+              currentUser.switchCandidateToChoice(position);
+
               Intent chat_intent = new Intent(curActivity, ChatroomActivity.class);
-              chat_intent.putExtra(USER_UID, chat_user_obj.getUid());
+       		  chat_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+              chat_intent.putExtra(ChatroomActivity.USER_UID, currentUser.getMingleUser(user_uid).getUid());
               curActivity.startActivity(chat_intent);
               
           }
@@ -169,9 +170,12 @@ public class CandidateFragment extends Fragment {
 			}
 
 	        
-			MingleUser currUser = ((MingleApplication) curApp).currUser;
-			((MingleApplication) curApp).connectHelper.requestUserList(currUser.getUid(), currUser.getSex(), 
-					currUser.getLat(), currUser.getLong(), currUser.getDist(), load_num);
+			MingleApplication app = ((MingleApplication) curApp);
+			ArrayList<String> combined_list = new ArrayList<String>();
+			combined_list.addAll(app.getCandidateList());
+			combined_list.addAll(app.getChoiceList());
+			app.connectHelper.requestUserList(app.getMyUser().getUid(), app.getMyUser().getSex(), 
+					app.getLat(), app.getLong(), app.getDist(), load_num, combined_list);
 
 			return null;
 		}

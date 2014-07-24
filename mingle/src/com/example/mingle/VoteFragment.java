@@ -14,6 +14,7 @@ import com.fortysevendeg.swipelistview.SwipeListView.OnLoadMoreListener;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -48,7 +49,7 @@ public class VoteFragment extends Fragment{
 	    // Stores 
 	    ((MingleApplication) parent.getApplication()).connectHelper.requestVoteList();
 
-	    top_adapter = new VoteAdapter(parent, R.layout.vote_row, ((MingleApplication) parent.getApplication()).currUser.getTopList());
+	    top_adapter = new VoteAdapter(parent, R.layout.vote_row, ((MingleApplication) parent.getApplication()).getPopList(), (MingleApplication) parent.getApplicationContext());
 	    top_adapter.notifyDataSetChanged();
 	       
 	    /*final Activity curActivity = parent;

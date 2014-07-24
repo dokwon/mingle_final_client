@@ -15,13 +15,15 @@ public class ChoiceAdapter extends ArrayAdapter {
     List data;
     Context context;
     int layoutResID;
+    MingleApplication app;
 
-    public ChoiceAdapter(Context context, int layoutResourceId,List data) {
+    public ChoiceAdapter(Context context, int layoutResourceId,List data, MingleApplication currApp) {
   	  super(context, layoutResourceId, data);
 
   	  this.data=data;
   	  this.context=context;
   	  this.layoutResID=layoutResourceId;
+  	  this.app = currApp;
 
   	  // TODO Auto-generated constructor stub
     }
@@ -47,10 +49,11 @@ public class ChoiceAdapter extends ArrayAdapter {
       	  holder = (NewsHolder)row.getTag();
         }
 
-        ChattableUser cu = (ChattableUser)data.get(position);
-        holder.msg_view.setText(cu.getChatRoom().getLastMsg());
+        String choice_uid = (String)data.get(position);
+        MingleUser choice = app.getMingleUser(choice_uid);
+        holder.msg_view.setText(choice.getLastMsg());
 
-        holder.user_pic.setImageDrawable(cu.getPic(0));
+        holder.user_pic.setImageDrawable(choice.getPic(0));
        
         return row;
 

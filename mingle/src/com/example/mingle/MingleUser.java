@@ -1,244 +1,148 @@
 package com.example.mingle;
 
-
-import android.app.Application;
-import android.os.Bundle;
-
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 
-import android.graphics.*;
 import android.graphics.drawable.Drawable;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-/**
- * Created by Tempnote on 2014-06-02.
- */
-
-class MingleUser extends MingleApplication {
-
-    private ArrayList<String> photoPaths = new ArrayList<String>();;
-    private String uid;
-    private String sex;
-    private int num;
-    private String name;
-    private float latitude;
-    private float longitude;
-    private int dist_lim;
-    private String rid;
+public class MingleUser {
+	String uid;
+	String name;
+	int num;
+	ArrayList<Drawable> pics;
+	ArrayList<Boolean> pics_bool;
+	String sex;
+	boolean voted;
+	ArrayList<Message> msg_list;
     
-    private ArrayList<ChattableUser> chattable_users = new ArrayList<ChattableUser>();
-    private ArrayList<ChattableUser> chatting_users = new ArrayList<ChattableUser>();
-    
-    private ArrayList<String> voted_users = new ArrayList<String>();
 
-    private ArrayList<ArrayList<ChattableUser>> top_users = new ArrayList<ArrayList<ChattableUser>>();
-
-    public void setAttributes(String uid_var, String sex_var, int num_var, String name_var, float latitude_var, float longitude_var, int dist_lim_var){
-        setUid(uid_var);
-        setSex(sex_var);
-        setNum(num_var);
-        setName(name_var);
-        setLat(latitude_var);
-        setLong(longitude_var);
-        setDist(dist_lim_var);
+    public MingleUser(String uid, String name, int num, int photo_num, Drawable default_img, String sex) {
+          super();
+          this.uid = uid;
+          this.name = name;
+          this.num = num;
+          this.sex = sex;
+          this.voted = false;
+          this.msg_list = new ArrayList<Message>();
+          this.pics = new ArrayList<Drawable>();
+          this.pics_bool = new ArrayList<Boolean>();
+          
+          for (int i = 0; i < photo_num; i++){
+        	  pics.add(default_img);
+        	  pics_bool.add(false);
+          }
+          
     }
     
-    public void removePhotoPathAtIndex(int index) {
-    	photoPaths.remove(index);
-    }
     
-    public void addPhotoPath(String photoPath) {
-    	photoPaths.add(photoPath);
-    }
-    
-    public Bitmap getPic(int num) {
-    	if(photoPaths.size() >= num) {
-    		Bitmap bm;
-            BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-            bm = BitmapFactory.decodeFile( photoPaths.get(num), btmapOptions);
-    		return bm;
-    	} 
-    	return null;
-    }
-
-    public String getUid(){
+    public String getUid() {
         return uid;
     }
-
-    public String getSex(){
-        return sex;
+  
+    public void setUid(String uid) {
+        this.uid = uid;
+  	}
+  
+    public String getName() {
+          return name;
     }
-
-    public int getNum(){
+    
+    public void setName(String name) {
+          this.name = name;
+    }
+    
+    public int getNum() {
         return num;
     }
-
-    public String getName(){
-        return name;
-    }
-
-    public float getLat(){
-        return latitude;
-    }
-
-    public float getLong(){
-        return longitude;
-    }
-
-    public int getDist(){
-        return dist_lim;
-    }
-
-    public String getRid(){
-    	return rid;
+  
+    public void setNum(int num) {
+	  	this.num = num;
+  	}
+    
+    public String getSex(){
+    	return sex;
     }
     
-    public void setUid(String uid_var){
-        uid = uid_var;
-    }
-
-    public void setSex(String sex_var){
-        sex = sex_var;
-    }
-
-    public void setNum(int num_var){
-        num = num_var;
-    }
-
-    public void setName(String name_var){
-        name = name_var;
-    }
-
-    public void setLat(float latitude_var){
-        latitude = latitude_var;
-    }
-
-    public void setLong(float longitude_var){
-        longitude = longitude_var;
-    }
-
-    public void setDist(int dist_lim_var){
-        dist_lim = dist_lim_var;
-    }
-
-    public void setRid(String rid_var){
-    	rid = rid_var;
+    public void setSex(String sex){
+    	this.sex = sex;
     }
     
-    public boolean isValid() {
-        if (photoPaths == null) {
-            photoPaths = new ArrayList<String>();
+    public boolean alreadyVoted(){
+    	return voted;
+    }
+    
+    public void setVoted(){
+    	voted = true;
+    }
+  
+    public int getPhotoNum(){
+    	return pics.size();
+    }
+    
+    public ArrayList<Message> getMsgList(){
+    	return msg_list;
+    }
+    
+    public Drawable getPic(int index) {
+    	  if(pics.size() <= index || index < 0) return null;
+          return pics.get(index);
+    }
+    
+    public void setPic(int index, Drawable pic){
+    	pics.set(index, pic);
+    	pics_bool.set(index, true);
+    }
+    
+    public boolean isPicAvail(int index){
+    	return pics_bool.get(index);
+    }
+    
+    public boolean isMsgListEmpty(){
+    	if(msg_list.size() == 0) return true;
+    	else return false;
+    }
+    
+    public void addMsg(String msg, int msg_counter, int status){
+    	Date date= new Date();
+		Timestamp timestamp = (new Timestamp(date.getTime()));
+		Message msg_obj = new Message(msg, msg_counter, timestamp.toString(), 0, true);
+		msg_list.add(msg_obj);
+		Collections.sort(msg_list, new MsgComparator());
+    }
+    
+    public boolean updateMsgOnConf(int counter, String msg_ts){
+		for(Message obj : msg_list){
+			if(obj.getCounter()==counter){
+				obj.setStatus(1);
+
+        		System.out.println("msg conf at: " + msg_ts);
+    				
+    			obj.setTimestamp(msg_ts);
+    			Collections.sort(msg_list, new MsgComparator());
+
+				return true;
+			}	
+		}
+		return false;
+	}
+    
+    public void recvMsg(String msg, String msg_ts){
+    	Message msg_obj = new Message(msg, -1, msg_ts, 1, false);
+		msg_list.add(msg_obj);
+		Collections.sort(msg_list, new MsgComparator());
+    }
+    
+    public String getLastMsg(){
+		if(msg_list.size() > 0) return msg_list.get(msg_list.size() - 1).getContent();
+		return "";
+	}
+    
+    class MsgComparator implements Comparator<Message> {
+        public int compare(Message msg1, Message msg2) {
+        	return (msg1.getTimestamp()).compareTo(msg2.getTimestamp());
         }
-        
-        if (/*num == -1 ||  */photoPaths.size() == 0)
-            return false;
-
-        return true;
-    }
-
-    public ArrayList<String> getPhotoPaths(){
-        return photoPaths;
-    }
-
-    public void addChattableUser(ChattableUser user){
-        chattable_users.add(user);
-    }
-    
-    public void removeChattableUser(int pos){
-    	chattable_users.remove(pos);
-    }
-    
-    public int getChattableUserPos(String uid){
-    	for(int i = 0; i < chattable_users.size(); i++){
-    		ChattableUser cu= chattable_users.get(i);
-    		if(cu.getUid().equals(uid)) return i;
-    	}
-    	return -1;
-    }
-    
-    public ChattableUser getChattableUser(int pos){
-        return chattable_users.get(pos);
-    }
-    
-    public ChattableUser getChattableUser(String uid){
-    	for(int i = 0; i < chattable_users.size(); i++){
-    		ChattableUser cu= chattable_users.get(i);
-    		if(cu.getUid().equals(uid)) return cu;
-    	}
-    	return null;
-    }
-
-    public ArrayList<ChattableUser> getChattableUserList(){
-        return chattable_users;
-    }
-    
-    public void addChattingUser(ChattableUser cu){
-    	cu.createChatRoom(getUid());
-    	chatting_users.add(cu);
-    }
-    
-    public ChattableUser getChattingUser(String uid){
-    	for(int i = 0; i < chatting_users.size(); i++){
-    		ChattableUser cu= chatting_users.get(i);
-    		if(cu.getUid().equals(uid)) return cu;
-    	}
-    	return null;
-    }
-    
-    public ArrayList<ChattableUser> getChattingUserList(){
-    	return chatting_users;
-    }
-    
-    public ChattableUser getUser(String uid){
-    	ChattableUser cu = getChattableUser(uid);
-    	if(cu == null) cu = getChattingUser(uid);
-    	return cu;
-    }
-    public void switchChattableToChatting(int index){
-    	ChattableUser cu = getChattableUser(index);
-    	addChattingUser(cu);
-    	removeChattableUser(index);
-    }
-    
-    public void addVotedUser(String uid){
-    	voted_users.add(uid);
-    }
-    
-    public boolean alreadyVoted(String uid){
-    	for(int i = 0; i < voted_users.size(); i++){
-    		if(voted_users.get(i).equals(uid)) return true;
-    	}
-    	return false;
-    }
-    
-    public ArrayList<ArrayList<ChattableUser>> getTopList(){
-    	return top_users;
-    }
-    
-    public void addTopUsers(ChattableUser female_cu, ChattableUser male_cu){
-    	ArrayList<ChattableUser> rank_list = new ArrayList<ChattableUser>();
-    	rank_list.add(female_cu);
-    	rank_list.add(male_cu);
-    	top_users.add(rank_list);
-    	System.out.println("size: " + rank_list.size() + "  total size: " + top_users.size());
-    }
-    
-    public void emptyTopList(){
-    	top_users.clear();
-    }
-    
-    public ChattableUser getTopUser(String uid){
-    	for(int i = 0; i < top_users.size(); i++){
-    		ArrayList<ChattableUser> rank_list= top_users.get(i);
-    		ChattableUser female_user = rank_list.get(0);
-    		ChattableUser male_user = rank_list.get(1);
-    		if(female_user != null && female_user.getUid().equals(uid)) return female_user;
-    		if(male_user != null && rank_list.get(1).getUid().equals(uid)) return male_user;
-    	}
-    	return null;
     }
 }

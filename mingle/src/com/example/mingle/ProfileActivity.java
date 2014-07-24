@@ -22,7 +22,7 @@ public class ProfileActivity extends Activity {
 	private ViewFlipper viewFlipper;
     private float lastX;
     private int photo_num;
-    private ChattableUser cu;
+    private MingleUser user;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,27 +32,25 @@ public class ProfileActivity extends Activity {
          
          Intent intent = getIntent();
          String uid = intent.getExtras().getString(CandidateAdapter.PROFILE_UID);
-         cu = ((MingleApplication) this.getApplication()).currUser.getUser(uid);
-         photo_num = cu.getPhotoNum();
-         uid = cu.getUid();
-         
-         ((MingleApplication) this.getApplication()).connectHelper.changeContext(this);
-         
+         user = ((MingleApplication) this.getApplication()).getMingleUser(uid);
+         photo_num = user.getPhotoNum();
+         uid = user.getUid();
+                  
          LayoutInflater inflater = getLayoutInflater();
          for(int i = 0; i < photo_num; i++){
         	 LinearLayout single_photo_layout = (LinearLayout) inflater
                  .inflate(R.layout.single_photo, null);
         	 ImageView photo_view = (ImageView) single_photo_layout.findViewById(R.id.photoView);
-        	 Drawable photo_drawable = cu.getPic(i);
+        	 Drawable photo_drawable = user.getPic(i);
         	 photo_view.setImageDrawable(photo_drawable);
         	 
         	 viewFlipper.addView(single_photo_layout);
          }
          
          TextView num_view = (TextView) findViewById(R.id.profile_user_num);
-         num_view.setText(String.valueOf(cu.getNum()));
+         num_view.setText(String.valueOf(user.getNum()));
          TextView name_view = (TextView) findViewById(R.id.profile_user_name);
-         name_view.setText(cu.getName());
+         name_view.setText(user.getName());
 	}
 	
 	// Method to handle touch event like left to right swap and right to left swap
@@ -109,9 +107,9 @@ public class ProfileActivity extends Activity {
     	System.out.println("photo index: " + photo_index);
     	if(photo_index < 0 || photo_index >= photo_num) return;
     	
-		if(!cu.isPicAvail(photo_index)){
+		if(!user.isPicAvail(photo_index)){
 			System.out.println("download image!");
-			((MingleApplication) this.getApplication()).connectHelper.downloadPic(getApplication(), cu.getUid(), photo_index, false);
+			new ImageDownloader(getApplication(), user.getUid(), photo_index);
 		}
 	}
     
@@ -119,33 +117,31 @@ public class ProfileActivity extends Activity {
     	LinearLayout curr_layout = (LinearLayout) viewFlipper.getCurrentView();
 		ImageView photo_view = (ImageView) curr_layout.findViewById(R.id.photoView);
 
-		Drawable pic_to_update = cu.getPic(index);
+		Drawable pic_to_update = user.getPic(index);
 		
     	photo_view.setImageDrawable(pic_to_update);
     }
     
     public void voteUser(View v){
-    	System.out.println("vote user");
-    	MingleUser curr_user = ((MingleApplication) this.getApplication()).currUser;
-    	String curr_uid = cu.getUid();
-    	if(!curr_user.alreadyVoted(curr_uid)){
-    		curr_user.addVotedUser(curr_uid);
+    	String curr_uid = user.getUid();
+    	if(!user.alreadyVoted()){
+    		user.setVoted();
     		((MingleApplication) this.getApplication()).connectHelper.voteUser(curr_uid);
     	}
     }
     
     public void startChat(View v){
     	System.out.println("start chat");
-    	MingleUser curr_user = ((MingleApplication) this.getApplication()).currUser;
-    	int position = curr_user.getChattableUserPos(cu.getUid());
-    	if(position >= 0) {
-    		curr_user.switchChattableToChatting(position);
+    	MingleApplication app = ((MingleApplication) this.getApplication());
+    	int candidate_pos = app.getCandidatePos(user.getUid());
+    	if(candidate_pos >= 0) {
+    		app.switchCandidateToChoice(candidate_pos);
     	}
          // Create chatroom in local sqlite
          //((MingleApplication) parent.getApplication()).dbHelper.insertNewUID(chat_user_uid);
                  
         Intent chat_intent = new Intent(this, ChatroomActivity.class);
-        chat_intent.putExtra(USER_UID, cu.getUid());
+        chat_intent.putExtra(USER_UID, user.getUid());
         startActivity(chat_intent);
     }
 }

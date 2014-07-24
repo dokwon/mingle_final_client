@@ -7,34 +7,18 @@ import android.graphics.drawable.Drawable;
 
 
 public class Message {
-	private String uid;
-	private Drawable pic;
-	private String name;
 	private String content;
 	private int counter;
 	private String timestamp;
 	private int status;
+	private boolean is_me;
 	
-	public Message(String uid, Drawable pic, String name, String content, int counter, String timestamp, int status){
-		this.uid = uid;
-		this.pic = pic;
-		this.name = name;
+	public Message(String content, int counter, String timestamp, int status, boolean is_me){
 		this.content = content;
 		this.counter = counter;
 		this.timestamp = timestamp;
 		this.status = status;
-	}
-	
-	public String getName(){
-		return name;
-	}
-	
-	public String getUid(){
-		return uid;
-	}
-	
-	public Drawable getPic(){
-		return pic;
+		this.is_me = is_me;
 	}
 	
 	public String getContent(){
@@ -59,5 +43,9 @@ public class Message {
 	
 	public int getStatus(){
 		return status;
+	}
+	
+	public boolean isMyMsg(){
+		return is_me;
 	}
 }

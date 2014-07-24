@@ -21,16 +21,16 @@ public class MsgAdapter extends ArrayAdapter {
       Context context;
       int layoutResID;
       int my_layoutResID;
-      Activity parent_act;
+      MingleUser user;
  
-      public MsgAdapter(Context context, int layoutResourceId, int my_layoutResourceId, List data, Activity parent) {
+      public MsgAdapter(Context context, int layoutResourceId, int my_layoutResourceId, List data, MingleUser receiver) {
     	  super(context, layoutResourceId, data);
  
     	  this.data=data;
     	  this.context=context;
     	  this.layoutResID=layoutResourceId;
     	  this.my_layoutResID=my_layoutResourceId;
-    	  this.parent_act = parent; 
+    	  this.user = receiver; 
     	  // TODO Auto-generated constructor stub
       }
  
@@ -40,19 +40,17 @@ public class MsgAdapter extends ArrayAdapter {
     	  NewsHolder holder = null;
     	  View row = convertView;
     	  
-    	  boolean is_me = false;
           Message msg_data = (Message)data.get(position);
-          if(msg_data.getUid().equals(((MingleApplication) parent_act.getApplication()).currUser.getUid())) is_me = true;
  
           LayoutInflater inflater = ((Activity)context).getLayoutInflater();
           
-          if(is_me) row = inflater.inflate(my_layoutResID,parent,false);
+          if(msg_data.isMyMsg()) row = inflater.inflate(my_layoutResID,parent,false);
           else row = inflater.inflate(layoutResID, parent, false);
  
           holder = new NewsHolder();
           holder.msg_view = (TextView)row.findViewById(R.id.msg);
           holder.timestamp_view =(TextView)row.findViewById(R.id.timestamp);
-          if(!is_me){
+          if(!msg_data.isMyMsg()){
         	  holder.pic=(ImageView)row.findViewById(R.id.sender_image);
         	  holder.name_view =(TextView)row.findViewById(R.id.name);
           }
@@ -62,9 +60,9 @@ public class MsgAdapter extends ArrayAdapter {
           RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) holder.msg_view.getLayoutParams();
           holder.msg_view.setText(msg_data.getContent());
           holder.timestamp_view.setText(msg_data.getTimestamp().toString());
-          if(!is_me){
-        	  holder.pic.setImageDrawable(msg_data.getPic());
-        	  final String profile_uid = msg_data.getUid();
+          if(!msg_data.isMyMsg()){
+        	  holder.pic.setImageDrawable(user.getPic(0));
+        	  final String profile_uid = user.getUid();
         	  holder.pic.setOnClickListener(new OnClickListener()
               {
               	@Override
@@ -75,7 +73,7 @@ public class MsgAdapter extends ArrayAdapter {
                     context.startActivity(profile_intent);
       			}
               });
-        	  holder.name_view.setText(msg_data.getName());
+        	  holder.name_view.setText(user.getName());
           }
           holder.msg_view.setLayoutParams(lp);
           

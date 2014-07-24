@@ -1601,7 +1601,7 @@ containing a value of this type.
         public static final int choice=0x7f070031;
         public static final int classic=0x7f070011;
         public static final int collapseActionView=0x7f070020;
-        public static final int customTitleLayout=0x7f07006e;
+        public static final int customTitleLayout=0x7f07006f;
         public static final int default_activity_button=0x7f070040;
         public static final int dialog=0x7f070021;
         public static final int disableHome=0x7f07001b;
@@ -1630,16 +1630,16 @@ containing a value of this type.
         public static final int listMode=0x7f070014;
         public static final int list_item=0x7f070041;
         public static final int llout=0x7f070054;
-        public static final int load_more_footer=0x7f070071;
-        public static final int load_more_progressBar=0x7f070073;
+        public static final int load_more_footer=0x7f070072;
+        public static final int load_more_progressBar=0x7f070074;
         public static final int maleTopLogo=0x7f070079;
         public static final int male_vote_rl=0x7f07007e;
         public static final int match_parent=0x7f07000c;
         public static final int middle=0x7f070024;
-        public static final int mingling=0x7f070076;
+        public static final int mingling=0x7f07006e;
         public static final int monochrome=0x7f070013;
         public static final int msg=0x7f07006d;
-        public static final int name=0x7f070074;
+        public static final int name=0x7f070075;
         public static final int never=0x7f07001c;
         public static final int none=0x7f070000;
         public static final int normal=0x7f070001;
@@ -1671,7 +1671,7 @@ containing a value of this type.
         public static final int search_plate=0x7f07004e;
         public static final int search_src_text=0x7f07004f;
         public static final int search_voice_btn=0x7f070053;
-        public static final int section_label=0x7f070070;
+        public static final int section_label=0x7f070071;
         public static final int selectionDetails=0x7f07000b;
         public static final int sender_image=0x7f07006c;
         public static final int shortcut=0x7f070046;
@@ -1683,13 +1683,13 @@ containing a value of this type.
         public static final int submit_area=0x7f070051;
         public static final int tabMode=0x7f070015;
         public static final int terrain=0x7f070003;
-        public static final int timestamp=0x7f070075;
+        public static final int timestamp=0x7f070076;
         public static final int title=0x7f070043;
-        public static final int titleLogo=0x7f07006f;
+        public static final int titleLogo=0x7f070070;
         public static final int top_action_bar=0x7f070038;
         public static final int top_female_image=0x7f07007c;
         public static final int top_female_name=0x7f07007d;
-        public static final int top_line=0x7f070072;
+        public static final int top_line=0x7f070073;
         public static final int top_list=0x7f07007a;
         public static final int top_male_image=0x7f07007f;
         public static final int top_male_name=0x7f070080;
@@ -1768,11 +1768,10 @@ containing a value of this type.
         public static final int load_more_footer=0x7f030022;
         public static final int msg_row=0x7f030023;
         public static final int my_msg_row=0x7f030024;
-        public static final int ongoing_chat_fragment=0x7f030025;
-        public static final int single_photo=0x7f030026;
-        public static final int support_simple_spinner_dropdown_item=0x7f030027;
-        public static final int vote_fragment=0x7f030028;
-        public static final int vote_row=0x7f030029;
+        public static final int single_photo=0x7f030025;
+        public static final int support_simple_spinner_dropdown_item=0x7f030026;
+        public static final int vote_fragment=0x7f030027;
+        public static final int vote_row=0x7f030028;
     }
     public static final class menu {
         public static final int chat=0x7f0c0000;

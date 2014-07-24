@@ -37,7 +37,7 @@ public class MinglePhotoClickListener implements OnClickListener{
 			}
 		}
 		// Remove image from the Queue
-		((MingleApplication) mainActivity.getApplication()).currUser.removePhotoPathAtIndex(indexOfRemoved);
+		((MingleApplication) mainActivity.getApplication()).removePhotoPathAtIndex(indexOfRemoved);
 		
 	}
 	

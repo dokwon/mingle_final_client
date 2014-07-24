@@ -23,13 +23,15 @@ public class CandidateAdapter extends ArrayAdapter {
     List data;
     Context context;
     int layoutResID;
+    MingleApplication app;
 
-    public CandidateAdapter(Context context, int layoutResourceId,List data) {
+    public CandidateAdapter(Context context, int layoutResourceId,List data, MingleApplication currApp) {
   	  super(context, layoutResourceId, data);
 
   	  this.data=data;
   	  this.context=context;
   	  this.layoutResID=layoutResourceId;
+  	  this.app = currApp;
 
   	  // TODO Auto-generated constructor stub
     }
@@ -54,13 +56,14 @@ public class CandidateAdapter extends ArrayAdapter {
         } else {
       	  holder = (NewsHolder)row.getTag();
         }
-        ChattableUser itemdata = ((ArrayList<ChattableUser>)data).get(position);
-        holder.user_num.setText(Integer.toString(itemdata.getNum()) + "  " + Integer.toString(itemdata.getPhotoNum()));
-        holder.user_name.setText(itemdata.getName());
-        Drawable main_drawable = itemdata.getPic(0);
+        String candidate_uid = ((ArrayList<String>)data).get(position);
+        MingleUser candidate = app.getMingleUser(candidate_uid);
+        holder.user_num.setText(Integer.toString(candidate.getNum()) + "  " + Integer.toString(candidate.getPhotoNum()));
+        holder.user_name.setText(candidate.getName());
+        Drawable main_drawable = candidate.getPic(0);
         holder.user_pic.setImageDrawable(main_drawable);
         
-        final String profile_uid = itemdata.getUid();
+        final String profile_uid = candidate.getUid();
         holder.user_pic.setOnClickListener(new OnClickListener()
         {
 

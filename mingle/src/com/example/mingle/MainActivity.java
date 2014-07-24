@@ -2,6 +2,7 @@ package com.example.mingle;
 
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.location.Criteria;
@@ -31,10 +32,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.IntentSender.SendIntentException;
 import android.content.pm.PackageInfo;
@@ -58,17 +61,6 @@ import com.example.mingle.MingleApplication;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 //import com.google.android.gms.maps.model.Location;
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -163,7 +155,7 @@ public class MainActivity extends Activity {
                      .getBitmap(cr, selectedImage);
                      
                      imageView.setImageBitmap(rotatedBitmap(taken_photo_bitmap, selectedImage.getPath()));
-                    ((MingleApplication) this.getApplication()).currUser.addPhotoPath(selectedImage.getPath());
+                    ((MingleApplication) this.getApplication()).addPhotoPath(selectedImage.getPath());
                     
                     Toast.makeText(this, selectedImage.toString(),
                             Toast.LENGTH_LONG).show();
@@ -177,7 +169,7 @@ public class MainActivity extends Activity {
                 Uri selectedImageUri = data.getData();
  
                 String tempPath = getPath(selectedImageUri, MainActivity.this);
-                ((MingleApplication) this.getApplication()).currUser.addPhotoPath(tempPath);
+                ((MingleApplication) this.getApplication()).addPhotoPath(tempPath);
                 Bitmap bm;
                 BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
                 bm = BitmapFactory.decodeFile(tempPath, btmapOptions);
@@ -186,6 +178,24 @@ public class MainActivity extends Activity {
     	}
    
     }
+    
+    private BroadcastReceiver userRequestReceiver = new BroadcastReceiver() {
+    	@Override
+    	public void onReceive(Context context, Intent intent) {
+    	   // Extract data included in the Intent
+    	   String data = intent.getStringExtra(HttpHelper.USER_CONF);
+    	   Log.d("receiver", "Got message: " + data);
+    	   
+    	   try {
+    		   JSONObject user_conf_obj = new JSONObject(data);
+    		   joinMingle(user_conf_obj);
+    	   } catch (JSONException e) {
+    		   // TODO Auto-generated catch block
+    		   e.printStackTrace();
+    	   }
+    	   
+    	}
+    };
     
     // Helper method to retrieve the filepath of selected image
     public String getPath(Uri uri, Activity activity) {
@@ -211,8 +221,8 @@ public class MainActivity extends Activity {
         	lat =(float) location.getLatitude();
         	lon =(float) location.getLongitude();
         } 
-        ((MingleApplication) this.getApplication()).currUser.setLat(lat);
-    	((MingleApplication) this.getApplication()).currUser.setLong(lon);
+        ((MingleApplication) this.getApplication()).setLat(lat);
+    	((MingleApplication) this.getApplication()).setLong(lon);
      
     	
     	// In case we want to register for location updates
@@ -259,9 +269,9 @@ public class MainActivity extends Activity {
         views.add(photoView2);
         views.add(photoView3);
 
-        photoView1.setOnClickListener(new MinglePhotoClickListener( this, views));
-        photoView2.setOnClickListener(new MinglePhotoClickListener(this, views));
-        photoView3.setOnClickListener(new MinglePhotoClickListener(this, views));
+        for(ImageView view : views ) {
+        	view.setOnClickListener(new MinglePhotoClickListener( this, views));
+        }
        
     }
     
@@ -277,7 +287,8 @@ public class MainActivity extends Activity {
     		return true;
     	}
     	String UID = mingleApp.dbHelper.getMyUID();
-    	mingleApp.currUser.setUid(UID);
+    	
+    	mingleApp.getMyUser().setUid(UID);
     	ArrayList<String> chatters = mingleApp.dbHelper.getUIDList();
     	
     	
@@ -285,7 +296,6 @@ public class MainActivity extends Activity {
     	// Populate other fields with UID
     	return false;
     }
-    
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -301,16 +311,20 @@ public class MainActivity extends Activity {
         MingleApplication mingleApp = (MingleApplication) this.getApplication();
         
         //Initialize HttpHelper that supports HTTP GET/POST requests and socket connection
-        mingleApp.connectHelper = new HttpHelper(server_url, this);
-        //Initialize MingleUser object that stores current user's info
-        mingleApp.currUser = new MingleUser();
+        mingleApp.connectHelper = new HttpHelper(server_url, (MingleApplication)this.getApplication());
+
         // Initialize the database helper that manages local storage
         mingleApp.dbHelper = new DatabaseHelper(this);
+     
+        mingleApp.socketHelper = new Socket(server_url, (MingleApplication)this.getApplication());
         // Get the user's current location
         getCurrentLocation();
-        
+                
         //GCM Setup here
         context = (Context)this;
+        
+        LocalBroadcastManager.getInstance(context).registerReceiver(userRequestReceiver,
+        		  new IntentFilter(HttpHelper.JOIN_MINGLE));
         
         // Check device for Play Services APK. If check succeeds, proceed with
         //  GCM registration.
@@ -326,7 +340,7 @@ public class MainActivity extends Activity {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
         
-		((MingleApplication)this.getApplication()).currUser.setRid(regid);
+		((MingleApplication)this.getApplication()).setRid(regid);
 
         // If the app is not on for the first time, start HuntActivity
         // and populate it with data from local storage
@@ -349,44 +363,45 @@ public class MainActivity extends Activity {
     public void userCreateButtonPressed(View view) {
         //hard coded. need to be replaced later on
     	name_option = "hi";
-        num_option = 4;
-        
-        MingleUser user =  ((MingleApplication) this.getApplication()).currUser;
-        
-        
+        num_option = 4;        
+
+    	MingleApplication app = ((MingleApplication) this.getApplication());
+
         //Check validity of user input and send user creation request to server
-        if (user.isValid()) {
-        	((MingleApplication) this.getApplication()).connectHelper.userCreateRequest(user.getPhotoPaths(), 
-        																			name_option, 
-        																			sex_option, 
-        																			num_option,
-        																			user.getLong(), user.getLat(), user.getRid());
+        if (app.isValid()) {
+        	
+        	app.connectHelper.userCreateRequest(app.getPhotoPaths(), 
+        												name_option, 
+        												sex_option, 
+        												num_option,
+        												app.getLong(), app.getLat(), app.getRid());
       } else {
     	   showInvalidUserAlert();
            System.out.println("The user is not valid.");
        }
     }
 
-    //Update MingleUser info and join Mingle Market
-    //Called when user creation request confirmation returns from server
+
     public void joinMingle(JSONObject userData) {
-        
-    	try {
-            System.out.println(userData.toString());
-           
-            ((MingleApplication) this.getApplication()).currUser.setAttributes(userData.getString("UID"), userData.getString("SEX"), 
-            																	userData.getInt("NUM"), userData.getString("COMM"),
-                                                                                        (float)userData.getDouble("LOC_LAT"), 
-                                                                                        (float)userData.getDouble("LOC_LONG"), 
-                                                                                        userData.getInt("DIST_LIM"));
-        } catch(JSONException e){
-            e.printStackTrace();
-        }
-        
-        //Start activity for Mingle Market
-        Intent i = new Intent(this, HuntActivity.class);
-        startActivity(i);
+    		
+    		  
+        	try {
+                System.out.println(userData.toString());
+                ((MingleApplication) this.getApplication()).dbHelper.setMyUID(userData.getString("UID"));
+                ((MingleApplication) this.getApplication()).createMyUser(userData.getString("UID"), userData.getString("SEX"), 
+                																	userData.getInt("NUM"), userData.getString("COMM"),
+                                                                                            (float)userData.getDouble("LOC_LAT"), 
+                                                                                            (float)userData.getDouble("LOC_LONG"), 
+                                                                                            userData.getInt("DIST_LIM"));
+            } catch(JSONException e){
+                e.printStackTrace();
+            }
+            
+            //Start activity for Mingle Market
+            Intent i = new Intent(this, HuntActivity.class);
+            startActivity(i);
     }
+
     
     
    
@@ -520,5 +535,11 @@ public class MainActivity extends Activity {
 	      editor.putString(PROPERTY_REG_ID, regId);
 	      editor.putInt(PROPERTY_APP_VERSION, appVersion);
 	      editor.commit();
+	  }
+	  
+	  @Override
+	  public void onDestroy(){
+		  LocalBroadcastManager.getInstance(this).unregisterReceiver(userRequestReceiver);
+		  super.onDestroy();
 	  }
 }

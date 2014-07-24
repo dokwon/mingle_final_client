@@ -1,6 +1,7 @@
 package com.example.mingle;
 
 import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
@@ -16,7 +17,7 @@ public class ChoiceFragment extends Fragment {
 	public final static String USER_UID = "com.example.mingle.USER_SEL";	//Intent data to pass on when new Chatroom Activity started
 
 	public ListView currentlychattinglistview;
-	private ArrayList<ChattableUser> chatting_user_list;
+	private ArrayList<String> choice_list;
 	private ChoiceAdapter adapter;
 	
 	private Activity parent; 
@@ -31,8 +32,8 @@ public class ChoiceFragment extends Fragment {
 		currentlychattinglistview= (ListView)(rootView.findViewById(R.id.mingling)) ;
 		
         // Stores 
-		chatting_user_list = ((MingleApplication) parent.getApplication()).currUser.getChattingUserList();
-        adapter = new ChoiceAdapter(parent, R.layout.chatroom_row, chatting_user_list);
+		choice_list = ((MingleApplication) parent.getApplication()).getChoiceList();
+        adapter = new ChoiceAdapter(parent, R.layout.chatroom_row, choice_list, (MingleApplication)parent.getApplicationContext());
         adapter.notifyDataSetChanged();
         
         final Activity curActivity = parent;
@@ -40,13 +41,10 @@ public class ChoiceFragment extends Fragment {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                // TODO Auto-generated method stub
-            	ChattableUser cu = chatting_user_list.get(position);
-        			
+                // TODO Auto-generated method stub        			
                 Intent chat_intent = new Intent(curActivity, ChatroomActivity.class);
-                chat_intent.putExtra(USER_UID, cu.getUid());
+                chat_intent.putExtra(USER_UID, choice_list.get(position));
                 curActivity.startActivity(chat_intent);
-            	System.out.println(parent + "   " + v + "   " + position + "   " + id);
             }
 
         });
@@ -54,6 +52,16 @@ public class ChoiceFragment extends Fragment {
         currentlychattinglistview.setAdapter( adapter );        
         
 		return rootView;
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		parent.runOnUiThread(new Runnable() {
+    		public void run() {
+    			adapter.notifyDataSetChanged();
+    		}
+    	});
 	}
 	
 	public void listDataChanged(){
