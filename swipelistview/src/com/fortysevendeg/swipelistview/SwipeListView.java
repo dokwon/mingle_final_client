@@ -747,7 +747,7 @@ public class SwipeListView extends ListView implements OnScrollListener{
 		}
 
 		if (mOnLoadMoreListener != null) {
-
+			//System.out.println("scroll- firstVisibleItem: " + firstVisibleItem + "visibleItemCount: " + visibleItemCount + "  totalItemCount: " + totalItemCount);
 			if (visibleItemCount == totalItemCount) {
 				mProgressBarLoadMore.setVisibility(View.GONE);
 				// mLabLoadMore.setVisibility(View.GONE);
@@ -755,7 +755,7 @@ public class SwipeListView extends ListView implements OnScrollListener{
 			}
 
 			boolean loadMore = firstVisibleItem + visibleItemCount >= totalItemCount;
-			System.out.println("first :" + firstVisibleItem + "  visible: " + visibleItemCount + "  total : " + totalItemCount);
+			//System.out.println("first :" + firstVisibleItem + "  visible: " + visibleItemCount + "  total : " + totalItemCount);
 			if (!mIsLoadingMore && loadMore
 					&& mCurrentScrollState != SCROLL_STATE_IDLE) {
 				mProgressBarLoadMore.setVisibility(View.VISIBLE);

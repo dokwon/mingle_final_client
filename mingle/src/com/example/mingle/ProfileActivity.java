@@ -17,7 +17,7 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 public class ProfileActivity extends Activity {
-	public final static String USER_UID = "com.example.mingle.USER_SEL";	//Intent data to pass on when new Chatroom Activity started
+	public final static String PROFILE_UID = "com.example.mingle.USER_SEL";	//Intent data to pass on when new Chatroom Activity started
 
 	private ViewFlipper viewFlipper;
     private float lastX;
@@ -31,7 +31,7 @@ public class ProfileActivity extends Activity {
          viewFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
          
          Intent intent = getIntent();
-         String uid = intent.getExtras().getString(CandidateAdapter.PROFILE_UID);
+         String uid = intent.getExtras().getString(ProfileActivity.PROFILE_UID);
          user = ((MingleApplication) this.getApplication()).getMingleUser(uid);
          photo_num = user.getPhotoNum();
          uid = user.getUid();
@@ -141,7 +141,7 @@ public class ProfileActivity extends Activity {
          //((MingleApplication) parent.getApplication()).dbHelper.insertNewUID(chat_user_uid);
                  
         Intent chat_intent = new Intent(this, ChatroomActivity.class);
-        chat_intent.putExtra(USER_UID, user.getUid());
+        chat_intent.putExtra(ChatroomActivity.USER_UID, user.getUid());
         startActivity(chat_intent);
     }
 }

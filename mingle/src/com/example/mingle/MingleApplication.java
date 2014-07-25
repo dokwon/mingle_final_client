@@ -39,22 +39,49 @@ public class MingleApplication extends Application {
     private float latitude;
     private float longitude;
     private int dist_lim;
+    private int first_match_num = 10;
+    private int extra_match_num = 5;
+    private boolean can_get_more_candidate = true;
     
     private HashMap<String, MingleUser> user_map = new HashMap<String, MingleUser>();
     
     private ArrayList<String> candidates = new ArrayList<String>();
     private ArrayList<String> choices = new ArrayList<String>();
     private ArrayList<ArrayList<String>> pop_users = new ArrayList<ArrayList<String>>();
+    
+    private ArrayList<String> setting_list = new ArrayList<String>();
 
     public void createMyUser(String uid_var, String sex_var, int num_var, String name_var, float latitude_var, float longitude_var, int dist_lim_var){
     	my_user = new MingleUser(uid_var, name_var, num_var, 0, null, sex_var);
         setLat(latitude_var);
         setLong(longitude_var);
         setDist(dist_lim_var);
+        setting_list.add("Profile");
+        setting_list.add("Setting");
     }
     
     public MingleUser getMyUser(){
     	return my_user;
+    }
+    
+    public int getFirstMatchNum(){
+    	return first_match_num;
+    }
+    
+    public int getExtraMatchNum(){
+    	return extra_match_num;
+    }
+    
+    public boolean canGetMoreCandidate(){
+    	return can_get_more_candidate;
+    }
+    
+    public void noMoreCandidate(){
+    	can_get_more_candidate = false;
+    }
+    
+    public void moreCandidate(){
+    	can_get_more_candidate = true;
     }
     
     public void removePhotoPathAtIndex(int index) {
@@ -190,6 +217,10 @@ public class MingleApplication extends Application {
     
     public void emptyPopList(){
     	pop_users.clear();
+    }
+    
+    public ArrayList<String> getSettingList(){
+    	return setting_list;
     }
     
     public void handleIncomingMsg(JSONObject get_msg_obj){

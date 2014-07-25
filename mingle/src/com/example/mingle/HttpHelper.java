@@ -69,7 +69,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     
     public HttpHelper(String url, MingleApplication curApp){
     	app = curApp; 
-    	server_url = url;   
+    	server_url = url+"/"; 
     }
     /*private String BitmapToString(Bitmap bmp) {
     	ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -85,7 +85,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     * is the unique id of the user as well as some other useful information
     */
     public void userCreateRequest(final ArrayList<String> photos, String name, String sex, int number, float longitude, float latitude, String rid)  {
-        String baseURL = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080/";
+        String baseURL = server_url;
     	baseURL += "create_user?";
     	baseURL += "name=" + name + "&";
     	baseURL += "sex=" + sex + "&";
@@ -122,7 +122,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     }
     
     public void voteUser(String uid)  {
-    	String baseURL = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080/";
+        String baseURL = server_url;
     	baseURL += "vote?";
     	baseURL += "uid=" + uid;
     	
@@ -174,31 +174,10 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
         }
     	return null;
     }
-    
-    public Bitmap getBitmapFromURL(String link) {
-        /*--- this method downloads an Image from the given URL, 
-         *  then decodes and returns a Bitmap object
-         ---*/
-        try {
-            URL url = new URL(link);
-            HttpURLConnection connection = (HttpURLConnection) url
-                    .openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-
-            return myBitmap;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     public void requestUserList(String uid, final String sex, float latitude, float longitude, int dist_lim, int num_of_users, ArrayList<String> uid_list) {
         
-    	String baseURL = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080/";
+        String baseURL = server_url;
     	baseURL += "get_list?";
     	baseURL += "sex=" + sex + "&";
     	baseURL += "dist_lim=" + (new Integer(dist_lim)).toString() + "&";
@@ -219,7 +198,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	//Start Thread that receives HTTP Response
     	new Thread(new Runnable() {
     		public void run() {
-    			System.out.println(cps);
+    			System.out.println("request candidate list: " +cps);
     			HttpClient client = new DefaultHttpClient();
     	        HttpGet poster = new HttpGet(cps);
     	        HttpResponse response = null;
@@ -253,7 +232,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     
  public void requestVoteList() {
         
-    	String baseURL = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080/";
+     String baseURL = server_url;
     	baseURL += "get_vote";
         
     	final String getVoteURL = baseURL;

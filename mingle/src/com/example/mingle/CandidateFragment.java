@@ -73,12 +73,12 @@ public class CandidateFragment extends Fragment {
                                          
               // Create chatroom in local sqlite
               //((MingleApplication) parent.getApplication()).dbHelper.insertNewUID(chat_user_uid);
-             
-           	  ((HuntActivity)parent).listsUpdate();
            	  
               String user_uid = currentUser.getCandidate(position);
               
               currentUser.switchCandidateToChoice(position);
+              ((HuntActivity)parent).candidateListUpdate();
+              ((HuntActivity)parent).choiceListUpdate();
 
               Intent chat_intent = new Intent(curActivity, ChatroomActivity.class);
        		  chat_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -123,19 +123,19 @@ public class CandidateFragment extends Fragment {
       candidatelistview.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
       
       candidatelistview.setAdapter(adapter);
-     final ApplicationWrapper wrapper = new ApplicationWrapper(parent.getApplication());
       candidatelistview.setOnLoadMoreListener(new OnLoadMoreListener() {
           public void onLoadMore() {
-          	new LoadDataTask(wrapper.curApp, 5).execute();
+        	  loadNewMatches(((MingleApplication)parent.getApplication()).getExtraMatchNum());
           }
       });
       
-      //Load First Matches
-      if(is_first_time) {
+      //Load more matches if first time or has only a few
+      int match_num = candidate_list.size();
+      if(is_first_time || match_num <  ((MingleApplication)parent.getApplication()).getFirstMatchNum()) {
     	  is_first_time = false;
-    	  loadNewMatches();
+    	  loadNewMatches( ((MingleApplication)parent.getApplication()).getFirstMatchNum());
       }
-      System.out.println("candidateFrag oncreate compleate");
+      
     return rootView;
   }
   
@@ -146,66 +146,20 @@ public class CandidateFragment extends Fragment {
 	  		}
 	  });
   }
-  
-  public void loadNewMatches() {
-	  new LoadDataTask(parent.getApplication(), 10).execute();
+  public void candidateLoadMoreComplete(){
+	  candidatelistview.onLoadMoreComplete();
   }
-  
-  private class LoadDataTask extends AsyncTask<Void, Void, Void> {
-  	
-  	private Application curApp;
-  	
-  	private int load_num;
-  	
-  	public LoadDataTask(Application app, int load_num) {
-  		curApp = app;
-  		this.load_num = load_num;
-  	}
-  	
-		@Override
-		protected Void doInBackground(Void... params) {
-
-			if (isCancelled()) {
-				return null;
-			}
-
-	        
-			MingleApplication app = ((MingleApplication) curApp);
-			ArrayList<String> combined_list = new ArrayList<String>();
-			combined_list.addAll(app.getCandidateList());
-			combined_list.addAll(app.getChoiceList());
-			app.connectHelper.requestUserList(app.getMyUser().getUid(), app.getMyUser().getSex(), 
-					app.getLat(), app.getLong(), app.getDist(), load_num, combined_list);
-
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-
-			// We need notify the adapter that the data have been changed
-			adapter.notifyDataSetChanged();
-
-			// Call onLoadMoreComplete when the LoadMore task, has finished
-			candidatelistview.onLoadMoreComplete();
-			super.onPostExecute(result);
-		}
-
-		@Override
-		protected void onCancelled() {
-			// Notify the loading more operation has finished
-			candidatelistview.onLoadMoreComplete();
-	    }
+  public void loadNewMatches(int num_of_matches) {
+	  MingleApplication app = (MingleApplication) parent.getApplication();
+	  if(app.canGetMoreCandidate()) {
+		  ArrayList<String> combined_list = new ArrayList<String>();
+		  combined_list.addAll(app.getCandidateList());
+		  combined_list.addAll(app.getChoiceList());
+		  app.connectHelper.requestUserList(app.getMyUser().getUid(), app.getMyUser().getSex(), 
+					app.getLat(), app.getLong(), app.getDist(), num_of_matches, combined_list);
+	  }
+	  else candidateLoadMoreComplete();
   }
-  
-  private class ApplicationWrapper {
-		Application curApp;
-		public ApplicationWrapper(Application app) {
-			curApp = app;
-		}
-	}
-  
-
   
   public int convertDpToPixel(float dp) {
       DisplayMetrics metrics = getResources().getDisplayMetrics();

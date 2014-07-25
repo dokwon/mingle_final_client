@@ -26,7 +26,6 @@ import android.graphics.Bitmap;
 public class PhotoPoster {
 	
 	public static HttpResponse postPhoto(ArrayList<String> photoPaths, final String baseURL) throws Exception {
-	    
 		HttpClient client = new DefaultHttpClient();
 	    client.getParams().setParameter(CoreProtocolPNames.USER_AGENT, System.getProperty("http.agent"));
 	    
