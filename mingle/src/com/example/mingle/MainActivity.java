@@ -34,6 +34,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -61,6 +62,9 @@ import com.example.mingle.MingleApplication;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 //import com.google.android.gms.maps.model.Location;
+
+
+
 
 
 
@@ -276,8 +280,6 @@ public class MainActivity extends Activity {
     }
     
     
-    
-    
     private boolean AppOnFirstTime() {
     	DatabaseHelper db = ((MingleApplication) this.getApplication()).dbHelper;
     	MingleApplication mingleApp = (MingleApplication) this.getApplication();
@@ -286,13 +288,31 @@ public class MainActivity extends Activity {
     		System.out.println("Saving for the first time!!");
     		return true;
     	}
-    	String UID = mingleApp.dbHelper.getMyUID();
+    	String myUID = mingleApp.dbHelper.getMyUID();
+    	String mySex = mingleApp.dbHelper.getMySex();
+    	int myNum = mingleApp.dbHelper.getMyNum();
+    	String myComm = mingleApp.dbHelper.getMyComm();
+    	float myLat = mingleApp.dbHelper.getMyLocLat();
+    	float myLong = mingleApp.dbHelper.getMyLocLong();
+    	int myDistLim = mingleApp.dbHelper.getMyDistLim();
+    	System.out.println("UID: " + myUID + ", Sex: " + mySex + ", Num: " + myNum + ", Comm: " + myComm + ", Lat: " + myLat + ", Long: " + myLong + ", DistLim: " + myDistLim);
+    	mingleApp.createMyUser(myUID,mySex,myNum,myComm,myLat,myLong,myDistLim);
+    	ArrayList<ContentValues> chatters = mingleApp.dbHelper.getUserList();
+    	System.out.println(chatters.size() + " is the size of chatters");
+    	for(int i=0; i<chatters.size(); i++){
+    		System.out.println(chatters.get(i));
+    		ArrayList<Message> tempmsgs = mingleApp.dbHelper.getMsgList(chatters.get(i).getAsString("UID"));
+    		String sex_var = "M";
+    		if(((MingleApplication) this.getApplicationContext()).getMyUser().getSex() == "M") sex_var = "F";
+    		MingleUser newUser = new MingleUser(chatters.get(i).getAsString("UID"),chatters.get(i).getAsString("COMM"),chatters.get(i).getAsInteger("NUM"),1,(Drawable)mingleApp.getResources().getDrawable(R.drawable.ic_launcher),sex_var);
+    		mingleApp.addMingleUser(newUser);
+    		mingleApp.addChoice(newUser.getUid());
+    		new ImageDownloader(this.getApplicationContext(), newUser.getUid(), 0);
+    		for(int j =0; j<tempmsgs.size(); j++){
+    			newUser.addMsgObj(tempmsgs.get(j));
+    		}
+    	}
     	
-    	mingleApp.getMyUser().setUid(UID);
-    	ArrayList<String> chatters = mingleApp.dbHelper.getUIDList();
-    	
-    	
-    	Cursor msgs = mingleApp.dbHelper.getMsgList(UID);
     	// Populate other fields with UID
     	return false;
     }
@@ -387,7 +407,11 @@ public class MainActivity extends Activity {
     		  
         	try {
                 System.out.println(userData.toString());
-                ((MingleApplication) this.getApplication()).dbHelper.setMyUID(userData.getString("UID"));
+                ((MingleApplication) this.getApplication()).dbHelper.setMyInfo(userData.getString("UID"), userData.getString("SEX"), 
+						userData.getInt("NUM"), userData.getString("COMM"),
+                        (float)userData.getDouble("LOC_LAT"), 
+                        (float)userData.getDouble("LOC_LONG"), 
+                        userData.getInt("DIST_LIM"));
                 ((MingleApplication) this.getApplication()).createMyUser(userData.getString("UID"), userData.getString("SEX"), 
                 																	userData.getInt("NUM"), userData.getString("COMM"),
                                                                                             (float)userData.getDouble("LOC_LAT"), 

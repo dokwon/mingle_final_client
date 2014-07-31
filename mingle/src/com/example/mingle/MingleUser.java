@@ -123,6 +123,11 @@ public class MingleUser {
 		Collections.sort(msg_list, new MsgComparator());
     }
     
+    public void addMsgObj(Message msg){
+    	msg_list.add(msg);
+		Collections.sort(msg_list, new MsgComparator());
+    }
+    
     public boolean updateMsgOnConf(int counter, String msg_ts){
 		for(Message obj : msg_list){
 			if(obj.getCounter()==counter){
