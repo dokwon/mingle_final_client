@@ -75,6 +75,8 @@ public class CandidateFragment extends Fragment {
               //((MingleApplication) parent.getApplication()).dbHelper.insertNewUID(chat_user_uid);
            	  
               String user_uid = currentUser.getCandidate(position);
+              MingleUser targetMU = currentUser.getMingleUser(user_uid);
+              currentUser.dbHelper.insertNewUID(user_uid, targetMU.getNum(), targetMU.getName(), 0,0,0);
               
               currentUser.switchCandidateToChoice(position);
               ((HuntActivity)parent).candidateListUpdate();

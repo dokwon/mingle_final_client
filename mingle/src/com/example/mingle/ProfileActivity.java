@@ -137,6 +137,7 @@ public class ProfileActivity extends Activity {
     	if(candidate_pos >= 0) {
     		app.switchCandidateToChoice(candidate_pos);
     	}
+    	app.dbHelper.insertNewUID(user.getUid(), user.getNum(), user.getName(), 0, 0, 0);
          // Create chatroom in local sqlite
          //((MingleApplication) parent.getApplication()).dbHelper.insertNewUID(chat_user_uid);
                  

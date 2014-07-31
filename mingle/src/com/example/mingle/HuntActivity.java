@@ -2,6 +2,7 @@ package com.example.mingle;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -80,6 +81,10 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
         		  new IntentFilter(HttpHelper.HANDLE_POP));
 
         ((MingleApplication) this.getApplication()).socketHelper.connectSocket();
+        ArrayList<String> choice_list = ((MingleApplication) this.getApplicationContext()).getChoiceList();
+        for(int i=0; i<choice_list.size(); i++){
+        	System.out.println("Choice #"+i+": "+choice_list.get(i));
+        }
     }
     
 	@Override

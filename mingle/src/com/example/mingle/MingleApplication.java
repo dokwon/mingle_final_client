@@ -1,6 +1,7 @@
 package com.example.mingle;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.json.JSONException;
@@ -15,6 +16,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.mingle.HttpHelper;
+import com.example.mingle.MingleUser.MsgComparator;
 
 /**
  * Created by Tempnote on 2014-06-12.
@@ -238,16 +240,25 @@ public class MingleApplication extends Application {
 				this.addChoice(chat_user_uid);
 				
 				new ImageDownloader(this.getApplicationContext(), new_user.getUid(), 0);
+				MingleUser currentMU = this.user_map.get(chat_user_uid);
+				dbHelper.insertNewUID(chat_user_uid, currentMU.getNum(), currentMU.getName(), 0, 0, 0);
 				
 				//download profile also
 			} else {
 				int candidate_pos = this.getCandidatePos(chat_user_uid);
 				if(candidate_pos >= 0){
 					this.switchCandidateToChoice(candidate_pos);
+					MingleUser currentMU = this.user_map.get(chat_user_uid);
+					dbHelper.insertNewUID(chat_user_uid, currentMU.getNum(), currentMU.getName(), 0, 0, 0);
 				} else {
 					int choice_pos = this.getChoicePos(chat_user_uid);
-					if(choice_pos < 0) this.addChoice(chat_user_uid);
+					if(choice_pos < 0){
+						this.addChoice(chat_user_uid);
+						MingleUser currentMU = this.user_map.get(chat_user_uid);
+						dbHelper.insertNewUID(chat_user_uid, currentMU.getNum(), currentMU.getName(), 0, 0, 0);
+					}
 				}
+				
 			}
 			
 			String msg = get_msg_obj.getString("msg");
@@ -255,6 +266,7 @@ public class MingleApplication extends Application {
     		this.getMingleUser(chat_user_uid).recvMsg(msg, msg_ts);
     		// Save to local storage
 			//((MingleApplication)currContext.getApplicationContext()).dbHelper.insertMessages(chat_user_uid, chat_user_uid, msg, msg_ts);
+    		dbHelper.insertMessages(chat_user_uid, false, msg, msg_ts);
     		
     		if(this.getMingleUser(chat_user_uid).isInChat()) {
 				Intent dispatcher = new Intent(this, ChatroomActivity.class);
@@ -273,6 +285,14 @@ public class MingleApplication extends Application {
     		String msg_recv_uid = msg_conf_obj.getString("recv_uid");
     		int msg_recv_counter = Integer.parseInt(msg_conf_obj.getString("msg_counter"));
     		String msg_ts = msg_conf_obj.getString("ts");
+    		ArrayList<Message> msg_list = user_map.get(msg_recv_uid).getMsgList();
+    		String msg="";
+    		for(Message obj : msg_list){
+    			if(obj.getCounter()==msg_recv_counter){
+    				msg=obj.getContent();
+    			}	
+    		}
+    		this.dbHelper.insertMessages(msg_recv_uid, true, msg, msg_ts);
 
     		this.getMingleUser(msg_recv_uid).updateMsgOnConf(msg_recv_counter, msg_ts);
     		

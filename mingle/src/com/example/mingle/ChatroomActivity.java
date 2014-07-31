@@ -115,7 +115,7 @@ public class ChatroomActivity extends ListActivity {
 			response_msg = false;
 			DatabaseHelper db = ((MingleApplication) this.getApplication()).dbHelper;
 			// Stores messages in DB
-			db.insertMessages(recv_uid, send_uid,SMS , new Timestamp(System.currentTimeMillis()).toString());
+			db.insertMessages(recv_uid, false, SMS , new Timestamp(System.currentTimeMillis()).toString());
 		}
 		
 		//Send MSG to Server
