@@ -1,0 +1,46 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="${packageName}.${activityClass}" >
+
+	<LinearLayout
+	    android:id="@+id/llout"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true"
+	    android:layout_alignParentLeft="true"
+	    android:orientation="horizontal" >
+
+	    <EditText
+	        android:id="@+id/txt_inputText"
+	        android:layout_width="125dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="0.8"
+	        android:ems="10"
+	        android:inputType="text"
+	        android:text="@string/sms" >
+
+	        <requestFocus />
+	    </EditText>
+
+	    <Button
+	        android:id="@+id/btn_Send"
+	        android:layout_width="100dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="0.2"
+	        android:onClick="sendSMS"
+	        android:text="@string/send" />
+	</LinearLayout>
+
+	<ListView
+	    android:id="@android:id/list"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:divider="@null"
+		android:dividerHeight="0dp"
+	    android:layout_above="@+id/llout"
+	    android:layout_alignParentLeft="true" >
+	</ListView>
+
+</RelativeLayout>
