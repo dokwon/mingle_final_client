@@ -305,12 +305,15 @@ public class MainActivity extends Activity {
     		String sex_var = "M";
     		if(((MingleApplication) this.getApplicationContext()).getMyUser().getSex() == "M") sex_var = "F";
     		MingleUser newUser = new MingleUser(chatters.get(i).getAsString("UID"),chatters.get(i).getAsString("COMM"),chatters.get(i).getAsInteger("NUM"),1,(Drawable)mingleApp.getResources().getDrawable(R.drawable.ic_launcher),sex_var);
-    		mingleApp.addMingleUser(newUser);
-    		if(mingleApp.getChoicePos(newUser.getUid())==-1) mingleApp.addChoice(newUser.getUid());
-    		new ImageDownloader(this.getApplicationContext(), newUser.getUid(), 0);
-    		for(int j =0; j<tempmsgs.size(); j++){
-    			newUser.addMsgObj(tempmsgs.get(j));
-    		}
+    		if(mingleApp.getChoicePos(newUser.getUid())==-1) {
+    			mingleApp.addMingleUser(newUser);
+    		
+    			mingleApp.addChoice(newUser.getUid());
+    			new ImageDownloader(this.getApplicationContext(), newUser.getUid(), 0);
+	    		for(int j =0; j<tempmsgs.size(); j++){
+	    			newUser.addMsgObj(tempmsgs.get(j));
+	    		}
+	    	}
     	}
     	
     	// Populate other fields with UID
