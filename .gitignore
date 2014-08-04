@@ -25,6 +25,8 @@ $RECYCLE.BIN/
 .AppleDouble
 .LSOverride
 .metadata*
+*.jar
+*.class
 
 # Icon must ends with two \r.
 Icon 
