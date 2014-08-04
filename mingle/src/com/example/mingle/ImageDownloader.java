@@ -1,7 +1,13 @@
 package com.example.mingle;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -28,12 +34,13 @@ public class ImageDownloader extends AsyncTask<Void, Void, Void> {
   	
 		@Override
 		protected Void doInBackground(Void... params) {
-
+			System.out.println("background...");
 			if (isCancelled()) {
 				return null;
 			}
-
-			bm = ((MingleApplication) context).connectHelper.getBitmapFromURL(url);
+			System.out.println("get bitmap!");
+			bm = getBitmapFromURL(url);
+			System.out.println(bm);
 
 			return null;
 		}
@@ -45,9 +52,9 @@ public class ImageDownloader extends AsyncTask<Void, Void, Void> {
 
 			user.setPic(pic_index, (Drawable) new BitmapDrawable(context.getResources(),bm));
 			
+			System.out.println("post exec: " + context);
 			if(context instanceof HuntActivity){
-				((HuntActivity)context).listsUpdate();
-				((HuntActivity)context).popListUpdate();
+				((HuntActivity)context).allListsUpdate();
 			}
 			
 			if(context instanceof ProfileActivity){
@@ -59,5 +66,27 @@ public class ImageDownloader extends AsyncTask<Void, Void, Void> {
 
 		@Override
 		protected void onCancelled() {
+			System.out.println("cancled");
+	    }
+		
+		public Bitmap getBitmapFromURL(String link) {
+	        /*--- this method downloads an Image from the given URL, 
+	         *  then decodes and returns a Bitmap object
+	         ---*/
+	        try {
+	            URL url = new URL(link);
+	            HttpURLConnection connection = (HttpURLConnection) url
+	                    .openConnection();
+	            connection.setDoInput(true);
+	            connection.connect();
+	            InputStream input = connection.getInputStream();
+	            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+
+	            return myBitmap;
+
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            return null;
+	        }
 	    }
 }

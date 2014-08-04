@@ -1,6 +1,7 @@
 package com.example.mingle;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.json.JSONException;
@@ -11,11 +12,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.provider.Contacts.Photos;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.mingle.HttpHelper;
+import com.example.mingle.MingleUser.MsgComparator;
 
 /**
  * Created by Tempnote on 2014-06-12.
@@ -31,19 +32,28 @@ public class MingleApplication extends Application {
     private MingleUser my_user;
     
     private ArrayList<String> photoPaths = new ArrayList<String>();;
+    private String uid;
+    private String sex;
+    private int num;
+    private String name;
     private String rid;
     
     private float latitude;
     private float longitude;
     private int dist_lim;
+    private int first_match_num = 10;
+    private int extra_match_num = 5;
+    private boolean can_get_more_candidate = true;
     
     private HashMap<String, MingleUser> user_map = new HashMap<String, MingleUser>();
     
     private ArrayList<String> candidates = new ArrayList<String>();
     private ArrayList<String> choices = new ArrayList<String>();
     private ArrayList<ArrayList<String>> pop_users = new ArrayList<ArrayList<String>>();
+    
+    private ArrayList<String> setting_list = new ArrayList<String>();
 
-    public void createMyUser(JSONObject userData){
+   public void createMyUser(JSONObject userData){
     	
     	try {
 	    	my_user = new MingleUser(userData.getString("UID"), 
@@ -61,6 +71,26 @@ public class MingleApplication extends Application {
     
     public MingleUser getMyUser(){
     	return my_user;
+    }
+    
+    public int getFirstMatchNum(){
+    	return first_match_num;
+    }
+    
+    public int getExtraMatchNum(){
+    	return extra_match_num;
+    }
+    
+    public boolean canGetMoreCandidate(){
+    	return can_get_more_candidate;
+    }
+    
+    public void noMoreCandidate(){
+    	can_get_more_candidate = false;
+    }
+    
+    public void moreCandidate(){
+    	can_get_more_candidate = true;
     }
     
     public void removePhotoPathAtIndex(int index) {
@@ -113,7 +143,7 @@ public class MingleApplication extends Application {
     	rid = rid_var;
     }
     
-    public boolean isValid() {
+     public boolean isValid() {
         if (photoPaths == null) {
             photoPaths = new ArrayList<String>();
         }
@@ -198,6 +228,10 @@ public class MingleApplication extends Application {
     	pop_users.clear();
     }
     
+    public ArrayList<String> getSettingList(){
+    	return setting_list;
+    }
+    
     public void handleIncomingMsg(JSONObject get_msg_obj){
 		try {
 			//MingleApplication curr_user = ((MingleApplication) this.getApplicationContext());
@@ -213,16 +247,25 @@ public class MingleApplication extends Application {
 				this.addChoice(chat_user_uid);
 				
 				new ImageDownloader(this.getApplicationContext(), new_user.getUid(), 0);
+				MingleUser currentMU = this.user_map.get(chat_user_uid);
+				dbHelper.insertNewUID(chat_user_uid, currentMU.getNum(), currentMU.getName(), 0, 0, 0);
 				
 				//download profile also
 			} else {
 				int candidate_pos = this.getCandidatePos(chat_user_uid);
 				if(candidate_pos >= 0){
 					this.switchCandidateToChoice(candidate_pos);
+					MingleUser currentMU = this.user_map.get(chat_user_uid);
+					dbHelper.insertNewUID(chat_user_uid, currentMU.getNum(), currentMU.getName(), 0, 0, 0);
 				} else {
 					int choice_pos = this.getChoicePos(chat_user_uid);
-					if(choice_pos < 0) this.addChoice(chat_user_uid);
+					if(choice_pos < 0){
+						this.addChoice(chat_user_uid);
+						MingleUser currentMU = this.user_map.get(chat_user_uid);
+						dbHelper.insertNewUID(chat_user_uid, currentMU.getNum(), currentMU.getName(), 0, 0, 0);
+					}
 				}
+				
 			}
 			
 			String msg = get_msg_obj.getString("msg");
@@ -230,6 +273,7 @@ public class MingleApplication extends Application {
     		this.getMingleUser(chat_user_uid).recvMsg(msg, msg_ts);
     		// Save to local storage
 			//((MingleApplication)currContext.getApplicationContext()).dbHelper.insertMessages(chat_user_uid, chat_user_uid, msg, msg_ts);
+    		dbHelper.insertMessages(chat_user_uid, false, msg, msg_ts);
     		
     		if(this.getMingleUser(chat_user_uid).isInChat()) {
 				Intent dispatcher = new Intent(this, ChatroomActivity.class);
@@ -248,6 +292,14 @@ public class MingleApplication extends Application {
     		String msg_recv_uid = msg_conf_obj.getString("recv_uid");
     		int msg_recv_counter = Integer.parseInt(msg_conf_obj.getString("msg_counter"));
     		String msg_ts = msg_conf_obj.getString("ts");
+    		ArrayList<Message> msg_list = user_map.get(msg_recv_uid).getMsgList();
+    		String msg="";
+    		for(Message obj : msg_list){
+    			if(obj.getCounter()==msg_recv_counter){
+    				msg=obj.getContent();
+    			}	
+    		}
+    		this.dbHelper.insertMessages(msg_recv_uid, true, msg, msg_ts);
 
     		this.getMingleUser(msg_recv_uid).updateMsgOnConf(msg_recv_counter, msg_ts);
     		
@@ -263,3 +315,4 @@ public class MingleApplication extends Application {
     }
     
 }
+

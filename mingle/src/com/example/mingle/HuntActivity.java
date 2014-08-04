@@ -2,6 +2,9 @@ package com.example.mingle;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.json.JSONArray;
@@ -45,8 +48,10 @@ import android.graphics.drawable.Drawable;
 public class HuntActivity extends FragmentActivity implements ActionBar.TabListener	 {
 
 	 public CandidateFragment candidateFragment;		//Fragment for list of chattable users
-	 public ChoiceFragment choiceFragment;	//Fragment for list of users whom current user is chatting with
+	 public ChoiceFragment choiceFragment;				//Fragment for list of users whom current user is chatting with
 	 public VoteFragment voteFragment;					//Fragment for list of top male and female users
+	 public SettingFragment settingFragment;					//Fragment for list of top male and female users
+
 	 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +69,8 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
             .setTabListener(this).setTag(R.string.tab2title));
         actionBar.addTab(actionBar.newTab().setText(R.string.tab3title)
                 .setTabListener(this).setTag(R.string.tab3title));
+        actionBar.addTab(actionBar.newTab().setText(R.string.tab4title)
+                .setTabListener(this).setTag(R.string.tab4title));
         
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         
@@ -74,6 +81,10 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
         		  new IntentFilter(HttpHelper.HANDLE_POP));
 
         ((MingleApplication) this.getApplication()).socketHelper.connectSocket();
+        ArrayList<String> choice_list = ((MingleApplication) this.getApplicationContext()).getChoiceList();
+        for(int i=0; i<choice_list.size(); i++){
+        	System.out.println("Choice #"+i+": "+choice_list.get(i));
+        }
     }
     
 	@Override
@@ -133,7 +144,6 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 		  // When the given tab is selected, show the tab contents in the
 		  // container view.
 		  if(tab.getTag().equals(R.string.tab1title)) {
-			  System.out.println("vote fragment on view");
 			  if(voteFragment == null) voteFragment = new VoteFragment();
 			  
 			  getFragmentManager().beginTransaction()
@@ -141,17 +151,20 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 		  }	else if(tab.getTag().equals(R.string.tab2title)) {
 			  if(candidateFragment == null) candidateFragment  = new CandidateFragment();
 			 
-			  System.out.println("chat fragment on view");
 			  getFragmentManager().beginTransaction()
 			        .replace(R.id.fragment_container, candidateFragment).commit();
 			  
 		  } else if(tab.getTag().equals(R.string.tab3title)) {
-			  System.out.println("ongoing chat fragment on view");
 			  if(choiceFragment == null) choiceFragment = new ChoiceFragment();
 			  
 			  getFragmentManager().beginTransaction()
 		        .replace(R.id.fragment_container, choiceFragment).commit();
-		  }	
+		  }	else if(tab.getTag().equals(R.string.tab4title)) {
+			  if(settingFragment == null) settingFragment = new SettingFragment();
+			  
+			  getFragmentManager().beginTransaction()
+		        .replace(R.id.fragment_container, settingFragment).commit();
+		  }
 	  }
 	  
 	  
@@ -196,26 +209,53 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    	   
 	    	  }
 	    };
-	  public void handleCandidateList(JSONArray list_of_users){
-		//update ChattableUser list and dispatch image downloader
-	    MingleApplication app = ((MingleApplication) this.getApplicationContext());
-	    for(int i = 0 ; i < list_of_users.length(); i++) {
-	    	try {
-	    		JSONObject shownUser = list_of_users.getJSONObject(i);
-	    	    if(app.getMingleUser(shownUser.getString("UID")) == null){
-	    	     	  String sex_var = "M";
-	    	       	  if(app.getMyUser().getSex().equals("M")) sex_var = "F";
-	    	       	  MingleUser new_user = new MingleUser(shownUser.getString("UID"), shownUser.getString("COMM"), Integer.valueOf(shownUser.getString("NUM")), Integer.valueOf(shownUser.getString("PHOTO_NUM")), (Drawable) this.getResources().getDrawable(R.drawable.ic_launcher),sex_var);
 
-	    	          app.addMingleUser(new_user);
-	    	          new ImageDownloader(this.getApplicationContext(), new_user.getUid(), 0);
-	    	    }
-	    	    app.addCandidate(shownUser.getString("UID"));
-	        } catch (JSONException e){
-	        	e.printStackTrace();
-	        }
-	    }
-	    candidateListUpdate();
+	  
+	  class CandidateTimerTask extends TimerTask {
+		  MingleApplication ma;
+		  public CandidateTimerTask(MingleApplication ma){
+			  this.ma = ma;
+		  }
+		  @Override
+		  public void run() {
+			  runOnUiThread(new Runnable(){
+				  @Override
+				  public void run() {
+					  ma.moreCandidate();
+				  }
+			  });
+		  }
+	  }
+	    
+	  public void handleCandidateList(JSONArray list_of_users){
+		MingleApplication app = ((MingleApplication) this.getApplicationContext());
+		if(list_of_users.length() == 0){
+			app.noMoreCandidate();
+			System.out.println("app candidate bool: " +app.canGetMoreCandidate());
+			CandidateTimerTask ctt = new CandidateTimerTask(app);
+			new Timer().schedule(ctt, 30000);
+		} else {
+		  
+			//update ChattableUser list and dispatch image downloader
+			for(int i = 0 ; i < list_of_users.length(); i++) {
+				try {
+					JSONObject shownUser = list_of_users.getJSONObject(i);
+					if(app.getMingleUser(shownUser.getString("UID")) == null){
+						String sex_var = "M";
+						if(app.getMyUser().getSex().equals("M")) sex_var = "F";
+						MingleUser new_user = new MingleUser(shownUser.getString("UID"), shownUser.getString("COMM"), Integer.valueOf(shownUser.getString("NUM")), Integer.valueOf(shownUser.getString("PHOTO_NUM")), (Drawable) this.getResources().getDrawable(R.drawable.ic_launcher),sex_var);
+
+						app.addMingleUser(new_user);
+						new ImageDownloader(this.getApplicationContext(), new_user.getUid(), 0);
+					}
+					app.addCandidate(shownUser.getString("UID"));
+				} catch (JSONException e){
+					e.printStackTrace();
+				}
+			}
+			candidateListUpdate();
+		}
+		if(candidateFragment != null) candidateFragment.candidateLoadMoreComplete();
 	  }
 	  
 	  public void handlePopList(JSONArray list_of_top){
@@ -260,10 +300,10 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    popListUpdate();
 	  }
 	  
-	  //Update allChatFragment and ongoingChatFragment's lists
-	  public void listsUpdate(){
+	  public void allListsUpdate(){
 		  candidateListUpdate();
 		  choiceListUpdate();
+		  popListUpdate();
 	  }
 	  
 	  public void candidateListUpdate(){
@@ -281,7 +321,8 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	  @Override
 	  public void onRestart(){
 	        super.onRestart();
-	        listsUpdate();
+	        candidateListUpdate();
+	        choiceListUpdate();
 	  }
 	 
 	  @Override

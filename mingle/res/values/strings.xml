@@ -25,8 +25,8 @@
     <string name="photo_description">Click to add Photo</string>
 	<string name="minge_start_button_string">Mingle</string>
 	<string name="erase_button_description">erase photo</string>
-	<string name="nickname_placeholder">  닉네임 입력해주세요</string>
-	<string name="launch">입력</string>
+	<string name="nickname_placeholder">  닉네임 입력하세요</string>
+	<string name="launch">launch</string>
 
 	
 </resources>

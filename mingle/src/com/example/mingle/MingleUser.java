@@ -22,7 +22,7 @@ public class MingleUser {
 	ArrayList<Message> msg_list;
     boolean inChat;
 
-    public MingleUser(String uid, String name, int num, int photo_num, Drawable default_img, String sex) {
+    public MingleUser(String uid, String name, int num, int photo_num, Drawable drawable, String sex) {
           super();
           this.uid = uid;
           this.name = name;
@@ -34,13 +34,15 @@ public class MingleUser {
           this.pics_bool = new ArrayList<Boolean>();
           this.inChat = false;
           for (int i = 0; i < photo_num; i++){
-        	  pics.add(default_img);
+        	  pics.add(drawable);
         	  pics_bool.add(false);
           }
           
     }
-    
-    public void setInChat(boolean inChat){
+
+
+
+	public void setInChat(boolean inChat){
     	this.inChat = inChat;
     }
     
@@ -120,6 +122,11 @@ public class MingleUser {
 		Timestamp timestamp = (new Timestamp(date.getTime()));
 		Message msg_obj = new Message(msg, msg_counter, timestamp.toString(), 0, true);
 		msg_list.add(msg_obj);
+		Collections.sort(msg_list, new MsgComparator());
+    }
+    
+    public void addMsgObj(Message msg){
+    	msg_list.add(msg);
 		Collections.sort(msg_list, new MsgComparator());
     }
     

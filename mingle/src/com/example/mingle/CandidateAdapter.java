@@ -18,8 +18,7 @@ import android.widget.TextView;
 
 
 public class CandidateAdapter extends ArrayAdapter {
-	public final static String PROFILE_UID = "com.example.mingle.PROFILE_UID";	//Intent data to pass on when new Profile Activity started
-	
+
     List data;
     Context context;
     int layoutResID;
@@ -71,7 +70,7 @@ public class CandidateAdapter extends ArrayAdapter {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
         		Intent profile_intent = new Intent(context, ProfileActivity.class);
-                profile_intent.putExtra(PROFILE_UID, profile_uid);
+                profile_intent.putExtra(ProfileActivity.PROFILE_UID, profile_uid);
                 context.startActivity(profile_intent);
 			}
         });
@@ -87,4 +86,3 @@ public class CandidateAdapter extends ArrayAdapter {
   	  ImageView user_pic;
     }
 }
-

@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -320,21 +321,41 @@ public class MainActivity extends Activity {
     
     
     
-    private boolean AppOnFirstTime() {
-    	DatabaseHelper db = app.dbHelper;
-    	
+private boolean AppOnFirstTime() {
+    	DatabaseHelper db = ((MingleApplication) this.getApplication()).dbHelper;
+    	MingleApplication mingleApp = (MingleApplication) this.getApplication();
     	if(db.isFirst()) {
 
     		System.out.println("Saving for the first time!!");
     		return true;
     	}
-    	String UID = app.dbHelper.getMyUID();
     	
-    	//app.getMyUser().setUid(UID);
-    	//ArrayList<String> chatters = app.dbHelper.getUIDList();
+    	mingleApp.createMyUser(mingleApp.dbHelper.getUserData());
+    	ArrayList<ContentValues> chatters = mingleApp.dbHelper.getUserList();
+    	System.out.println(chatters.size() + " is the size of chatters");
+    	for(int i=0; i<chatters.size(); i++){
+    		System.out.println(chatters.get(i));
+    		ArrayList<Message> tempmsgs = mingleApp.dbHelper.getMsgList(chatters.get(i).getAsString("UID"));
+    		String sex_var = "M";
+    		if(((MingleApplication) this.getApplicationContext()).getMyUser().getSex() == "M") sex_var = "F";
+    		
+    		MingleUser newUser = new MingleUser(chatters.get(i).getAsString("UID"),
+    				chatters.get(i).getAsString("COMM"),
+    				(int) chatters.get(i).getAsInteger("NUM"),
+    				1,
+    				mingleApp.getResources().getDrawable(R.drawable.ic_launcher),
+    				sex_var);
+    		if(mingleApp.getChoicePos(newUser.getUid())==-1) {
+    			mingleApp.addMingleUser(newUser);
+    		
+    			mingleApp.addChoice(newUser.getUid());
+    			new ImageDownloader(this.getApplicationContext(), newUser.getUid(), 0);
+	    		for(int j =0; j<tempmsgs.size(); j++){
+	    			newUser.addMsgObj(tempmsgs.get(j));
+	    		}
+	    	}
+    	}
     	
-    	
-    	//Cursor msgs = app.dbHelper.getMsgList(UID);
     	// Populate other fields with UID
     	return false;
     }
@@ -416,13 +437,12 @@ public class MainActivity extends Activity {
 
     public void joinMingle(JSONObject userData) {
   
-        	try {
+        
                 System.out.println(userData.toString());
-                ((MingleApplication) this.getApplication()).dbHelper.setMyUID(userData.getString("UID"));
+                
+                app.dbHelper.setMyInfo(userData);
                 ((MingleApplication) this.getApplication()).createMyUser(userData);
-            } catch(JSONException e){
-                e.printStackTrace();
-            }
+            
             //Start activity for Mingle Market
             Intent i = new Intent(this, HuntActivity.class);
             startActivity(i);

@@ -2,30 +2,54 @@ package com.example.mingle;
 //package com.hmkcode.android;
 
         
+import android.annotation.SuppressLint;
+import android.app.Application;
+import android.app.Instrumentation;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.net.*;
 
+import io.socket.*;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import com.example.mingle.MingleUser;        
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.String;
 
 /**
@@ -45,10 +69,18 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     
     public HttpHelper(String url, MingleApplication curApp){
     	app = curApp; 
-    	server_url = url;   
+    	server_url = url+"/"; 
     }
+    /*private String BitmapToString(Bitmap bmp) {
+    	ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    	bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+    	
+    	return new String(stream.toByteArray());
+    
+    }*/
+    
    
-    /*
+  /*
     * Sends login info along to the server, and hopefully what will be returned
     * is the unique id of the user as well as some other useful information
     */
@@ -91,8 +123,9 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	}).start();
     }
     
+    
     public void voteUser(String uid)  {
-    	String baseURL = server_url.toString();
+        String baseURL = server_url;
     	baseURL += "vote?";
     	baseURL += "uid=" + uid;
     	
@@ -144,37 +177,16 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
         }
     	return null;
     }
-    
-    public Bitmap getBitmapFromURL(String link) {
-        /*--- this method downloads an Image from the given URL, 
-         *  then decodes and returns a Bitmap object
-         ---*/
-        try {
-            URL url = new URL(link);
-            HttpURLConnection connection = (HttpURLConnection) url
-                    .openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-
-            return myBitmap;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     public void requestUserList(String uid, final String sex, float latitude, float longitude, int dist_lim, int num_of_users, ArrayList<String> uid_list) {
         
-    	String baseURL = server_url.toString();
+        String baseURL = server_url;
     	baseURL += "get_list?";
     	baseURL += "sex=" + sex + "&";
-    	baseURL += "dist_lim=" + (Integer.valueOf(dist_lim)).toString() + "&";
-    	baseURL += "loc_long=" + (Float.valueOf(longitude)).toString() + "&";
-    	baseURL += "loc_lat=" + (Float.valueOf(latitude)).toString() + "&";
-    	baseURL += "list_num=" + (Integer.valueOf(num_of_users)).toString();
+    	baseURL += "dist_lim=" + (new Integer(dist_lim)).toString() + "&";
+    	baseURL += "loc_long=" + (new Float(longitude)).toString() + "&";
+    	baseURL += "loc_lat=" + (new Float(latitude)).toString() + "&";
+    	baseURL += "list_num=" + (new Integer(num_of_users)).toString();
     	
     	//Add list of MingleUsers' uids to URL as parameter
         int uid_list_size = uid_list.size();
@@ -189,7 +201,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	//Start Thread that receives HTTP Response
     	new Thread(new Runnable() {
     		public void run() {
-    			System.out.println(cps);
+    			System.out.println("request candidate list: " +cps);
     			HttpClient client = new DefaultHttpClient();
     	        HttpGet poster = new HttpGet(cps);
     	        HttpResponse response = null;
@@ -223,7 +235,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     
  public void requestVoteList() {
         
-    	String baseURL = server_url.toString();
+     String baseURL = server_url;
     	baseURL += "get_vote";
         
     	final String getVoteURL = baseURL;
@@ -277,3 +289,4 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
         //showDialog("Downloaded " + result + " bytes");
     }
 }
+
