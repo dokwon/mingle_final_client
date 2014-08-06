@@ -1,5 +1,15 @@
 <resources>
 
+   
+    <style name="WhiteTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+    </style>
+
+    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">#FFFFFF</item>
+    </style>
+    
+    
     <!--
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -18,11 +28,15 @@
     </style>
     
     <!--  Title Bar Theme -->
-    <style name="ProfileTheme" parent="android:Theme.Light">
+    <style name="MainTheme" parent="android:Theme.Light">
         <item name="android:windowTitleSize">@dimen/title_bar_height</item>
         <item name="android:windowTitleBackgroundStyle">@style/WindowTitleBackground</item> 
 	</style>
 	
+    <style name="ProfileTheme" parent="android:Theme.Light">
+        <item name="android:windowTitleSize">@dimen/title_bar_height</item>
+        <item name="android:windowTitleBackgroundStyle">@style/WindowTitleBackground</item> 
+	</style>
    
 	
     <!--  Chat Room Theme -->
@@ -84,6 +98,14 @@
        <item name="android:maxLines">2</item>
        <item name="android:ellipsize">end</item>
    </style>
+   <style name="ChatRoomRank">
+       <item name="android:layout_alignParentTop">true</item>
+       <item name="android:layout_alignParentLeft">true</item>
+
+       <item name="android:layout_width">15dp</item>
+       <item name="android:layout_height">15dp</item>
+   </style>
+  
    
    <style name="Theme.Transparent" parent="android:Theme">
     <item name="android:windowIsTranslucent">true</item>

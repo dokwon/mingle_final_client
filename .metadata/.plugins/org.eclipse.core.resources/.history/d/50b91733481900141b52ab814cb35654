@@ -1,0 +1,305 @@
+<?xml version="1.0"?>
+
+<RelativeLayout 
+  tools:context=".MainActivity" 
+  android:paddingBottom="@dimen/activity_vertical_margin" 
+  android:paddingTop="@dimen/activity_vertical_margin" 
+  android:paddingRight="@dimen/activity_horizontal_margin" 
+  android:paddingLeft="@dimen/activity_horizontal_margin" 
+  android:layout_height="match_parent" 
+  android:layout_width="match_parent" 
+  android:background="@color/titlebackgroundcolor"
+  xmlns:tools="http://schemas.android.com/tools" 
+  xmlns:android="http://schemas.android.com/apk/res/android">
+
+		
+	<!-- 
+
+	+++++	PHOTO VIEWS   +++++
+
+							-->  
+	<ImageView 
+	    android:id="@+id/photoView1"
+	    android:layout_height="150dp" 
+	    android:layout_width="150dp" 
+	    android:layout_marginLeft="@dimen/option_margin"
+	    android:layout_marginTop="@dimen/option_margin"
+	    android:layout_alignParentStart="true" 
+	    android:layout_alignParentLeft="true" 
+	    android:theme="@style/PictureViewTheme" 
+	    android:cropToPadding="true" 
+	    android:contentDescription="@string/photo_description"
+	    android:background="@color/photobackgroundcolor"
+	    android:longClickable="false"
+	    android:clickable="true" />
+	
+	<ImageView
+	    android:id="@+id/photoView2"
+	    android:layout_width="wrap_content"
+	    android:layout_height="80dp"
+	    android:layout_alignTop="@+id/photoView1"
+	    android:layout_alignParentRight="true" 
+	    android:layout_marginRight="@dimen/option_margin"
+	    android:layout_marginLeft="@dimen/photo_margin"
+	    android:layout_toRightOf="@+id/photoView1"
+	    android:adjustViewBounds="false"
+	    android:background="@color/photobackgroundcolor"
+	    android:baselineAlignBottom="false"
+	    android:clickable="true"
+	    android:contentDescription="@string/photo_description"
+	    android:cropToPadding="true"
+	    android:longClickable="false" />
+	<ImageView 
+	    android:id="@+id/photoView3" 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="wrap_content"
+	    android:background="@color/photobackgroundcolor"
+	    android:cropToPadding="true" 
+	    android:contentDescription="@string/photo_description"
+	    android:clickable="true"
+	    android:longClickable="false" 
+	    android:layout_alignRight="@+id/photoView2" 
+	    android:layout_alignBottom="@+id/photoView1"
+	    android:layout_alignStart="@+id/photoView2" 
+	    android:layout_alignLeft="@+id/photoView2" 
+	    android:layout_below="@+id/photoView2" 
+	    android:layout_marginTop="@dimen/photo_margin"/>
+
+	
+	<!-- 
+
+	+++++	ADD BUTTONS   +++++
+
+							-->
+	<ImageView 
+	    android:layout_height="20dp" 
+	    android:layout_width="20dp" 
+	    android:layout_marginRight="5dp"
+	    android:layout_marginBottom="5dp"
+	    android:layout_alignRight="@+id/photoView1" 
+	    android:layout_alignBottom="@+id/photoView1" 
+	    android:cropToPadding="true" 
+	    android:contentDescription="@string/erase_button_description"
+	    android:background="@drawable/photo_plus"
+	    android:longClickable="true" 
+	    android:id="@+id/add1"/>
+	<ImageView 
+	    android:layout_height="20dp" 
+	    android:layout_width="20dp" 
+	    android:layout_marginRight="5dp"
+	    android:layout_marginBottom="5dp"
+	    android:layout_alignRight="@+id/photoView2" 
+	    android:layout_alignBottom="@+id/photoView2" 
+	    android:cropToPadding="true" 
+	    android:contentDescription="@string/erase_button_description"
+	    android:background="@drawable/photo_plus"
+	    android:longClickable="true" 
+	    android:id="@+id/add2"/>
+	<ImageView 
+	    android:layout_height="20dp" 
+	    android:layout_width="20dp" 
+	    android:layout_marginRight="5dp"
+	    android:layout_marginBottom="5dp"
+	    android:layout_alignRight="@+id/photoView3" 
+	    android:layout_alignBottom="@+id/photoView3" 
+	    android:cropToPadding="true" 
+	    android:contentDescription="@string/erase_button_description"
+	    android:background="@drawable/photo_plus"
+	    android:longClickable="true" 
+	    android:id="@+id/add3"/>
+	
+	<!-- 
+
+	+++++	NICKNAME  +++++
+
+							-->  
+	
+	<ImageView 
+	    android:id="@+id/nicknamelabel" 
+	    android:layout_width="@dimen/option_label_width" 
+	    android:layout_height="@dimen/option_label_height" 
+	    android:background="@drawable/nickname"
+	    android:cropToPadding="true" 
+	    android:contentDescription="@string/photo_description"
+	    android:longClickable="false"  
+	    android:layout_alignStart="@+id/photoView1" 
+	    android:layout_alignLeft="@+id/photoView1" 
+	    android:layout_below="@+id/photoView1"
+	    android:layout_marginTop="@dimen/option_margin"/>
+	
+	<EditText
+	    android:id="@+id/nicknameTextView"
+	    android:layout_alignRight="@+id/photoView3"
+	    android:layout_alignTop="@+id/nicknamelabel"
+	    android:layout_alignBottom="@+id/nicknamelabel"
+	    android:layout_toRightOf="@+id/nicknamelabel"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:background="@color/photobackgroundcolor"
+	    android:hint="@string/nickname_placeholder"
+	    android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+	<!-- 
+
+	+++++	SEX CHOICE   +++++
+
+							-->  	
+	
+	<ImageView 
+	    android:layout_width="@dimen/option_label_width" 
+	    android:layout_height="@dimen/option_label_height" 
+	    android:background="@drawable/genderchoice"
+	    android:cropToPadding="true" 
+	    android:contentDescription="@string/photo_description"
+	    android:longClickable="false"  
+	    android:layout_alignStart="@+id/photoView1" 
+	    android:layout_alignLeft="@+id/photoView1" 
+	    android:layout_below="@+id/nicknamelabel"
+	    android:id="@+id/sexlabel" 
+	    android:layout_marginTop="@dimen/option_margin"/>
+
+	<Button 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="wrap_content" 
+	    android:id="@+id/manbutton" 
+	    android:layout_centerHorizontal="true" 
+	    android:background="@drawable/genderchoice_man"
+	    android:layout_alignTop="@+id/sexlabel"
+	    android:layout_alignBottom="@+id/sexlabel"
+	    android:layout_toRightOf="@+id/sexlabel"
+	    android:layout_toLeftOf="@+id/photoView3"
+	    android:onClick="userCreateButtonPressed"/>
+	
+	<Button 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="wrap_content" 
+	    android:id="@+id/womanbutton" 
+	    android:layout_centerHorizontal="true" 
+	    android:background="@drawable/genderchoice_notwoman"
+	    android:layout_alignTop="@+id/sexlabel"
+	    android:layout_alignBottom="@+id/sexlabel"
+	    android:layout_toRightOf="@+id/manbutton"
+	    android:layout_alignRight="@+id/photoView3"
+	    android:onClick="userCreateButtonPressed"/>
+	
+	
+	<!-- 
+
+	+++++	MEMBER NUM   +++++
+
+							--> 
+	
+	<ImageView 
+	    android:layout_width="@dimen/option_label_width" 
+	    android:layout_height="@dimen/option_label_height" 
+	    android:background="@drawable/member"
+	    android:cropToPadding="true" 
+	    android:contentDescription="@string/photo_description"
+	    android:longClickable="false"  
+	    android:layout_alignStart="@+id/photoView1" 
+	    android:layout_alignLeft="@+id/photoView1" 
+	    android:layout_below="@+id/sexlabel"
+	    android:id="@+id/memberlabel" 
+	    android:layout_marginTop="@dimen/option_margin"/>
+	<ImageView
+	    android:layout_height="wrap_content" 
+	    android:layout_width="wrap_content" 
+	    android:id="@+id/member_background" 
+	    android:background="@color/photobackgroundcolor"
+	    android:layout_alignTop="@+id/memberlabel"
+	    android:layout_alignBottom="@+id/memberlabel"
+	    android:contentDescription="@string/photo_description"
+	    android:layout_toRightOf="@+id/memberlabel"
+	    android:layout_alignRight="@+id/photoView3"/>
+	<Button 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="@dimen/member_icon_width" 
+	    android:id="@+id/member_1" 
+	    android:background="@drawable/peoplenumberpicon"
+	    android:layout_alignTop="@+id/memberlabel"
+	    android:layout_alignBottom="@+id/memberlabel"
+	    android:layout_toRightOf="@+id/memberlabel"
+	    android:layout_margin="@dimen/small_margin"
+	    android:onClick="userCreateButtonPressed"/>
+	
+	<Button 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="@dimen/member_icon_width" 
+	    android:id="@+id/member_2" 
+	    android:background="@drawable/peoplenumberpicon"
+	    android:layout_alignTop="@+id/memberlabel"
+	    android:layout_alignBottom="@+id/memberlabel"
+	    android:layout_toRightOf="@+id/member_1"
+	    android:layout_margin="@dimen/small_margin"
+	    android:onClick="userCreateButtonPressed"/>
+	<Button 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="@dimen/member_icon_width" 
+	    android:id="@+id/member_3" 
+	    android:background="@drawable/peoplenumberpicon"
+	    android:layout_alignTop="@+id/memberlabel"
+	    android:layout_alignBottom="@+id/memberlabel"
+	    android:layout_toRightOf="@+id/member_2"
+	    android:layout_margin="@dimen/small_margin"
+	    android:onClick="userCreateButtonPressed"/>
+	<Button 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="@dimen/member_icon_width" 
+	    android:id="@+id/member_4" 
+	    android:background="@drawable/peoplenumberpicon"
+	    android:layout_alignTop="@+id/memberlabel"
+	    android:layout_alignBottom="@+id/memberlabel"
+	    android:layout_toRightOf="@+id/member_3"
+	    android:layout_margin="@dimen/small_margin"
+	    android:onClick="userCreateButtonPressed"/>
+	<Button 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="@dimen/member_icon_width" 
+	    android:id="@+id/member_5" 
+	    android:background="@drawable/peoplenumberpicon"
+	    android:layout_alignTop="@+id/memberlabel"
+	    android:layout_alignBottom="@+id/memberlabel"
+	    android:layout_toRightOf="@+id/member_4"
+	    android:layout_margin="@dimen/small_margin"
+	    android:onClick="userCreateButtonPressed"/>
+	<Button 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="@dimen/member_icon_width" 
+	    android:id="@+id/member_6" 
+	    android:background="@drawable/peoplenumberpicon"
+	    android:layout_alignTop="@+id/memberlabel"
+	    android:layout_alignBottom="@+id/memberlabel"
+	    android:layout_toRightOf="@+id/member_5"
+	    android:layout_margin="@dimen/small_margin"
+	    android:onClick="userCreateButtonPressed"/>
+	
+	
+	
+	
+	<Button 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="120dp" 
+	    android:id="@+id/delete_button" 
+	    android:layout_alignLeft="@+id/photoView1"
+	    android:layout_below="@+id/memberlabel"
+	    android:layout_marginTop="@dimen/option_margin"
+	    android:background="@drawable/deleteall"
+	    
+	    android:onClick="userCreateButtonPressed"/>
+	
+	<Button 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="120dp" 
+	    android:id="@+id/enter_button" 
+	    android:layout_alignParentRight="true"
+	    android:layout_alignRight="@+id/photoView3"
+	   
+	    android:layout_alignTop="@+id/delete_button"
+	    android:layout_marginLeft="@dimen/small_margin"
+	    
+	    android:background="@drawable/enter"
+	    
+	    android:onClick="userCreateButtonPressed"/>
+	
+
+</RelativeLayout>

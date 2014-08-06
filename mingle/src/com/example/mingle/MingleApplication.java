@@ -1,5 +1,6 @@
 package com.example.mingle;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,7 +13,10 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.WindowManager;
@@ -26,18 +30,16 @@ import com.example.mingle.MingleUser.MsgComparator;
 
 public class MingleApplication extends Application {
     public final static String UPDATE_MSG_LIST = "com.example.mingle.UPDATE_MSG_LIST";
+    
+    private String question_of_the_day;
 	
     public HttpHelper connectHelper;
     public Socket socketHelper;
     public DatabaseHelper dbHelper;
     
-    private MingleUser my_user;
+    private MingleUser my_user = null;
     
-    private ArrayList<String> photoPaths = new ArrayList<String>();;
-    private String uid;
-    private String sex;
-    private int num;
-    private String name;
+    private ArrayList<String> photoPaths = new ArrayList<String>();
     private String rid;
     
     private float latitude;
@@ -53,10 +55,7 @@ public class MingleApplication extends Application {
     private ArrayList<String> choices = new ArrayList<String>();
     private ArrayList<ArrayList<String>> pop_users = new ArrayList<ArrayList<String>>();
     
-    private ArrayList<String> setting_list = new ArrayList<String>();
-
    public void createMyUser(JSONObject userData){
-    	
     	try {
 	    	my_user = new MingleUser(userData.getString("UID"), 
 	    			userData.getString("COMM"), 
@@ -70,6 +69,61 @@ public class MingleApplication extends Application {
     		e.printStackTrace();
     	}
     }
+   
+   public void createDefaultMyUser(){
+   		my_user = new MingleUser("","",0,0,null,"");
+   }
+   
+   public Bitmap rotatedBitmap(Bitmap source, String photoPath) {
+		Matrix matrix = new Matrix();
+		ExifInterface ei = null;
+		try {
+			ei = new ExifInterface(photoPath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+		System.out.println(Integer.toString(orientation));
+		switch(orientation) {
+		    case ExifInterface.ORIENTATION_ROTATE_90:
+		    	matrix.postRotate(90);
+		        break;
+		    case ExifInterface.ORIENTATION_ROTATE_180:
+		    	matrix.postRotate(180);
+		        break;
+		    case ExifInterface.ORIENTATION_ROTATE_270:
+		    	matrix.postRotate(270);
+		    	break;
+		    // etc.
+		}
+		matrix.postScale(0.5f, 0.5f);
+		return Bitmap.createBitmap(source , 0, 0, source .getWidth(), source .getHeight(), matrix, true);
+	}	
+   
+   public void setQuestion(String question){
+	   question_of_the_day = question;
+   }
+   
+   public String getQuestion(String question){
+	   return question_of_the_day;
+   }
+   
+   public void setMyUser(String name, int num, String sex){
+	   getMyUser().setName(name);
+	   getMyUser().setNum(num);
+	   getMyUser().setSex(sex);
+	   
+	   getMyUser().clearPics();
+	   for(int i = 0; i < photoPaths.size(); i++){
+		   Bitmap bm;
+           BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
+           bm = rotatedBitmap(BitmapFactory.decodeFile(photoPaths.get(i), btmapOptions), photoPaths.get(i));
+           
+		   Drawable user_pic = new BitmapDrawable(getResources(),bm);
+		   getMyUser().addPic(user_pic);
+	   }
+   }
     
     public MingleUser getMyUser(){
     	return my_user;
@@ -100,6 +154,9 @@ public class MingleApplication extends Application {
     }
     
     public void addPhotoPath(String photoPath) {
+    	if(photoPaths == null){
+    		photoPaths = new ArrayList<String>();
+    	}
     	photoPaths.add(photoPath);
     }
     
@@ -150,6 +207,7 @@ public class MingleApplication extends Application {
             photoPaths = new ArrayList<String>();
         }
         
+   
         if (my_num == -1 ||  photoPaths.size() == 0 || my_name == "")
             return false;
 
@@ -230,9 +288,7 @@ public class MingleApplication extends Application {
     	pop_users.clear();
     }
     
-    public ArrayList<String> getSettingList(){
-    	return setting_list;
-    }
+
     
     public void handleIncomingMsg(JSONObject get_msg_obj){
 		try {
@@ -248,7 +304,7 @@ public class MingleApplication extends Application {
 				this.addMingleUser(new_user);
 				this.addChoice(chat_user_uid);
 				
-				new ImageDownloader(this.getApplicationContext(), new_user.getUid(), 0);
+				new ImageDownloader(this.getApplicationContext(), new_user.getUid(), -1).execute();
 				MingleUser currentMU = this.user_map.get(chat_user_uid);
 				dbHelper.insertNewUID(chat_user_uid, currentMU.getNum(), currentMU.getName(), 0, 0, 0);
 				

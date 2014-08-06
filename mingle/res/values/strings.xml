@@ -13,7 +13,7 @@
     <string name="tab1title">Top</string>
     <string name="tab2title">All</string>
     <string name="tab3title">Mingling</string>
-    <string name="tab4title">Region</string>
+    <string name="tab4title">Setting</string>
     <string name="radio_male">Male</string>
     <string name="radio_female">Female</string>
     <string name="sms"></string>
@@ -26,7 +26,7 @@
     <string name="photo_description">Click to add Photo</string>
 	<string name="minge_start_button_string">Mingle</string>
 	<string name="erase_button_description">erase photo</string>
-	<string name="nickname_placeholder">  닉네임 입력하세요</string>
+	<string name="nickname_placeholder">put nickname</string>
 	<string name="launch">launch</string>
 
 	

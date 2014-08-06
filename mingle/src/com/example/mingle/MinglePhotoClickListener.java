@@ -29,20 +29,32 @@ public class MinglePhotoClickListener implements OnClickListener{
 		optViews[index].setBackgroundResource(R.drawable.photo_plus);
 	}
 	
+	private int numOfPhotos() {
+		int counter = 0;
+		for (ImageView view : imgViews) {
+			if(view.getDrawable() != null) {
+				counter++;
+			}
+		}
+		return counter; 
+	}
+	
 	private void RemovePhoto(ImageView targetView) {
 		
 		// Remove the image from imageview
 		targetView.setImageDrawable(null);
 		// Move image up the UI queue
 		int indexOfRemoved = imgViews.indexOf(targetView);
+		
 		// Change photo option
-		UpdatePhotoAddCancelOpt(indexOfRemoved);
+		UpdatePhotoAddCancelOpt(numOfPhotos());
 		
 		for(ImageView view : imgViews) {
-			if(view.equals(targetView)) continue;
 			int indexOfView = imgViews.indexOf(view);
-			if(indexOfView > indexOfRemoved) {
+			if(!view.equals(targetView) && indexOfView > indexOfRemoved) 
+			{
 				targetView.setImageDrawable(view.getDrawable());
+				view.setImageDrawable(null);
 				targetView = view;
 			}
 		}
@@ -95,7 +107,6 @@ public class MinglePhotoClickListener implements OnClickListener{
 		    }
 		});
 		builder.show();
-
     }
 	
 	@Override

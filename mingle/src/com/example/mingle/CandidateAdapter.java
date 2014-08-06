@@ -71,6 +71,7 @@ public class CandidateAdapter extends ArrayAdapter {
 				// TODO Auto-generated method stub
         		Intent profile_intent = new Intent(context, ProfileActivity.class);
                 profile_intent.putExtra(ProfileActivity.PROFILE_UID, profile_uid);
+                profile_intent.putExtra(ProfileActivity.PROFILE_TYPE, "candidate");
                 context.startActivity(profile_intent);
 			}
         });

@@ -53,7 +53,7 @@ public class ChoiceAdapter extends ArrayAdapter {
         MingleUser choice = app.getMingleUser(choice_uid);
         holder.msg_view.setText(choice.getLastMsg());
 
-        holder.user_pic.setImageDrawable(choice.getPic(0));
+        holder.user_pic.setImageDrawable(choice.getPic(-1));
        
         return row;
 
