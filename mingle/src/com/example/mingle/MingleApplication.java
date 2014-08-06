@@ -31,7 +31,7 @@ public class MingleApplication extends Application {
     
     private MingleUser my_user;
     
-    private ArrayList<String> photoPaths = new ArrayList<String>();;
+    private ArrayList<String> photoPaths = new ArrayList<String>();
     private String uid;
     private String sex;
     private int num;
@@ -98,6 +98,9 @@ public class MingleApplication extends Application {
     }
     
     public void addPhotoPath(String photoPath) {
+    	if(photoPaths == null){
+    		photoPaths = new ArrayList<String>();
+    	}
     	photoPaths.add(photoPath);
     }
     
@@ -143,12 +146,12 @@ public class MingleApplication extends Application {
     	rid = rid_var;
     }
     
-     public boolean isValid() {
+     public boolean isValid(int my_num, String my_name) {
         if (photoPaths == null) {
             photoPaths = new ArrayList<String>();
         }
         
-        if (my_user.num == -1 ||  photoPaths.size() == 0 || my_user.name == "")
+        if (my_num == -1 ||  photoPaths.size() == 0 || my_name == "")
             return false;
 
         return true;

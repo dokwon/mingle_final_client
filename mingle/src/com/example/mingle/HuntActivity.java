@@ -19,7 +19,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.View;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -32,6 +34,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.app.ActionBar;
 import android.content.BroadcastReceiver;
@@ -44,6 +47,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 public class HuntActivity extends FragmentActivity implements ActionBar.TabListener	 {
 
@@ -51,28 +56,46 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	 public ChoiceFragment choiceFragment;				//Fragment for list of users whom current user is chatting with
 	 public VoteFragment voteFragment;					//Fragment for list of top male and female users
 	 public SettingFragment settingFragment;					//Fragment for list of top male and female users
-
+	 private ActionBar actionBar;
 	 
+	 private ArrayList<Integer> tabOnIcons; 
+	 private ArrayList<Integer> tabOffIcons;
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hunt);
-
-        // Set up the action bar to show tabs.
-        final ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        // for each of the sections in the app, add a tab to the action bar.
-        actionBar.addTab(actionBar.newTab().setText(R.string.tab1title)
-            .setTabListener(this).setTag(R.string.tab1title));
-        actionBar.addTab(actionBar.newTab().setText(R.string.tab2title)
-            .setTabListener(this).setTag(R.string.tab2title));
-        actionBar.addTab(actionBar.newTab().setText(R.string.tab3title)
-                .setTabListener(this).setTag(R.string.tab3title));
-        actionBar.addTab(actionBar.newTab().setText(R.string.tab4title)
-                .setTabListener(this).setTag(R.string.tab4title));
         
+        initializeTabIconElems();
+        
+        // Set up the action bar to show tabs.
+        actionBar = getActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(0xFFFFFFFF));
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowHomeEnabled(true);
+        View homeIcon = findViewById(android.R.id.home);
+        homeIcon.setVisibility(View.GONE);
+        //actionBar.setDisplayHomeAsUpEnabled(false);
+        LayoutInflater mInflater = LayoutInflater.from(this);
+        
+		View mCustomView = mInflater.inflate(R.layout.custom_actionbar, null);
+        
+        actionBar.setCustomView(mCustomView);
+       
+        actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        
+    
+        //ImageView view =(ImageView) findViewById(R.layout.tab_icon_wrapper);
+        
+        // for each of the sections in the app, add a tab to the action bar.
+        actionBar.addTab(actionBar.newTab().setCustomView(getViewForIcon(tabOffIcons.get(0)))
+            .setTabListener(this).setTag(R.string.tab1title));
+        actionBar.addTab(actionBar.newTab().setCustomView(getViewForIcon(tabOffIcons.get(1)))
+            .setTabListener(this).setTag(R.string.tab2title));
+        actionBar.addTab(actionBar.newTab().setCustomView(getViewForIcon(tabOffIcons.get(2)))
+                .setTabListener(this).setTag(R.string.tab3title));
+        actionBar.addTab(actionBar.newTab().setCustomView(getViewForIcon(tabOffIcons.get(3)))
+                .setTabListener(this).setTag(R.string.tab4title));
         
         LocalBroadcastManager.getInstance(this).registerReceiver(userListReceiver,
       		  new IntentFilter(HttpHelper.HANDLE_CANDIDATE));
@@ -87,6 +110,31 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
         }
     }
     
+	
+	private void initializeTabIconElems() {
+		tabOnIcons = new ArrayList<Integer>();
+        tabOnIcons.add(R.drawable.vote_tab_on);
+        tabOnIcons.add(R.drawable.chat_tab_off);
+        tabOnIcons.add(R.drawable.choice_tab_on);
+        tabOnIcons.add(R.drawable.setting);
+        tabOffIcons = new ArrayList<Integer>();
+        tabOffIcons.add(R.drawable.vote_tab_off);
+        tabOffIcons.add(R.drawable.chat_tab_off);
+        tabOffIcons.add(R.drawable.choice_tab_off);
+        tabOffIcons.add(R.drawable.setting);
+	}
+	
+	private ImageView getViewForIcon(int id) {
+		BitmapDrawable icon = (BitmapDrawable)getResources().getDrawable(id);
+        ImageView image = new ImageView(this);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(60, 60);
+        params.setMargins(5, 15, 5, 5);
+        image.setLayoutParams(params);
+        image.setImageDrawable(icon);
+        
+        return image; 
+	}
+	
 	@Override
 	public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
 		// TODO Auto-generated method stub
@@ -95,7 +143,9 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 
 	@Override
 	public void onTabUnselected(Tab arg0, FragmentTransaction arg1) {
-		// TODO Auto-generated method stub
+		 BitmapDrawable icon = (BitmapDrawable)getResources().getDrawable(tabOffIcons.get(arg0.getPosition()));
+		  ((ImageView)actionBar.getSelectedTab().getCustomView()).setImageDrawable(icon);
+		
 		
 	}
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
@@ -119,8 +169,10 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    public boolean onCreateOptionsMenu(Menu menu) {
 	        // Inflate the menu; this adds items to the action bar if it is present.
 	        super.onCreateOptionsMenu(menu);
-	        getMenuInflater().inflate(R.menu.chat, menu);
-
+	        //menu.clear();
+	        //getMenuInflater().in
+	        //menu.
+	        //getMenuInflater().inflate(R.menu.chat, menu);
 	        return true;  
 	    }
 	  
@@ -144,6 +196,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 		  // When the given tab is selected, show the tab contents in the
 		  // container view.
 		  if(tab.getTag().equals(R.string.tab1title)) {
+			  
 			  if(voteFragment == null) voteFragment = new VoteFragment();
 			  
 			  getFragmentManager().beginTransaction()
@@ -165,6 +218,8 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 			  getFragmentManager().beginTransaction()
 		        .replace(R.id.fragment_container, settingFragment).commit();
 		  }
+		  BitmapDrawable icon = (BitmapDrawable)getResources().getDrawable(tabOnIcons.get(tab.getPosition()));
+		  ((ImageView)actionBar.getSelectedTab().getCustomView()).setImageDrawable(icon);
 	  }
 	  
 	  

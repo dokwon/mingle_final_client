@@ -1,5 +1,15 @@
 <resources>
 
+   
+    <style name="WhiteTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+    </style>
+
+    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">#FFFFFF</item>
+    </style>
+    
+    
     <!--
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -84,4 +94,12 @@
        <item name="android:maxLines">2</item>
        <item name="android:ellipsize">end</item>
    </style>
+   <style name="ChatRoomRank">
+       <item name="android:layout_alignParentTop">true</item>
+       <item name="android:layout_alignParentLeft">true</item>
+
+       <item name="android:layout_width">15dp</item>
+       <item name="android:layout_height">15dp</item>
+   </style>
+  
 </resources>

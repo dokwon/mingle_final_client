@@ -40,6 +40,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 
 import com.example.mingle.HttpHelper;
 import com.google.android.gms.common.ConnectionResult;
@@ -77,6 +78,7 @@ public class MainActivity extends Activity {
 	 
 	MingleApplication app;
 	
+	private static final int COMPRESS_PHOTO_FACTOR = 8;
 	static final String TAG = "GCMDemo";
 
 	//Until here
@@ -131,7 +133,6 @@ public class MainActivity extends Activity {
 						((ImageView) findViewById(R.id.add2))
 						.setBackgroundResource(R.drawable.photo_delete);
 						break;
-						
 					default:
 						((ImageView) findViewById(R.id.add3))
 						.setBackgroundResource(R.drawable.photo_delete);
@@ -149,22 +150,20 @@ public class MainActivity extends Activity {
 	
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //InputStream stream = null;
     	ImageView imageView = FindAppropriateImageView();
     	String photoPath = "";
     	if (resultCode == RESULT_OK) {
     		if (requestCode == REQUEST_IMAGE_CAPTURE) {   // If the user requested taking a photo
-    			System.out.println(imageUri);
                 getContentResolver().notifyChange(imageUri, null);
                 photoPath = imageUri.getPath();
             }  else if (requestCode == SELECT_FILE) { // If the user wants to select a file
                 imageUri = data.getData();
                 photoPath = getPath(imageUri, MainActivity.this);
             }
-    		 ((MingleApplication) this.getApplication()).addPhotoPath(photoPath);
+    		 app.addPhotoPath(photoPath);
              Bitmap bm;
              BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-             btmapOptions.inSampleSize = 16;
+             btmapOptions.inSampleSize = COMPRESS_PHOTO_FACTOR;
              bm = rotatedBitmap(BitmapFactory.decodeFile(photoPath, btmapOptions), photoPath);
              imageView.setImageBitmap(bm);
     	}
@@ -284,7 +283,8 @@ public class MainActivity extends Activity {
         sex = "M";
         num = -1;
 
-        EditText editText = (EditText) findViewById(R.id.nicknameTextView);
+        final EditText editText = (EditText) findViewById(R.id.nicknameTextView);
+        
         editText.setOnEditorActionListener(new OnEditorActionListener() {
            
 			@Override
@@ -292,6 +292,9 @@ public class MainActivity extends Activity {
 					KeyEvent event) {
 				 boolean handled = false;
 	                if (actionId == EditorInfo.IME_ACTION_SEND) {
+	                	InputMethodManager imm = (InputMethodManager)getSystemService(
+	                		      Context.INPUT_METHOD_SERVICE);
+	                		imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
 	                	String name_str = (String) v.getText();
 	                	
 	                	
@@ -321,11 +324,10 @@ public class MainActivity extends Activity {
     
     
     
-private boolean AppOnFirstTime() {
+    private boolean AppOnFirstTime() {
     	DatabaseHelper db = ((MingleApplication) this.getApplication()).dbHelper;
     	MingleApplication mingleApp = (MingleApplication) this.getApplication();
     	if(db.isFirst()) {
-
     		System.out.println("Saving for the first time!!");
     		return true;
     	}
@@ -363,7 +365,7 @@ private boolean AppOnFirstTime() {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+  
         app = ((MingleApplication) this.getApplication());
         
         //check if custom title is supported BEFORE setting the content view!
@@ -372,9 +374,7 @@ private boolean AppOnFirstTime() {
         setContentView(R.layout.activity_main);
         
         if(customTitleSupported) getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title_bar);
-        
-        //MingleApplication mingleApp = (MingleApplication) this.getApplication();
-        
+      
         //Initialize HttpHelper that supports HTTP GET/POST requests and socket connection
         app.connectHelper = new HttpHelper(server_url, (MingleApplication)this.getApplication());
 
@@ -415,6 +415,7 @@ private boolean AppOnFirstTime() {
         } else {
         	//Start activity for Mingle Market
            Intent i = new Intent(this, HuntActivity.class);
+           //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
         }        
     }
@@ -426,7 +427,7 @@ private boolean AppOnFirstTime() {
     public void userCreateButtonPressed(View view) {
 
         //Check validity of user input and send user creation request to server
-        if (app.isValid()) {
+        if (app.isValid(num, name)) {
         	app.connectHelper.userCreateRequest(app, name, sex, num);
       } else {
     	   showInvalidUserAlert();
@@ -437,11 +438,8 @@ private boolean AppOnFirstTime() {
 
     public void joinMingle(JSONObject userData) {
   
-        
-                System.out.println(userData.toString());
-                
-                app.dbHelper.setMyInfo(userData);
-                ((MingleApplication) this.getApplication()).createMyUser(userData);
+           app.dbHelper.setMyInfo(userData);
+           app.createMyUser(userData);
             
             //Start activity for Mingle Market
             Intent i = new Intent(this, HuntActivity.class);
@@ -459,11 +457,9 @@ private boolean AppOnFirstTime() {
     	 Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
     	  File photo = new File(Environment.getExternalStorageDirectory(), 
     			  (new Timestamp(new Date().getTime())).toString() + "Pic.jpg");
-    	  System.out.println((new Timestamp(new Date().getTime())).toString());
     	  intent.putExtra(MediaStore.EXTRA_OUTPUT,
     	            Uri.fromFile(photo));
     	 imageUri = Uri.fromFile(photo);
-    	 System.out.println(imageUri.toString());
     	 startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
     }
 

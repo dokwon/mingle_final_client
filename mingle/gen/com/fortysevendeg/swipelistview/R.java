@@ -28,22 +28,22 @@ public final class R {
 		public static final int gray_2 = 0x7f07001b;
 	}
 	public static final class drawable {
-		public static final int costum_progress_bar = 0x7f020073;
+		public static final int costum_progress_bar = 0x7f020076;
 	}
 	public static final class id {
 		public static final int both = 0x7f05002c;
 		public static final int choice = 0x7f050031;
 		public static final int dismiss = 0x7f050030;
 		public static final int left = 0x7f05002e;
-		public static final int load_more_footer = 0x7f05007f;
-		public static final int load_more_progressBar = 0x7f050081;
+		public static final int load_more_footer = 0x7f050080;
+		public static final int load_more_progressBar = 0x7f050082;
 		public static final int none = 0x7f050010;
 		public static final int reveal = 0x7f05002f;
 		public static final int right = 0x7f05002d;
-		public static final int top_line = 0x7f050080;
+		public static final int top_line = 0x7f050081;
 	}
 	public static final class layout {
-		public static final int load_more_footer = 0x7f030022;
+		public static final int load_more_footer = 0x7f030023;
 	}
 	public static final class styleable {
 		public static final int[] SwipeListView = { 0x7f01008e, 0x7f01008f, 0x7f010090, 0x7f010091, 0x7f010092, 0x7f010093, 0x7f010094, 0x7f010095, 0x7f010096, 0x7f010097, 0x7f010098, 0x7f010099 };
