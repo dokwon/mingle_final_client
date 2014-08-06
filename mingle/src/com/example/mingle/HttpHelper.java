@@ -58,6 +58,7 @@ import java.lang.String;
 public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 	  public final static String USER_CONF = "com.example.mingle.USER_CONF";	//Intent data to pass on when new Chatroom Activity started
 	  public final static String JOIN_MINGLE = "com.example.mingle.JOIN_MINGLE";	//Intent data to pass on when new Chatroom Activity started
+	  public final static String UPDATE_USER = "com.example.mingle.UPDATE_USER";	//Intent data to pass on when new Chatroom Activity started
 	  public final static String USER_LIST = "com.example.mingle.USER_LIST";	//Intent data to pass on when new Chatroom Activity started
 	  public final static String HANDLE_CANDIDATE = "com.example.mingle.HANDLE_CANDIDATE";	//Intent data to pass on when new Chatroom Activity started
 	  public final static String POP_LIST = "com.example.mingle.POP_LIST";	//Intent data to pass on when new Chatroom Activity started
@@ -123,6 +124,41 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	}).start();
     }
     
+public void userUpdateRequest( final MingleApplication app,String name, String sex, int num)  {
+        
+    	
+    	String baseURL = server_url.toString();
+    	baseURL += "update_user?";
+    	baseURL += "uid=" + app.getMyUser().getUid() + "&";
+    	baseURL += "name=" + name + "&";
+    	baseURL += "sex=" + sex + "&";
+    	baseURL += "num=" + (Integer.valueOf(num).toString()) + "&";
+    	baseURL += "loc_long=" + (Float.valueOf(app.getLong())).toString() + "&";
+    	baseURL += "loc_lat=" + (Float.valueOf(app.getLat())).toString() + "&";
+    	baseURL += "photo_num=" + (Integer.valueOf(app.getPhotoPaths().size())).toString();
+    	
+    	final String cpy = baseURL;
+    	
+    	new Thread(new Runnable() {
+    		public void run() {
+    			try {
+					HttpResponse response = PhotoPoster.postPhoto(app.getPhotoPaths(), cpy);
+					//JSONObject user_info = new JSONObject(HttpResponseBody(response));
+					//System.out.println(user_info);
+					
+					//notify user for complete
+					Intent dispatcher = new Intent(app, MainActivity.class);
+					dispatcher.setAction(UPDATE_USER);
+					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
+					
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		
+    		}
+    	}).start();
+    }
     
     public void voteUser(String uid)  {
         String baseURL = server_url;
@@ -233,7 +269,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	}).start();
     }
     
- public void requestVoteList() {
+    public void requestVoteList() {
         
      String baseURL = server_url;
     	baseURL += "get_vote";
@@ -271,8 +307,6 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     		}
     	}).start();
     }
-    
-    
 
     //@Override
     protected Integer doInBackground(String... urls) {

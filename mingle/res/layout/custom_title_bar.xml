@@ -19,4 +19,14 @@
 	    android:layout_alignParentTop="true"/>
 	
 
+	<Button 
+	    android:layout_height="18dp" 
+	    android:layout_width="70dp" 
+	    android:id="@+id/preview_button" 
+	    android:background="@drawable/preview"
+	    android:layout_margin="15dp"
+	    android:layout_alignParentBottom="true"
+	    android:layout_alignParentRight="true"
+	    android:onClick="showPreview"/>
+
 </RelativeLayout>

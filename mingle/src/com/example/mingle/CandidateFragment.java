@@ -34,6 +34,7 @@ public class CandidateFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
+	  System.out.println("cand frag create");
 	  parent = getActivity();
 
 	  
@@ -133,6 +134,7 @@ public class CandidateFragment extends Fragment {
       
       //Load more matches if first time or has only a few
       int match_num = candidate_list.size();
+      System.out.println("is first time:" + is_first_time + " match_num_tot:"+match_num);
       if(is_first_time || match_num <  ((MingleApplication)parent.getApplication()).getFirstMatchNum()) {
     	  is_first_time = false;
     	  loadNewMatches( ((MingleApplication)parent.getApplication()).getFirstMatchNum());
@@ -168,6 +170,5 @@ public class CandidateFragment extends Fragment {
       float px = dp * (metrics.densityDpi / 160f);
       return (int) px;
   }
-  
-  
+
 }

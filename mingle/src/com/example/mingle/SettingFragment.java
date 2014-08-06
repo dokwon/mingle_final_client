@@ -1,5 +1,7 @@
 package com.example.mingle;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
@@ -7,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView;
@@ -25,10 +28,13 @@ public class SettingFragment extends Fragment{
 		parent = getActivity();
 		
 		View rootView = inflater.inflate(R.layout.setting_fragment, container, false);
-		
 		setting_list_view = (ListView)(rootView.findViewById(R.id.setting_list));
 
-	    setting_adapter = new SettingAdapter(parent, R.layout.setting_row, ((MingleApplication) parent.getApplication()).getSettingList(), (MingleApplication) parent.getApplicationContext());
+		ArrayList<String> setting_list = new ArrayList<String>();
+		setting_list.add("Profile");
+		setting_list.add("Delete");
+		
+	    setting_adapter = new SettingAdapter(parent, R.layout.setting_row, setting_list, (MingleApplication) parent.getApplicationContext());
 	    setting_adapter.notifyDataSetChanged();
 	       
 	    final Activity curActivity = parent;
@@ -37,9 +43,11 @@ public class SettingFragment extends Fragment{
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 	    		// TODO Auto-generated method stub
 	            if(position == 0){
-	            	Intent chat_intent = new Intent(curActivity,ProfileActivity.class);
-		            chat_intent.putExtra(ProfileActivity.PROFILE_UID, ((MingleApplication) curActivity.getApplication()).getMyUser().getUid());
-		            curActivity.startActivity(chat_intent);
+	            	final String profile_uid = ((MingleApplication) curActivity.getApplication()).getMyUser().getUid();
+	            	Intent profile_intent = new Intent(curActivity, ProfileActivity.class);
+	                profile_intent.putExtra(ProfileActivity.PROFILE_UID, profile_uid);
+	                profile_intent.putExtra(ProfileActivity.PROFILE_TYPE, "setting");
+	                curActivity.startActivity(profile_intent);
 	            }
 	        	
 	        }
