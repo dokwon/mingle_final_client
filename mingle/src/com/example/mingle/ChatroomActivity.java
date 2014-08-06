@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -35,7 +36,10 @@ public class ChatroomActivity extends ListActivity {
 	EditText txtSMS;
 	//LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
     ArrayList<String> listItems=new ArrayList<String>();
+    
     public final static String USER_UID = "com.example.mingle.USER_SEL";	//Intent data to pass on when new Chatroom Activity started
+    public final static String FROM_GCM = "com.example.mingle.FROM_GCM";	//Intent data to pass on when Chatroom Activity is started by GCM notification
+
     
     //DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
     MsgAdapter adapter;
@@ -48,24 +52,28 @@ public class ChatroomActivity extends ListActivity {
 	
     @Override
     protected void onNewIntent(Intent intent){
-    	if(intent.getExtras().getString(USER_UID) != null) {
-    		setIntent(intent);
-    	}
+    	Log.i("sktag", "catch intent -> " + intent.getExtras().getString("USER_ID"));
+    	setIntent(intent);
     }
     
     @Override
     protected void onResume(){
         super.onResume();
         
+        //Clear the notification from gcm.
+        ((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancelAll();
+        
+        MingleApplication app = ((MingleApplication) this.getApplication());
+        
         Intent intent = getIntent();
         recv_uid = intent.getExtras().getString(USER_UID);
         
         //Set basic information required for this chat room
-        send_uid = ((MingleApplication) this.getApplication()).getMyUser().getUid();
+        send_uid = app.getMyUser().getUid();
 		//for testing purpose, set myself as receiver
 		//recv_uid = send_uid;
         
-        recv_user = ((MingleApplication) this.getApplication()).getMingleUser(recv_uid);
+        recv_user = app.getMingleUser(recv_uid);
         recv_user.setInChat(true);
 		
         //Should be fixed here!!!
@@ -98,7 +106,10 @@ public class ChatroomActivity extends ListActivity {
     }
     
     public void sendSMS(View v){
-    	
+        MingleApplication app = ((MingleApplication) this.getApplication());
+        
+        app.socketHelper.connectSocket();
+
     	txtSMS=(EditText) findViewById(R.id.txt_inputText);
     	
 		// TODO Auto-generated method stub
@@ -173,9 +184,17 @@ public class ChatroomActivity extends ListActivity {
     };
     
     @Override
+    public void onBackPressed(){
+    	if(this.isTaskRoot()){
+    		Intent huntIntent = new Intent(this, HuntActivity.class);
+    		startActivity(huntIntent);
+    	}
+    	super.onBackPressed();
+    }
+    
+    @Override
     public void onDestroy(){    	
     	LocalBroadcastManager.getInstance(this).unregisterReceiver(refListReceiver);
-
     	super.onDestroy();
     }
 }

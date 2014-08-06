@@ -319,7 +319,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	  }
 	  
 	  @Override
-	  public void onRestart(){
+	  public void onResume(){
 	        super.onRestart();
 	        candidateListUpdate();
 	        choiceListUpdate();

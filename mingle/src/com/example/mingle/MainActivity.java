@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.Window;
+import android.view.WindowManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -75,6 +77,8 @@ public class MainActivity extends Activity {
 	private Context context;
 	private String regid;
 	 
+	private ProgressDialog proDialog;
+	
 	MingleApplication app;
 	
 	static final String TAG = "GCMDemo";
@@ -284,6 +288,7 @@ public class MainActivity extends Activity {
         sex = "M";
         num = -1;
 
+        /*
         EditText editText = (EditText) findViewById(R.id.nicknameTextView);
         editText.setOnEditorActionListener(new OnEditorActionListener() {
            
@@ -291,7 +296,7 @@ public class MainActivity extends Activity {
 			public boolean onEditorAction(TextView v, int actionId,
 					KeyEvent event) {
 				 boolean handled = false;
-	                if (actionId == EditorInfo.IME_ACTION_SEND) {
+	                if (actionId == EditorInfo.IME_ACTION_DONE) {
 	                	String name_str = (String) v.getText();
 	                	
 	                	
@@ -302,7 +307,7 @@ public class MainActivity extends Activity {
 	                }
 	                return handled;
 			}
-        });
+        });*/
         
         ImageView photoView1 = (ImageView) findViewById(R.id.photoView1);
         ImageView photoView2 = (ImageView) findViewById(R.id.photoView2);
@@ -321,7 +326,7 @@ public class MainActivity extends Activity {
     
     
     
-private boolean AppOnFirstTime() {
+    private boolean AppOnFirstTime() {
     	DatabaseHelper db = ((MingleApplication) this.getApplication()).dbHelper;
     	MingleApplication mingleApp = (MingleApplication) this.getApplication();
     	if(db.isFirst()) {
@@ -414,8 +419,9 @@ private boolean AppOnFirstTime() {
         	initializeUIViews();
         } else {
         	//Start activity for Mingle Market
-           Intent i = new Intent(this, HuntActivity.class);
+        	Intent i = new Intent(this, HuntActivity.class);
             startActivity(i);
+            finish();
         }        
     }
 
@@ -425,8 +431,15 @@ private boolean AppOnFirstTime() {
     //On user creation request, get user's info and send request to server
     public void userCreateButtonPressed(View view) {
 
+    	name = ((EditText)findViewById(R.id.nicknameTextView)).getText().toString();
         //Check validity of user input and send user creation request to server
-        if (app.isValid()) {
+        if (app.isValid(num, name)) {
+        	proDialog = new ProgressDialog(this);
+            proDialog.setIndeterminate(true);
+            proDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            proDialog.getWindow().getAttributes().dimAmount = (float)0.8;
+            proDialog.show(); 
+            
         	app.connectHelper.userCreateRequest(app, name, sex, num);
       } else {
     	   showInvalidUserAlert();
@@ -438,14 +451,17 @@ private boolean AppOnFirstTime() {
     public void joinMingle(JSONObject userData) {
   
         
-                System.out.println(userData.toString());
+            System.out.println(userData.toString());
                 
-                app.dbHelper.setMyInfo(userData);
-                ((MingleApplication) this.getApplication()).createMyUser(userData);
+            app.dbHelper.setMyInfo(userData);
+            ((MingleApplication) this.getApplication()).createMyUser(userData);
+            
+        	proDialog.dismiss();
             
             //Start activity for Mingle Market
             Intent i = new Intent(this, HuntActivity.class);
             startActivity(i);
+            finish();
     }
 
     
@@ -547,10 +563,9 @@ private boolean AppOnFirstTime() {
 	  }
 	  
 	  private void registerForNewUser() {
-		  new AsyncTask<Void, Void, String>() {	  
+		  new AsyncTask<MingleApplication, Void, String>() {	  
 			  @Override
-			  protected String doInBackground(Void... params) {
-				  String msg;
+			  protected String doInBackground(MingleApplication... params) {
 				  try {
 					  if (gcm == null) {
 						  gcm = GoogleCloudMessaging.getInstance(context);
@@ -559,11 +574,13 @@ private boolean AppOnFirstTime() {
 					  regid = gcm.register(SENDER_ID);
 					  // Persist the regID - no need to register again.
 					  storeRegistrationId(context, regid);
+					  params[0].setRid(regid);
 				  } catch (IOException ex) {
 					  ex.printStackTrace();
 					  // If there is an error, don't just keep trying to register.
 					  // Require the user to click a button again, or perform
 					  // exponential back-off.
+					  return "";
 				  }
 				  return "Registration done";
 			  }
@@ -572,7 +589,7 @@ private boolean AppOnFirstTime() {
 			  protected void onPostExecute(String msg) {
 				  System.out.println(msg);
 			  }
-		  }.execute();
+		  }.execute(((MingleApplication)this.getApplication()));
 	  }
 
 	  private void storeRegistrationId(Context context, String regId) {

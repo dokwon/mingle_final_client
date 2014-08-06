@@ -1800,21 +1800,22 @@ containing a value of this type.
         public static final int activity_hunt=0x7f030019;
         public static final int activity_main=0x7f03001a;
         public static final int activity_profile=0x7f03001b;
-        public static final int candidate_fragment=0x7f03001c;
-        public static final int candidate_row=0x7f03001d;
-        public static final int chatroom_row=0x7f03001e;
-        public static final int choice_fragment=0x7f03001f;
-        public static final int custom_title_bar=0x7f030020;
-        public static final int fragment_main=0x7f030021;
-        public static final int load_more_footer=0x7f030022;
-        public static final int msg_row=0x7f030023;
-        public static final int my_msg_row=0x7f030024;
-        public static final int setting_fragment=0x7f030025;
-        public static final int setting_row=0x7f030026;
-        public static final int single_photo=0x7f030027;
-        public static final int support_simple_spinner_dropdown_item=0x7f030028;
-        public static final int vote_fragment=0x7f030029;
-        public static final int vote_row=0x7f03002a;
+        public static final int activity_transparent=0x7f03001c;
+        public static final int candidate_fragment=0x7f03001d;
+        public static final int candidate_row=0x7f03001e;
+        public static final int chatroom_row=0x7f03001f;
+        public static final int choice_fragment=0x7f030020;
+        public static final int custom_title_bar=0x7f030021;
+        public static final int fragment_main=0x7f030022;
+        public static final int load_more_footer=0x7f030023;
+        public static final int msg_row=0x7f030024;
+        public static final int my_msg_row=0x7f030025;
+        public static final int setting_fragment=0x7f030026;
+        public static final int setting_row=0x7f030027;
+        public static final int single_photo=0x7f030028;
+        public static final int support_simple_spinner_dropdown_item=0x7f030029;
+        public static final int vote_fragment=0x7f03002a;
+        public static final int vote_row=0x7f03002b;
     }
     public static final class menu {
         public static final int chat=0x7f0c0000;
@@ -1961,12 +1962,12 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f0a002b;
-        public static final int erase_button_description=0x7f0a0044;
+        public static final int erase_button_description=0x7f0a0045;
         public static final int hello_world=0x7f0a0032;
-        public static final int launch=0x7f0a0046;
-        public static final int minge_start_button_string=0x7f0a0043;
-        public static final int nickname_placeholder=0x7f0a0045;
-        public static final int photo_description=0x7f0a0042;
+        public static final int launch=0x7f0a0047;
+        public static final int minge_start_button_string=0x7f0a0044;
+        public static final int nickname_placeholder=0x7f0a0046;
+        public static final int photo_description=0x7f0a0043;
         public static final int radio_female=0x7f0a003b;
         public static final int radio_male=0x7f0a003a;
         public static final int send=0x7f0a003d;
@@ -1982,6 +1983,7 @@ containing a value of this type.
         public static final int title_activity_profile=0x7f0a0040;
         public static final int title_activity_region_chatroom=0x7f0a0041;
         public static final int title_activity_setting=0x7f0a003e;
+        public static final int title_activity_transparent=0x7f0a0042;
         public static final int title_section1=0x7f0a002e;
         public static final int title_section2=0x7f0a002f;
         public static final int title_section3=0x7f0a0030;
@@ -2141,6 +2143,7 @@ containing a value of this type.
         /**  Base platform-dependent theme providing a light-themed activity. 
          */
         public static final int Theme_Base_Light=0x7f0b007f;
+        public static final int Theme_Transparent=0x7f0b009b;
         public static final int UserListImage=0x7f0b0098;
         public static final int WalletFragmentDefaultButtonTextAppearance=0x7f0b008d;
         public static final int WalletFragmentDefaultDetailsHeaderTextAppearance=0x7f0b008c;

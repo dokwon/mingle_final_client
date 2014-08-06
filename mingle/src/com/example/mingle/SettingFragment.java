@@ -1,7 +1,9 @@
 package com.example.mingle;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,7 +19,6 @@ public class SettingFragment extends Fragment{
 
 	public ListView setting_list_view;
 	private SettingAdapter setting_adapter;
-	
 	private Activity parent; 
 	
 	@Override
@@ -41,9 +42,7 @@ public class SettingFragment extends Fragment{
 		            chat_intent.putExtra(ProfileActivity.PROFILE_UID, ((MingleApplication) curActivity.getApplication()).getMyUser().getUid());
 		            curActivity.startActivity(chat_intent);
 	            }
-	        	
-	        }
-
+	    	}
 	    });
 	    // Set the ArrayAdapter as the ListView's adapter.  
 	    setting_list_view.setAdapter(setting_adapter);  

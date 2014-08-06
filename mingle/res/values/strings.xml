@@ -22,6 +22,7 @@
     <string name="title_activity_photo_view">PhotoViewActivity</string>
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_region_chatroom">RegionChatroomActivity</string>
+    <string name="title_activity_transparent">TransparentActivity</string>
     <string name="photo_description">Click to add Photo</string>
 	<string name="minge_start_button_string">Mingle</string>
 	<string name="erase_button_description">erase photo</string>

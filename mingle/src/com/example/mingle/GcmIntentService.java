@@ -1,5 +1,7 @@
 package com.example.mingle;
 
+import java.util.Set;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,6 +14,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -25,6 +28,7 @@ public class GcmIntentService extends IntentService {
     private NotificationManager mNotificationManager;
     NotificationCompat.Builder builder;
     static final String TAG = "GCM Demo";
+	public final static String DATA_BUNDLE = "com.example.mingle.DATA_BUNDLE";
 
 
     public GcmIntentService() {
@@ -53,9 +57,31 @@ public class GcmIntentService extends IntentService {
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 Log.i(TAG, "Received: " + extras.toString());
                 String send_uid = extras.getString("send_uid");
-                MingleApplication curr_user = ((MingleApplication)this.getApplicationContext());
-                if(!curr_user.getMingleUser(send_uid).isInChat())
+                MingleApplication app = ((MingleApplication)this.getApplicationContext());
+                
+                //If socket is not connected, then update chat list with GCM msg, 
+                //and reconnect the socket for further use.
+                if(!app.socketHelper.isSocketConnected() ) {
+                	JSONObject msg_obj = new JSONObject();
+                	Set<String> keys = extras.keySet();
+                	for (String key : keys) {
+                	    try {
+                	    	if(key != "android.support.content.wakelockid")
+                	    		msg_obj.put(key, extras.getString(key));
+                	    } catch(JSONException e) {
+                	    	e.printStackTrace();
+                	    }
+                	}
+                	
+                	app.handleIncomingMsg(msg_obj);
+                	app.socketHelper.connectSocket();
+                }
+ 
+                //If the user is looking at the chat room now, we need not show notification.
+                if(!app.getMingleUser(send_uid).isInChat()) {
+                	openPopupActivity(extras);
                 	sendNotification(extras);
+                }
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
@@ -67,10 +93,12 @@ public class GcmIntentService extends IntentService {
     // a GCM message.
     private void sendNotification(Bundle data) {
         mNotificationManager = (NotificationManager)this.getSystemService(NOTIFICATION_SERVICE);
-   
-		Intent chat_intent = new Intent(this, ChatroomActivity.class);
- 		chat_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		chat_intent.putExtra(ChatroomActivity.USER_UID, data.getString("send_uid"));		
+       
+		Intent chat_intent = new Intent((MingleApplication)this.getApplicationContext(), ChatroomActivity.class);
+ 		chat_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		chat_intent.putExtra(ChatroomActivity.USER_UID, data.getString("send_uid"));
+		chat_intent.putExtra(ChatroomActivity.FROM_GCM, true);
+		
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, chat_intent, PendingIntent.FLAG_UPDATE_CURRENT);
         CharSequence tickerTxt = (CharSequence)("Mingle: " + data.getString("msg"));
         
@@ -85,5 +113,13 @@ public class GcmIntentService extends IntentService {
 		builder.setContentIntent(contentIntent);
 		NOTIFICATION_ID = (NOTIFICATION_ID + 1) % 10;
 		mNotificationManager.notify(NOTIFICATION_ID, builder.build());
+    }
+    
+    private void openPopupActivity(Bundle data){
+    	Intent dispatcher = new Intent(this, TransparentActivity.class);
+    	dispatcher.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | 
+    							Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    	dispatcher.putExtra(DATA_BUNDLE, data);				
+		startActivity(dispatcher);
     }
 }

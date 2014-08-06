@@ -83,7 +83,7 @@ public class CandidateFragment extends Fragment {
               ((HuntActivity)parent).choiceListUpdate();
 
               Intent chat_intent = new Intent(curActivity, ChatroomActivity.class);
-       		  chat_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+       		  chat_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
               chat_intent.putExtra(ChatroomActivity.USER_UID, currentUser.getMingleUser(user_uid).getUid());
               curActivity.startActivity(chat_intent);
               

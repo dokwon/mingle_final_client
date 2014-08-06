@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import java.net.*;
 
@@ -26,27 +27,11 @@ public class Socket extends AsyncTask<String, MingleApplication, Integer>  {
 
     private SocketIO socket = null;
     private MingleApplication app; 
+    private String url;
 	
     public Socket(String url, MingleApplication currApp){
-    	//Set up default settings for socket communication with server
-        try {
-           //SocketIO.setDefaultSSLSocketFactory(SSLContext.getDefault());
-            socket = new SocketIO(url);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } /*catch (NoSuchAlgorithmException f) {
-            f.printStackTrace();
-        }*/
-
-        if (socket == null) {
-            System.out.println("Socket is not availiable");
-            return;
-        }
-
-        socket.addHeader("Cookie", "cookie");
-        app=currApp;
-
-        
+    	this.url = url;
+        this.app=currApp;   
     }
     
     /*
@@ -54,75 +39,99 @@ public class Socket extends AsyncTask<String, MingleApplication, Integer>  {
      * Contains actions required by client on different events
      */
     public void connectSocket(){
-    	IOCallback iocb  = new IOCallback() {
+    	if(isSocketConnected()) return;
+    	
+    	else {
+    		if(socket != null) socket.disconnect();
+    		
+    		//Set up default settings for socket communication with server
+    		try {
+    			socket = new SocketIO(url);
+    		} catch (MalformedURLException e) {
+    			e.printStackTrace();
+    		}
+        
+    		if (socket == null) {
+    			System.out.println("Socket is not availiable");
+    			return;
+    		}
 
-            @Override
-            public void onMessage(String data, IOAcknowledge ack) {
-                System.out.println("Server said: " + data);
-            }
+    		socket.addHeader("Cookie", "cookie");
+    	
+    		IOCallback iocb  = new IOCallback() {
+    			
+    			@Override
+    			public void onMessage(String data, IOAcknowledge ack) {
+    				System.out.println("Server said: " + data);
+    			}
 
-            @Override
-            public void onError(SocketIOException socketIOException) {
-                System.out.println("an Error occured");
+    			@Override
+    			public void onError(SocketIOException socketIOException) {
+    				System.out.println("an Error occured");
+    				socketIOException.printStackTrace();
+    			}
 
-                socketIOException.printStackTrace();
-            }
+    			@Override
+    			public void onDisconnect() {
+    				Log.i("socket", "Connection terminated.");
+    				socket = null;
+    			}
 
-            @Override
-            public void onDisconnect() {
-                System.out.println("Connection terminated.");
-            }
+    			@Override
+    			public void onConnect() {
+    				Log.i("socket", "Connection established");
+    			}
 
-            @Override
-            public void onConnect() {
-                System.out.println("Connection established");        
-            }
-
-            @Override
-            public void on(String event, IOAcknowledge ack, Object... args) {
-                System.out.println("Server triggered event '" + event + "'");
+    			@Override
+    			public void on(String event, IOAcknowledge ack, Object... args) {
+    				System.out.println("Server triggered event '" + event + "'");
                 
-                //When server asks for UID of current user, return it with RID
-                if(event.equals("uid_query")){
-                	System.out.println("uid_query_recved");
-                	String uid = app.getMyUser().getUid();
-                	JSONObject uid_obj = new JSONObject();
-                	try {
-						uid_obj.put("uid", uid);
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-                	socket.emit("uid_query_result", uid_obj);
+    				//When server asks for UID of current user, return it with RID
+    				if(event.equals("uid_query")){
+    					System.out.println("uid_query_recved");
+    					String uid = app.getMyUser().getUid();
+    					JSONObject uid_obj = new JSONObject();
+    					try {
+    						uid_obj.put("uid", uid);
+    					} catch (JSONException e) {
+    						// TODO Auto-generated catch block
+    						e.printStackTrace();
+    					}
+    					socket.emit("uid_query_result", uid_obj);
                 
-                //When server sends confirmation that the message sent by user is received,
-                //update ChatRoom's message list
-                } else if(event.equals("msg_from_user_conf")){
-                	JSONObject msg_conf_obj = (JSONObject) args[0];
+    					//When server sends confirmation that the message sent by user is received,
+    					//update ChatRoom's message list
+    				} else if(event.equals("msg_from_user_conf")){
+    					JSONObject msg_conf_obj = (JSONObject) args[0];
                 	
-                	app.handleMsgConf(msg_conf_obj);
+    					app.handleMsgConf(msg_conf_obj);
                     
-                //When server delivers a message from other user, update ChatRoom's message list
-                //and send confirmation to server so that it knows client received the message
-                } else if(event.equals("msg_to_user")){
-                	JSONObject get_msg_obj = (JSONObject) args[0];
+    					//When server delivers a message from other user, update ChatRoom's message list
+    					//and send confirmation to server so that it knows client received the message
+    				} else if(event.equals("msg_to_user")){
+    					JSONObject get_msg_obj = (JSONObject) args[0];
                 	
-                	app.handleIncomingMsg(get_msg_obj);
-                	socket.emit("msg_to_user_conf");
-                }
-            }
+    					app.handleIncomingMsg(get_msg_obj);
+    					socket.emit("msg_to_user_conf");
+    				}
+    			}
 
-            @Override
-            public void onMessage(JSONObject json, IOAcknowledge ack) {
-                try {
-                    System.out.println("Server said:" + json.toString(2));
+    			@Override
+    			public void onMessage(JSONObject json, IOAcknowledge ack) {
+    				try {
+    					System.out.println("Server said:" + json.toString(2));
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        socket.connect(iocb);
+    				} catch (JSONException e) {
+    					e.printStackTrace();
+    				}
+    			}
+    		};
+    		socket.connect(iocb);
+    	}
+    }
+    
+    public boolean isSocketConnected(){
+    	return (socket != null && socket.isConnected());
     }
     
     public Bitmap getBitmapFromURL(String link) {

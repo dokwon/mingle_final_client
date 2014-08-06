@@ -8,12 +8,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.example.mingle.HttpHelper;
 import com.example.mingle.MingleUser.MsgComparator;
@@ -143,12 +145,12 @@ public class MingleApplication extends Application {
     	rid = rid_var;
     }
     
-     public boolean isValid() {
+     public boolean isValid(int my_num, String my_name) {
         if (photoPaths == null) {
             photoPaths = new ArrayList<String>();
         }
         
-        if (my_user.num == -1 ||  photoPaths.size() == 0 || my_user.name == "")
+        if (my_num == -1 ||  photoPaths.size() == 0 || my_name == "")
             return false;
 
         return true;
@@ -313,6 +315,5 @@ public class MingleApplication extends Application {
     		e.printStackTrace();
     	} 
     }
-    
 }
 

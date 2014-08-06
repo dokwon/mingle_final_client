@@ -86,6 +86,12 @@
             android:label="@string/title_activity_profile"
             android:theme="@style/ProfileTheme" >
         </activity>
+        <activity
+            android:name=".TransparentActivity"
+            android:label="@string/title_activity_transparent"
+            android:theme="@style/Theme.Transparent"
+            android:taskAffinity="com.example.mingle.popup" >
+        </activity>
     </application>
 
 </manifest>

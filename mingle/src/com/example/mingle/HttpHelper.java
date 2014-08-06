@@ -85,9 +85,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     * is the unique id of the user as well as some other useful information
     */
     public void userCreateRequest( final MingleApplication app,String name, String sex, int num)  {
-        
-    	
-    	String baseURL = server_url.toString();
+      	String baseURL = server_url.toString();
     	baseURL += "create_user?";
     	baseURL += "name=" + name + "&";
     	baseURL += "sex=" + sex + "&";
@@ -111,8 +109,6 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 					dispatcher.putExtra(USER_CONF,user_info.toString());
 					dispatcher.setAction(JOIN_MINGLE);
 					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
-					Log.i("receiver", "dwem?");
-					//app.startService(dispatcher);
 					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -122,8 +118,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     		}
     	}).start();
     }
-    
-    
+       
     public void voteUser(String uid)  {
         String baseURL = server_url;
     	baseURL += "vote?";
@@ -177,7 +172,28 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
         }
     	return null;
     }
+    
+    public Bitmap getBitmapFromURL(String link) {
+        /*--- this method downloads an Image from the given URL, 
+         *  then decodes and returns a Bitmap object
+         ---*/
+        try {
+            URL url = new URL(link);
+            HttpURLConnection connection = (HttpURLConnection) url
+                    .openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
 
+            return myBitmap;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
     public void requestUserList(String uid, final String sex, float latitude, float longitude, int dist_lim, int num_of_users, ArrayList<String> uid_list) {
         
         String baseURL = server_url;
@@ -235,7 +251,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     
  public void requestVoteList() {
         
-     String baseURL = server_url;
+	 	String baseURL = server_url;
     	baseURL += "get_vote";
         
     	final String getVoteURL = baseURL;
@@ -272,7 +288,33 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	}).start();
     }
     
-    
+    public void requestDeactivation(String uid){
+    	String baseURL = server_url;
+    	baseURL += "deactivate?";
+    	baseURL += "uid=" + uid;
+    	
+    	final String deactURL = baseURL;
+    	
+    	//Start Thread that receives HTTP Response
+    	new Thread(new Runnable() {
+    		public void run() {
+    			HttpClient client = new DefaultHttpClient();
+    	        HttpGet poster = new HttpGet(deactURL);
+    	        HttpResponse response = null;
+				try {
+					response = client.execute(poster);
+					System.out.println(response.toString());
+				} catch (ClientProtocolException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		}
+    	}).start();
+    	
+    }
 
     //@Override
     protected Integer doInBackground(String... urls) {
