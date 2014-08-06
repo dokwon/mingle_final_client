@@ -15,6 +15,8 @@ public class MingleUser {
 	String uid;
 	String name;
 	int num;
+	Drawable thumb;
+	Boolean thumb_bool;
 	ArrayList<Drawable> pics;
 	ArrayList<Boolean> pics_bool;
 	String sex;
@@ -30,6 +32,8 @@ public class MingleUser {
           this.sex = sex;
           this.voted = false;
           this.msg_list = new ArrayList<Message>();
+          this.thumb = drawable;
+          this.thumb_bool = false;
           this.pics = new ArrayList<Drawable>();
           this.pics_bool = new ArrayList<Boolean>();
           this.inChat = false;
@@ -99,16 +103,33 @@ public class MingleUser {
     }
     
     public Drawable getPic(int index) {
-    	  if(pics.size() <= index || index < 0) return null;
+    	  if(pics.size() <= index || index < -1) return null;
+    	  if(index == -1) return thumb;
           return pics.get(index);
     }
     
     public void setPic(int index, Drawable pic){
-    	pics.set(index, pic);
-    	pics_bool.set(index, true);
+    	if(index == -1) {
+    		thumb = pic;
+    		thumb_bool = true;
+    	} else {
+    		pics.set(index, pic);
+    		pics_bool.set(index, true);
+    	}
+    }
+    
+    public void addPic(Drawable pic){
+    	pics.add(pic);
+    	pics_bool.add(true);
+    }
+    
+    public void clearPics(){
+    	pics.clear();
+    	pics_bool.clear();
     }
     
     public boolean isPicAvail(int index){
+    	if(index == -1) return thumb_bool;
     	return pics_bool.get(index);
     }
     

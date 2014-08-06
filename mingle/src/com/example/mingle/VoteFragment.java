@@ -52,20 +52,7 @@ public class VoteFragment extends Fragment{
 	    top_adapter = new VoteAdapter(parent, R.layout.vote_row, ((MingleApplication) parent.getApplication()).getPopList(), (MingleApplication) parent.getApplicationContext());
 	    top_adapter.notifyDataSetChanged();
 	       
-	    /*final Activity curActivity = parent;
-	    currentlychattinglistview.setOnItemClickListener(new OnItemClickListener() {
-	    	@Override
-	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-	    		// TODO Auto-generated method stub
-	            ChattableUser cu = chatting_user_list.get(position);
-	        			
-	            Intent chat_intent = new Intent(curActivity, ChatroomActivity.class);
-	            chat_intent.putExtra(USER_UID, cu.getUid());
-	            curActivity.startActivity(chat_intent);
-	            System.out.println(parent + "   " + v + "   " + position + "   " + id);
-	        }
-
-	    });*/
+	    
 	    // Set the ArrayAdapter as the ListView's adapter.  
 	    top_list_view.setAdapter(top_adapter);  
 	        

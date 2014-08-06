@@ -18,11 +18,15 @@
     </style>
     
     <!--  Title Bar Theme -->
-    <style name="ProfileTheme" parent="android:Theme.Light">
+    <style name="MainTheme" parent="android:Theme.Light">
         <item name="android:windowTitleSize">@dimen/title_bar_height</item>
         <item name="android:windowTitleBackgroundStyle">@style/WindowTitleBackground</item> 
 	</style>
 	
+    <style name="ProfileTheme" parent="android:Theme.Light">
+        <item name="android:windowTitleSize">@dimen/title_bar_height</item>
+        <item name="android:windowTitleBackgroundStyle">@style/WindowTitleBackground</item> 
+	</style>
    
 	
     <!--  Chat Room Theme -->

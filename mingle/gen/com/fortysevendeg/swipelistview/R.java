@@ -8,45 +8,45 @@ package com.fortysevendeg.swipelistview;
 
 public final class R {
 	public static final class attr {
-		public static final int swipeActionLeft = 0x7f010096;
-		public static final int swipeActionRight = 0x7f010097;
-		public static final int swipeAnimationTime = 0x7f01008f;
-		public static final int swipeBackView = 0x7f010094;
-		public static final int swipeCloseAllItemsWhenMoveList = 0x7f010092;
-		public static final int swipeDrawableChecked = 0x7f010098;
-		public static final int swipeDrawableUnchecked = 0x7f010099;
-		public static final int swipeFrontView = 0x7f010093;
-		public static final int swipeMode = 0x7f010095;
-		public static final int swipeOffsetLeft = 0x7f010090;
-		public static final int swipeOffsetRight = 0x7f010091;
-		public static final int swipeOpenOnLongPress = 0x7f01008e;
+		public static final int swipeActionLeft = 0x7f010028;
+		public static final int swipeActionRight = 0x7f010029;
+		public static final int swipeAnimationTime = 0x7f010021;
+		public static final int swipeBackView = 0x7f010026;
+		public static final int swipeCloseAllItemsWhenMoveList = 0x7f010024;
+		public static final int swipeDrawableChecked = 0x7f01002a;
+		public static final int swipeDrawableUnchecked = 0x7f01002b;
+		public static final int swipeFrontView = 0x7f010025;
+		public static final int swipeMode = 0x7f010027;
+		public static final int swipeOffsetLeft = 0x7f010022;
+		public static final int swipeOffsetRight = 0x7f010023;
+		public static final int swipeOpenOnLongPress = 0x7f010020;
 	}
 	public static final class color {
-		public static final int black = 0x7f07001d;
-		public static final int dark_slate_gray = 0x7f07001a;
-		public static final int gray_1 = 0x7f07001c;
-		public static final int gray_2 = 0x7f07001b;
+		public static final int black = 0x7f06001a;
+		public static final int dark_slate_gray = 0x7f060017;
+		public static final int gray_1 = 0x7f060019;
+		public static final int gray_2 = 0x7f060018;
 	}
 	public static final class drawable {
 		public static final int costum_progress_bar = 0x7f020073;
 	}
 	public static final class id {
-		public static final int both = 0x7f05002c;
-		public static final int choice = 0x7f050031;
-		public static final int dismiss = 0x7f050030;
-		public static final int left = 0x7f05002e;
-		public static final int load_more_footer = 0x7f05007f;
-		public static final int load_more_progressBar = 0x7f050081;
-		public static final int none = 0x7f050010;
-		public static final int reveal = 0x7f05002f;
-		public static final int right = 0x7f05002d;
-		public static final int top_line = 0x7f050080;
+		public static final int both = 0x7f070014;
+		public static final int choice = 0x7f070019;
+		public static final int dismiss = 0x7f070018;
+		public static final int left = 0x7f070016;
+		public static final int load_more_footer = 0x7f070080;
+		public static final int load_more_progressBar = 0x7f070082;
+		public static final int none = 0x7f070000;
+		public static final int reveal = 0x7f070017;
+		public static final int right = 0x7f070015;
+		public static final int top_line = 0x7f070081;
 	}
 	public static final class layout {
 		public static final int load_more_footer = 0x7f030022;
 	}
 	public static final class styleable {
-		public static final int[] SwipeListView = { 0x7f01008e, 0x7f01008f, 0x7f010090, 0x7f010091, 0x7f010092, 0x7f010093, 0x7f010094, 0x7f010095, 0x7f010096, 0x7f010097, 0x7f010098, 0x7f010099 };
+		public static final int[] SwipeListView = { 0x7f010020, 0x7f010021, 0x7f010022, 0x7f010023, 0x7f010024, 0x7f010025, 0x7f010026, 0x7f010027, 0x7f010028, 0x7f010029, 0x7f01002a, 0x7f01002b };
 		public static final int SwipeListView_swipeActionLeft = 8;
 		public static final int SwipeListView_swipeActionRight = 9;
 		public static final int SwipeListView_swipeAnimationTime = 1;

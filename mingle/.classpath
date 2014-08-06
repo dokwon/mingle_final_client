@@ -3,19 +3,11 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
-	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK/swipelistview"/>
-	<classpathentry kind="lib" path="C:/Users/Tempnote/Desktop/mingle-client/mingle/libs/android-support-v13.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Tempnote/Desktop/mingle-client/mingle/libs/apache-mime4j-benchmark-0.7.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Tempnote/Desktop/mingle-client/mingle/libs/apache-mime4j-core-0.7.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Tempnote/Desktop/mingle-client/mingle/libs/apache-mime4j-dom-0.7.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Tempnote/Desktop/mingle-client/mingle/libs/apache-mime4j-storage-0.7.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Tempnote/Desktop/mingle-client/mingle/libs/commons-codec-1.6.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Tempnote/Desktop/mingle-client/mingle/libs/commons-io-2.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Tempnote/Desktop/mingle-client/mingle/libs/httpclient-4.3.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Tempnote/Desktop/mingle-client/mingle/libs/fluent-hc-4.3.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Tempnote/Desktop/mingle-client/mingle/libs/httpcore-4.3.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Tempnote/Desktop/mingle-client/mingle/libs/httpmime-4.3.jar"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK/swipelistview"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="C:/Users/Tempnote/Desktop/mingle-client/android-support-v7-appcompat/bin/android-support-v7-appcompat.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Tempnote/Desktop/mingle-client/swipelistview/bin/swipelistview.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Tempnote/Desktop/mingle-client/google-play-services_lib/bin/google-play-services_lib.jar"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

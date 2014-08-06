@@ -12,8 +12,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 
-public class ImageDownloader extends AsyncTask<Void, Void, Void> {
-  	
+public class ImageDownloader extends AsyncTask<Void, Integer, Void> {
+  	 
   	private Context context;
   	private String url;
   	private String uid;
@@ -32,15 +32,17 @@ public class ImageDownloader extends AsyncTask<Void, Void, Void> {
   		this.pic_index = pic_index;
   	}
   	
+  		@Override
+  		protected void onPreExecute() {
+  			super.onPreExecute();
+  		}
+  	
 		@Override
 		protected Void doInBackground(Void... params) {
-			System.out.println("background...");
 			if (isCancelled()) {
 				return null;
 			}
-			System.out.println("get bitmap!");
 			bm = getBitmapFromURL(url);
-			System.out.println(bm);
 
 			return null;
 		}
@@ -52,7 +54,6 @@ public class ImageDownloader extends AsyncTask<Void, Void, Void> {
 
 			user.setPic(pic_index, (Drawable) new BitmapDrawable(context.getResources(),bm));
 			
-			System.out.println("post exec: " + context);
 			if(context instanceof HuntActivity){
 				((HuntActivity)context).allListsUpdate();
 			}

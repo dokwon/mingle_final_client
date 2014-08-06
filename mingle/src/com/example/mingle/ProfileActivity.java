@@ -11,13 +11,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 public class ProfileActivity extends Activity {
-	public final static String PROFILE_UID = "com.example.mingle.USER_SEL";	//Intent data to pass on when new Chatroom Activity started
+	public final static String PROFILE_UID = "com.example.mingle.PROFILE_UID";	//Intent data to pass on when new Profile Activity started
+	public final static String PROFILE_TYPE = "com.example.mingle.PROFILE_TYPE";	//Intent data to pass on when new Profile Activity started
 
 	private ViewFlipper viewFlipper;
     private float lastX;
@@ -27,14 +30,23 @@ public class ProfileActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		 super.onCreate(savedInstanceState);
-         setContentView(R.layout.activity_profile);
-         viewFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
+		//check if custom title is supported BEFORE setting the content view!
+	    boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+	        
+	    setContentView(R.layout.activity_profile);
+	        
+	    if(customTitleSupported) getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.profile_title_bar);
+
+	    viewFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
          
          Intent intent = getIntent();
          String uid = intent.getExtras().getString(ProfileActivity.PROFILE_UID);
-         user = ((MingleApplication) this.getApplication()).getMingleUser(uid);
+         String type = intent.getExtras().getString(ProfileActivity.PROFILE_TYPE);
+         System.out.println("profile activity: uid="+uid+" type="+type);
+         MingleApplication app = ((MingleApplication) this.getApplication());
+         if(type.equals("preview") || app.getMyUser().getUid().equals(uid)) user = app.getMyUser();
+         else user = app.getMingleUser(uid);
          photo_num = user.getPhotoNum();
-         uid = user.getUid();
                   
          LayoutInflater inflater = getLayoutInflater();
          for(int i = 0; i < photo_num; i++){
@@ -51,6 +63,21 @@ public class ProfileActivity extends Activity {
          num_view.setText(String.valueOf(user.getNum()));
          TextView name_view = (TextView) findViewById(R.id.profile_user_name);
          name_view.setText(user.getName());
+         
+
+         Button vote_button = (Button) findViewById(R.id.vote_button);
+         Button chat_button = (Button) findViewById(R.id.chat_button);
+         Button edit_profile_button = (Button) findViewById(R.id.edit_profile_button);
+         
+         if(type.equals("preview") || type.equals("setting")){
+        	 vote_button.setVisibility(View.GONE);
+         }
+         if(!type.equals("candidate")){
+        	 chat_button.setVisibility(View.GONE);
+         }
+         if(!type.equals("setting")){
+        	 edit_profile_button.setVisibility(View.GONE);
+         }
 	}
 	
 	// Method to handle touch event like left to right swap and right to left swap
@@ -109,7 +136,7 @@ public class ProfileActivity extends Activity {
     	
 		if(!user.isPicAvail(photo_index)){
 			System.out.println("download image!");
-			new ImageDownloader(getApplication(), user.getUid(), photo_index);
+			new ImageDownloader(getApplication(), user.getUid(), photo_index).execute();
 		}
 	}
     
@@ -144,5 +171,11 @@ public class ProfileActivity extends Activity {
         Intent chat_intent = new Intent(this, ChatroomActivity.class);
         chat_intent.putExtra(ChatroomActivity.USER_UID, user.getUid());
         startActivity(chat_intent);
+    }
+    
+    public void modifyProfile(View v){
+    	Intent i = new Intent(this, MainActivity.class);
+        i.putExtra(MainActivity.MAIN_TYPE, "update");
+        startActivity(i);
     }
 }
