@@ -124,6 +124,9 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	 private ArrayList<Integer> tabOnIcons; 
 	 private ArrayList<Integer> tabOffIcons;
 	 
+	 
+	 
+	 
 	 private void customizeActionBar() {
 		// Set up the action bar to show tabs.
 	        actionBar = getActionBar();
@@ -288,7 +291,11 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
         tabOffIcons.add(R.drawable.choice_tab_off);
         
 	}
-	
+    public void showProfile(View v) {
+    	
+    	System.out.println("show Profile called!!");
+    }
+    
 	private ImageView getViewForIcon(int id) {
 		BitmapDrawable icon = (BitmapDrawable)getResources().getDrawable(id);
         ImageView image = new ImageView(this);
