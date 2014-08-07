@@ -7,6 +7,18 @@
      android:layout_gravity="center"
       android:orientation="horizontal">
 
+    
+	
+	<Button 
+	    android:layout_height="40dp" 
+	    android:layout_width="40dp" 
+	    android:id="@+id/setting_button" 
+	    android:background="@drawable/setting"
+	    android:layout_margin="15dp"
+	    android:layout_alignParentBottom="true"
+	    android:layout_alignParentRight="true"
+	    android:onClick="showSettingOptions"/>
+
      <ImageView
          android:id="@+id/titleLogo"
          android:layout_width="wrap_content"

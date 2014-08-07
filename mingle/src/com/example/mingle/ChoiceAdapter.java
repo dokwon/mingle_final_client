@@ -4,6 +4,8 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +47,7 @@ public class ChoiceAdapter extends ArrayAdapter {
       	  holder.msg_view = (TextView)row.findViewById(R.id.msg);
       	  holder.user_pic=(RoundedImageView)row.findViewById(R.id.sender_image);
       	  holder.user_name = (TextView)row.findViewById(R.id.sender_name);
-        //holder.user_name.setTypeface(app.koreanTypeFace);
+          holder.user_name.setTypeface(app.koreanTypeFace);
       	 
       	  row.setTag(holder);
         } else {

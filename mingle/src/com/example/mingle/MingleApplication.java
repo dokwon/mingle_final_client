@@ -15,6 +15,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.Typeface;
+
+
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
@@ -34,7 +37,8 @@ import com.example.mingle.MingleUser.MsgComparator;
 
 public class MingleApplication extends Application {
     public final static String UPDATE_MSG_LIST = "com.example.mingle.UPDATE_MSG_LIST";
-    
+    public Typeface koreanTypeFace;
+
     private String question_of_the_day;
 	
     public HttpHelper connectHelper;
@@ -60,6 +64,10 @@ public class MingleApplication extends Application {
     private ArrayList<String> choices = new ArrayList<String>();
     private ArrayList<ArrayList<String>> pop_users = new ArrayList<ArrayList<String>>();
     
+   public void initializeApplication(){
+    	koreanTypeFace = Typeface.createFromAsset(getAssets(), "fonts/UnGraphic.ttf");
+    }
+
    public void createMyUser(JSONObject userData){
     	try {
 	    	my_user = new MingleUser(userData.getString("UID"), 
@@ -215,13 +223,13 @@ public class MingleApplication extends Application {
     	rid = rid_var;
     }
     
-     public boolean isValid(int my_num, String my_name) {
+     public boolean isValid(String my_name) {
         if (photoPaths == null) {
             photoPaths = new ArrayList<String>();
         }
         
    
-        if (my_num == -1 ||  photoPaths.size() == 0 || my_name == "")
+        if (photoPaths.size() == 0 || my_name.length() < 5)
             return false;
 
         return true;

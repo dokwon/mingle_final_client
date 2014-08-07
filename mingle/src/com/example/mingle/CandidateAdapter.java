@@ -6,6 +6,9 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
+
+
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -75,6 +78,8 @@ public class CandidateAdapter extends ArrayAdapter {
 
       	  holder.user_num = (ImageView)row.findViewById(R.id.member_num);
       	  holder.user_name = (TextView)row.findViewById(R.id.user_name);
+          holder.user_name.setTypeface(app.koreanTypeFace);
+
       	  holder.user_pic=(ImageView)row.findViewById(R.id.user_pic);
       	  holder.user_pic.setScaleType(ScaleType.FIT_XY);
 

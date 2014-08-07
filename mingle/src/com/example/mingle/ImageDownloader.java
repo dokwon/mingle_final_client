@@ -6,14 +6,19 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 
 public class ImageDownloader extends AsyncTask<Void, Integer, Void> {
-  	 
+	public final static String UPDATE_HUNT = "com.example.mingle.UPDATE_HUNT";	//Intent data to pass on when new Chatroom Activity started
+	public final static String UPDATE_PROFILE = "com.example.mingle.UPDATE_PROFILE";	//Intent data to pass on when new Chatroom Activity started
+	public final static String PIC_INDEX = "com.example.mingle.PIC_INDEX";	//Intent data to pass on when new Chatroom Activity started
+
   	private Context context;
   	private String url;
   	private String uid;
@@ -53,14 +58,19 @@ public class ImageDownloader extends AsyncTask<Void, Integer, Void> {
 			MingleUser user = app.getMingleUser(uid);
 
 			user.setPic(pic_index, (Drawable) new BitmapDrawable(context.getResources(),bm));
+
+			//update lists on complete
+			Intent dispatcher = new Intent(app, HuntActivity.class);
+			dispatcher.putExtra(PIC_INDEX,pic_index);
+			dispatcher.setAction(UPDATE_HUNT);
+			LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
 			
-			if(context instanceof HuntActivity){
-				((HuntActivity)context).allListsUpdate();
-			}
+			//update profile on complete
+			dispatcher = new Intent(app, ProfileActivity.class);
+			dispatcher.putExtra(PIC_INDEX,pic_index);
+			dispatcher.setAction(UPDATE_PROFILE);
+			LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
 			
-			if(context instanceof ProfileActivity){
-				((ProfileActivity)context).updateView(pic_index);
-			}
 
 			super.onPostExecute(result);
 		}

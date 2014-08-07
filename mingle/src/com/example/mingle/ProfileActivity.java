@@ -1,9 +1,14 @@
 package com.example.mingle;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +31,7 @@ public class ProfileActivity extends Activity {
     private float lastX;
     private int photo_num;
     private MingleUser user;
+    private Typeface koreanTypeFace;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,16 +43,22 @@ public class ProfileActivity extends Activity {
 	        
 	    if(customTitleSupported) getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.profile_title_bar);
 
+	    //Support Korean Language
+	    koreanTypeFace = Typeface.createFromAsset(getAssets(), "fonts/UnGraphic.ttf");
+	    
 	    viewFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
          
          Intent intent = getIntent();
          String uid = intent.getExtras().getString(ProfileActivity.PROFILE_UID);
          String type = intent.getExtras().getString(ProfileActivity.PROFILE_TYPE);
-         System.out.println("profile activity: uid="+uid+" type="+type);
+         
          MingleApplication app = ((MingleApplication) this.getApplication());
+         MingleUser me = app.getMyUser();
+
          if(type.equals("preview") || app.getMyUser().getUid().equals(uid)) user = app.getMyUser();
          else user = app.getMingleUser(uid);
          photo_num = user.getPhotoNum();
+         System.out.println("photo num: "+photo_num);
                   
          LayoutInflater inflater = getLayoutInflater();
          for(int i = 0; i < photo_num; i++){
@@ -59,11 +71,14 @@ public class ProfileActivity extends Activity {
         	 viewFlipper.addView(single_photo_layout);
          }
          
+         LocalBroadcastManager.getInstance(this).registerReceiver(imageUpdateReceiver,
+         		  new IntentFilter(ImageDownloader.UPDATE_PROFILE));
+         
          TextView num_view = (TextView) findViewById(R.id.profile_user_num);
          num_view.setText(String.valueOf(user.getNum()));
          TextView name_view = (TextView) findViewById(R.id.profile_user_name);
+         name_view.setTypeface(koreanTypeFace);
          name_view.setText(user.getName());
-         
 
          Button vote_button = (Button) findViewById(R.id.vote_button);
          Button chat_button = (Button) findViewById(R.id.chat_button);
@@ -94,7 +109,6 @@ public class ProfileActivity extends Activity {
                          case MotionEvent.ACTION_UP: 
                          {
                              float currentX = touchevent.getX();
-                             
                              // if left to right swipe on screen
                              if (lastX < currentX) 
                              {
@@ -107,22 +121,22 @@ public class ProfileActivity extends Activity {
                                  viewFlipper.setInAnimation(this, R.anim.in_from_left);
                                  viewFlipper.setOutAnimation(this, R.anim.out_to_right);
                               
-                                 // Show the next Screen
-                                 viewFlipper.showNext();
+                                 // Show the previous Screen
+                                 viewFlipper.showPrevious();
                              }
                              
                              // if right to left swipe on screen
                              if (lastX > currentX)
                              {
-                                 if (viewFlipper.getDisplayedChild() == photo_num)
+                                 if (viewFlipper.getDisplayedChild() == photo_num-1)
                                      break;
                                  // set the required Animation type to ViewFlipper
                                  // The Next screen will come in form Right and current Screen will go OUT from Left 
                                  viewFlipper.setInAnimation(this, R.anim.in_from_right);
                                  viewFlipper.setOutAnimation(this, R.anim.out_to_left);
-                                 getNewImage(viewFlipper.getDisplayedChild()/2+1);
-                                 // Show The Previous Screen
-                                 viewFlipper.showPrevious();
+                                 getNewImage(viewFlipper.getDisplayedChild()+1);
+                                 // Show The Next Screen
+                                 viewFlipper.showNext();
                              }
                              break;
                          }
@@ -139,6 +153,15 @@ public class ProfileActivity extends Activity {
 			new ImageDownloader(getApplication(), user.getUid(), photo_index).execute();
 		}
 	}
+    
+    private BroadcastReceiver imageUpdateReceiver = new BroadcastReceiver() {
+    	@Override
+    	public void onReceive(Context context, Intent intent) {
+    	   // Extract data included in the Intent
+    	   int pic_index = intent.getExtras().getInt(ImageDownloader.PIC_INDEX);
+    	   updateView(pic_index);
+    	  }
+    };
     
     public void updateView(int index){
     	LinearLayout curr_layout = (LinearLayout) viewFlipper.getCurrentView();

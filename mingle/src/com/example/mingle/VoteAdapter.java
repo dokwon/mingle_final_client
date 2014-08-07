@@ -76,6 +76,7 @@ public class VoteAdapter extends ArrayAdapter {
 
   	  NewsHolder holder = null;
   	  View row = convertView;
+  	
         if(row == null) {
       	  LayoutInflater inflater = ((Activity)context).getLayoutInflater();
       	  row = inflater.inflate(layoutResID, parent, false);
@@ -83,8 +84,10 @@ public class VoteAdapter extends ArrayAdapter {
       	  holder = new NewsHolder();
 
       	  holder.female_name = (TextView)row.findViewById(R.id.top_female_name);
+      	  holder.female_name.setTypeface(app.koreanTypeFace);
     	  holder.female_pic=(ImageView)row.findViewById(R.id.top_female_image);
     	  holder.male_name = (TextView)row.findViewById(R.id.top_male_name);
+			holder.male_name.setTypeface(app.koreanTypeFace);
       	  holder.male_pic=(ImageView)row.findViewById(R.id.top_male_image);
       	  setRankNumberView(position, row, holder);
       	  row.setTag(holder);
