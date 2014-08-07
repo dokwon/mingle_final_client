@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_height="match_parent" >
+    
+    <RelativeLayout
+            android:orientation="vertical"
+            android:id="@+id/front"
+            android:tag="front"
+            style="@style/MyListFrontContent">
+ 
+        <com.example.mingle.RoundedImageView
+                style="@style/ChatRoomImage"
+                android:id="@+id/sender_image"/>
+        
+        <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/sender_image"
+                android:layout_alignTop="@id/sender_image"
+                style="@style/MyListTitle"
+                android:id="@+id/sender_name"/>
+        
+        <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/sender_image"
+                android:layout_below="@id/sender_name"
+                style="@style/MyListTitle"
+                android:id="@+id/msg"/>
+
+ 
+    </RelativeLayout>
+
+</FrameLayout>

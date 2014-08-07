@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    >
+        
+	<LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/front"
+            android:tag="front"
+            android:layout_margin="@dimen/small_margin"
+            android:background="@drawable/candidate_cell_border"
+            style="@style/MyListFrontContent">
+ 
+        <ImageView
+                style="@style/UserListImage"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:src="@android:drawable/ic_menu_gallery"
+                android:id="@+id/user_pic"/>
+		<RelativeLayout
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_margin="@dimen/option_margin"
+            android:gravity = "bottom">
+		         
+		         
+		         <ImageView
+	                android:layout_width="20dp"
+	                android:layout_height="30dp"
+	                android:layout_alignParentBottom="true"
+	                android:src="@drawable/numberpic"
+	                android:id="@+id/member_num_icon"/>
+		        
+		         
+		         <ImageView
+		             android:contentDescription="@string/photo_description"
+	                android:layout_width="15dp"
+	                android:layout_height="20dp"
+	                android:layout_alignLeft="@+id/member_num_icon"
+			        android:layout_alignBottom="@+id/member_num_icon"
+			         android:layout_marginLeft="20dp"
+	                android:id="@+id/member_num"/>
+		      
+		        <TextView
+		            android:id="@+id/user_name"
+		            style="@style/MyListTitle"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		           	android:layout_alignTop="@+id/member_num_icon"
+		            android:layout_marginLeft="15dp"
+		            android:layout_toRightOf="@+id/member_num" />
+ 
+        
+    	</RelativeLayout>
+    </LinearLayout>
+    
+</FrameLayout>
