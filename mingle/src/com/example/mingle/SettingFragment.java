@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -49,7 +50,39 @@ public class SettingFragment extends Fragment{
 	                profile_intent.putExtra(ProfileActivity.PROFILE_UID, profile_uid);
 	                profile_intent.putExtra(ProfileActivity.PROFILE_TYPE, "setting");
 	                curActivity.startActivity(profile_intent);
-	            }
+	            }else if(position == 1){
+	            	//1. popup dialog to confirm deactivation
+	            	//2. send msg to server that the user deactivates, should get confirm msg
+	            	//	At server
+	            	//	1. clear all data except uid
+	            	//	2. handle other occasions and sync with client --> Must be shit. Hardest part maybe.
+	            	//3. clear data in the database
+	            	//4. cut socket and flush all data in mingleapplication
+	            	
+	            	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(curActivity)
+																.setTitle("Mingle")
+																.setCancelable(false)
+																.setMessage("Your account will be deactivated.")
+																.setIcon(R.drawable.ic_launcher)
+																.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+																	@Override
+																	public void onClick(DialogInterface dialog, int id) {
+																		dialog.dismiss();
+																		((MingleApplication)curActivity.getApplication()).deactivateApp((Context)curActivity);
+																        Intent backToMain = new Intent(curActivity, HuntActivity.class);
+																        backToMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+																        startActivity(backToMain);
+																	}
+																})
+																.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+																	@Override
+																	public void onClick(DialogInterface dialog, int id) {
+																		dialog.dismiss();
+																	}
+																});
+	            	AlertDialog popupDialog = popupBuilder.create();
+	        		popupDialog.show();
+	            }	        	
 	    	}
 	    });
 	    // Set the ArrayAdapter as the ListView's adapter.  

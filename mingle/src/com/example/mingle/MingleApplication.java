@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import android.app.Application;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -370,6 +371,26 @@ public class MingleApplication extends Application {
     	} catch (JSONException e){
     		e.printStackTrace();
     	} 
+    }
+    
+    public void deactivateApp(Context context){
+    	ProgressDialog proDialog = new ProgressDialog(context);
+        proDialog.setIndeterminate(true);
+        proDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        proDialog.getWindow().getAttributes().dimAmount = (float)0.8;
+        proDialog.show();
+        
+        photoPaths.clear();
+        user_map.clear();
+        candidates.clear();
+        choices.clear();
+        pop_users.clear();
+
+        this.socketHelper.disconnectSocket();
+        this.dbHelper.deleteAll();
+        this.connectHelper.requestDeactivation(this.my_user.getUid());
+        
+        proDialog.dismiss();
     }
 }
 

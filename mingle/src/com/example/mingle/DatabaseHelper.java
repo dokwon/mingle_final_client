@@ -289,5 +289,9 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  return user_obj;
 	  }
 	  
-
+	  public void deleteAll(){
+		  SQLiteDatabase db = this.getWritableDatabase();
+		  db.execSQL("DELETE FROM " + TABLE_UIDLIST);
+		  db.execSQL("DELETE FROM " + TABLE_MYUID);
+	  }
 }

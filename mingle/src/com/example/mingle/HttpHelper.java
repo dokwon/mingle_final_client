@@ -159,9 +159,7 @@ public void getQuestionOfTheDay() {
     
     
     
-public void userUpdateRequest( final MingleApplication app,String name, String sex, int num)  {
-        
-    	
+    public void userUpdateRequest( final MingleApplication app,String name, String sex, int num)  {  	
     	String baseURL = server_url.toString();
     	baseURL += "update_user?";
     	baseURL += "uid=" + app.getMyUser().getUid() + "&";
@@ -365,8 +363,6 @@ public void userUpdateRequest( final MingleApplication app,String name, String s
     	}).start();
     }
     
-    
-    /*
     public void requestDeactivation(String uid){
     	String baseURL = server_url;
     	baseURL += "deactivate?";
@@ -391,9 +387,8 @@ public void userUpdateRequest( final MingleApplication app,String name, String s
 					e.printStackTrace();
 				}
     		}
-    	}).start();
-    	
-    }*/
+    	}).start();	
+    }
 
     //@Override
     protected Integer doInBackground(String... urls) {

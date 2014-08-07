@@ -1,7 +1,9 @@
 package com.example.mingle;
 //package com.hmkcode.android;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -113,6 +115,26 @@ public class Socket extends AsyncTask<String, MingleApplication, Integer>  {
                 	
     					app.handleIncomingMsg(get_msg_obj);
     					socket.emit("msg_to_user_conf");
+    				} else if(event.equals("no_user_exist")){
+    					AlertDialog.Builder popupBuilder = new AlertDialog.Builder(app)
+																.setTitle("Mingle")
+																.setCancelable(false)
+																.setMessage("This user is not active anymore.")
+																.setIcon(R.drawable.ic_launcher)
+																.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+																	@Override
+																	public void onClick(DialogInterface dialog, int id) {
+																		dialog.dismiss();
+																	}
+																});
+    					popupBuilder.show();
+    					/*
+						try {
+							String recv_uid = ((JSONObject)args[0]).getString("send_uid");
+							app.getMingleUser(recv_uid).removeLastMsg();
+						} catch (JSONException e) {
+							e.printStackTrace();
+						} */   					
     				}
     			}
 
@@ -132,6 +154,13 @@ public class Socket extends AsyncTask<String, MingleApplication, Integer>  {
     
     public boolean isSocketConnected(){
     	return (socket != null && socket.isConnected());
+    }
+    
+    
+    public void disconnectSocket(){
+    	if(socket != null)
+    		socket.disconnect();
+    	socket = null;
     }
     
     public Bitmap getBitmapFromURL(String link) {
