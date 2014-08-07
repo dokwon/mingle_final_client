@@ -12,6 +12,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ActionBar.Tab;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
@@ -34,14 +36,18 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.example.mingle.MingleApplication;
 
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 import android.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -49,6 +55,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -57,9 +64,10 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	 public CandidateFragment candidateFragment;		//Fragment for list of chattable users
 	 public ChoiceFragment choiceFragment;				//Fragment for list of users whom current user is chatting with
 	 public VoteFragment voteFragment;					//Fragment for list of top male and female users
-	 public SettingFragment settingFragment;					//Fragment for list of top male and female users
 
-
+	public ListView setting_list_view;
+	private SettingAdapter setting_adapter;
+		
 	 MingleApplication app;
 	 private static final String server_url = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080";
 	 private ActionBar actionBar;
@@ -120,6 +128,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
     protected void onCreate(Bundle savedInstanceState) {
 		app = ((MingleApplication) this.getApplication());
 		
+		app.initializeApplication();
         //Initialize HttpHelper that supports HTTP GET/POST requests and socket connection
         app.connectHelper = new HttpHelper(server_url, (MingleApplication)this.getApplication());
         app.connectHelper.getQuestionOfTheDay();
@@ -173,14 +182,15 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
             .setTabListener(this).setTag(R.string.tab2title));
         actionBar.addTab(actionBar.newTab().setCustomView(getViewForIcon(tabOffIcons.get(2)))
                 .setTabListener(this).setTag(R.string.tab3title));
-        actionBar.addTab(actionBar.newTab().setCustomView(getViewForIcon(tabOffIcons.get(3)))
-                .setTabListener(this).setTag(R.string.tab4title));
         
         LocalBroadcastManager.getInstance(this).registerReceiver(userListReceiver,
       		  new IntentFilter(HttpHelper.HANDLE_CANDIDATE));
         
         LocalBroadcastManager.getInstance(this).registerReceiver(popListReceiver,
         		  new IntentFilter(HttpHelper.HANDLE_POP));
+        
+        LocalBroadcastManager.getInstance(this).registerReceiver(listUpdateReceiver,
+      		  new IntentFilter(ImageDownloader.UPDATE_HUNT));
         
         //GCM Setup here
         context = (Context)this;
@@ -197,6 +207,71 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
+        
+       
+        setting_list_view = (ListView) findViewById(R.id.setting_option_list);
+        ArrayList<String> setting_list = new ArrayList<String>();
+		setting_list.add("Profile");
+		setting_list.add("Search Setting");
+		setting_list.add("Delete");
+		
+	    setting_adapter = new SettingAdapter(this, R.layout.setting_row, setting_list, (MingleApplication) getApplicationContext());
+	    setting_adapter.notifyDataSetChanged();
+	    
+	    final Activity curActivity = this;
+	    setting_list_view.setOnItemClickListener(new OnItemClickListener() {
+	    	@Override
+	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+	    		// TODO Auto-generated method stub
+	            if(position == 0){
+	            	final String profile_uid = ((MingleApplication) curActivity.getApplication()).getMyUser().getUid();
+	            	Intent profile_intent = new Intent(curActivity, ProfileActivity.class);
+	                profile_intent.putExtra(ProfileActivity.PROFILE_UID, profile_uid);
+	                profile_intent.putExtra(ProfileActivity.PROFILE_TYPE, "setting");
+	                curActivity.startActivity(profile_intent);
+	            } else if(position == 1){
+	            
+	            
+	    		} else if(position == 2){
+	            	//1. popup dialog to confirm deactivation
+	            	//2. send msg to server that the user deactivates, should get confirm msg
+	            	//	At server
+	            	//	1. clear all data except uid
+	            	//	2. handle other occasions and sync with client --> Must be shit. Hardest part maybe.
+	            	//3. clear data in the database
+	            	//4. cut socket and flush all data in mingleapplication
+	            	
+	            	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(curActivity)
+																.setTitle("Mingle")
+																.setCancelable(false)
+																.setMessage("Your account will be deactivated.")
+																.setIcon(R.drawable.ic_launcher)
+																.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+																	@Override
+																	public void onClick(DialogInterface dialog, int id) {
+																		dialog.dismiss();
+																		((MingleApplication)curActivity.getApplication()).deactivateApp((Context)curActivity);
+																        Intent backToMain = new Intent(curActivity, HuntActivity.class);
+																        backToMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+																        startActivity(backToMain);
+																	}
+																})
+																.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+																	@Override
+																	public void onClick(DialogInterface dialog, int id) {
+																		dialog.dismiss();
+																	}
+																});
+	            	AlertDialog popupDialog = popupBuilder.create();
+	        		popupDialog.show();
+	            }	        	
+	    	}
+	    });
+	    
+	    // Set the ArrayAdapter as the ListView's adapter.  
+	    setting_list_view.setAdapter(setting_adapter);    
+	    setting_list_view.setBackgroundColor(Color.GRAY);
+	    setting_list_view.setVisibility(View.GONE);
     }
     
 	
@@ -301,11 +376,6 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 			  
 			  getFragmentManager().beginTransaction()
 		        .replace(R.id.fragment_container, choiceFragment).commit();
-		  }	else if(tab.getTag().equals(R.string.tab4title)) {
-			  if(settingFragment == null) settingFragment = new SettingFragment();
-			  
-			  getFragmentManager().beginTransaction()
-		        .replace(R.id.fragment_container, settingFragment).commit();
 		  }
 		  BitmapDrawable icon = (BitmapDrawable)getResources().getDrawable(tabOnIcons.get(tab.getPosition()));
 		  ((ImageView)actionBar.getSelectedTab().getCustomView()).setImageDrawable(icon);
@@ -369,6 +439,11 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 				  }
 			  });
 		  }
+	  }
+	  
+	  public void showSettingOptions(View v){
+		  if(setting_list_view.getVisibility() == View.VISIBLE) setting_list_view.setVisibility(View.GONE);
+		  else setting_list_view.setVisibility(View.VISIBLE);
 	  }
 	    
 	  public void handleCandidateList(JSONArray list_of_users){
@@ -446,6 +521,22 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    	
 	    popListUpdate();
 	  }
+	  
+	  private BroadcastReceiver listUpdateReceiver = new BroadcastReceiver() {
+	    	@Override
+	    	public void onReceive(Context context, Intent intent) {
+	    	   // Extract data included in the Intent
+	    	   int pic_index = intent.getExtras().getInt(ImageDownloader.PIC_INDEX);
+	    	   switch (pic_index) {
+	    		case -1:
+	    			popListUpdate();
+	    			choiceListUpdate();
+	    			break;
+	    		case 0:
+	    			candidateListUpdate();
+	    	   }
+	    	  }
+	    };
 	  
 	  public void allListsUpdate(){
 		  candidateListUpdate();

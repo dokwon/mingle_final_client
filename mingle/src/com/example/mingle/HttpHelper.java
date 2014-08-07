@@ -80,6 +80,17 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     
     }*/
     
+    public String encodeString(String str){
+    	String encoded_str = "not available";
+		try {
+			encoded_str = URLEncoder.encode(str ,"utf-8");
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return encoded_str;
+    }
+    
 public void getQuestionOfTheDay() {
         
         String baseURL = server_url;
@@ -123,9 +134,9 @@ public void getQuestionOfTheDay() {
     * is the unique id of the user as well as some other useful information
     */
     public void userCreateRequest( final MingleApplication app,String name, String sex, int num)  {
-      	String baseURL = server_url.toString();
+       	String baseURL = server_url.toString();
     	baseURL += "create_user?";
-    	baseURL += "name=" + name + "&";
+    	baseURL += "name=" + encodeString(name) + "&";
     	baseURL += "sex=" + sex + "&";
     	baseURL += "num=" + (Integer.valueOf(num).toString()) + "&";
     	baseURL += "loc_long=" + (Float.valueOf(app.getLong())).toString() + "&";
@@ -163,7 +174,7 @@ public void getQuestionOfTheDay() {
     	String baseURL = server_url.toString();
     	baseURL += "update_user?";
     	baseURL += "uid=" + app.getMyUser().getUid() + "&";
-    	baseURL += "name=" + name + "&";
+    	baseURL += "name=" + encodeString(name) + "&";
     	baseURL += "sex=" + sex + "&";
     	baseURL += "num=" + (Integer.valueOf(num).toString()) + "&";
     	baseURL += "loc_long=" + (Float.valueOf(app.getLong())).toString() + "&";

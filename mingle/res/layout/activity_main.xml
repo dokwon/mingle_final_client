@@ -147,7 +147,8 @@
 	    android:hint="@string/nickname_placeholder"
 	    android:textAppearance="?android:attr/textAppearanceMedium"
 	    android:imeActionLabel="@string/launch"
-	    android:maxLength="10" />
+	    android:singleLine="true"
+	    android:maxLength="5" />
 	
 	<!-- 
 

@@ -1,8 +1,10 @@
 package com.example.mingle;
 
 import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +26,7 @@ public class ChoiceAdapter extends ArrayAdapter {
   	  this.context=context;
   	  this.layoutResID=layoutResourceId;
   	  this.app = currApp;
-
+  	  
   	  // TODO Auto-generated constructor stub
     }
 
@@ -41,8 +43,9 @@ public class ChoiceAdapter extends ArrayAdapter {
       	  holder = new NewsHolder();
 
       	  holder.msg_view = (TextView)row.findViewById(R.id.msg);
-
       	  holder.user_pic=(ImageView)row.findViewById(R.id.sender_image);
+      	  holder.user_name = (TextView)row.findViewById(R.id.sender_name);
+          holder.user_name.setTypeface(app.koreanTypeFace);
       	  
       	  row.setTag(holder);
         } else {
@@ -52,7 +55,7 @@ public class ChoiceAdapter extends ArrayAdapter {
         String choice_uid = (String)data.get(position);
         MingleUser choice = app.getMingleUser(choice_uid);
         holder.msg_view.setText(choice.getLastMsg());
-
+        holder.user_name.setText(choice.getName());
         holder.user_pic.setImageDrawable(choice.getPic(-1));
        
         return row;
@@ -63,5 +66,6 @@ public class ChoiceAdapter extends ArrayAdapter {
     static class NewsHolder{
   	  TextView msg_view;
   	  ImageView user_pic;
+  	  TextView user_name;
     }
 }

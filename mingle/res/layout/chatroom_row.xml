@@ -18,6 +18,15 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/sender_image"
+                android:layout_alignTop="@id/sender_image"
+                style="@style/MyListTitle"
+                android:id="@+id/sender_name"/>
+        
+        <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/sender_image"
+                android:layout_below="@id/sender_name"
                 style="@style/MyListTitle"
                 android:id="@+id/msg"/>
 
