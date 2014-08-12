@@ -138,46 +138,6 @@ public class MainActivity extends Activity {
         return cursor.getString(column_index);
     }
  
-
-    // Get the users one-time location. Code available below to register for updates
-    private void getCurrentLocation() {
-    	
-    	// Acquire a reference to the system Location Manager
-    	LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-    	Criteria criteria = new Criteria();
-    	String provider = locationManager.getBestProvider(criteria, true);
-        Location location = locationManager.getLastKnownLocation(provider);
-        float lat = 0;
-        float lon = 0;
-        if(location != null){
-        	lat =(float) location.getLatitude();
-        	lon =(float) location.getLongitude();
-        } 
-        ((MingleApplication) this.getApplication()).setLat(lat);
-    	((MingleApplication) this.getApplication()).setLong(lon);
-     
-    	
-    	// In case we want to register for location updates
-    	/*
-    	// Define a listener that responds to location updates
-    	LocationListener locationListener = new LocationListener() {
-    	    public void onLocationChanged(Location location) {
-    	      // Called when a new location is found by the network location provider.
-    	      //makeUseOfNewLocation(location);
-    	    }
-
-    	    public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-    	    public void onProviderEnabled(String provider) {}
-
-    	    public void onProviderDisabled(String provider) {}
-    	  };
-
-    	// Register the listener with the Location Manager to receive location updates
-    	locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);*/
-      
-    }
-    
     public void SexOptionChanged(View v) {
     	if (sex.equals("M") && v.equals(findViewById(R.id.womanbutton))) {
     		// Change selection to woman
@@ -322,9 +282,6 @@ public class MainActivity extends Activity {
         
         if(customTitleSupported) getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title_bar);
 
-        // Get the user's current location
-        getCurrentLocation();
-                
         context = (Context)this;
 
         Intent intent = getIntent();
@@ -348,7 +305,7 @@ public class MainActivity extends Activity {
     public void showPreview(View view){
     	name = ((EditText)findViewById(R.id.nicknameTextView)).getText().toString();
     	if(app.isValid(name)){
-    		app.setMyUser(name, num, sex);
+    		app.setMyUser(null, name, num, sex);
 
     		Intent profile_intent = new Intent(context, ProfileActivity.class);
     		profile_intent.putExtra(ProfileActivity.PROFILE_TYPE, "preview");
@@ -361,7 +318,7 @@ public class MainActivity extends Activity {
     public void modifyUserData(View view){
     	//Check validity of user input and send user update request to server
         if (app.isValid(name)) {
-    		app.setMyUser(name, num, sex);
+    		app.setMyUser(null, name, num, sex);
         	app.connectHelper.userUpdateRequest(app, name, sex, num);
       } else {
     	   showInvalidUserAlert();
@@ -403,7 +360,6 @@ public class MainActivity extends Activity {
     	name = ((EditText)findViewById(R.id.nicknameTextView)).getText().toString();
         //Check validity of user input and send user creation request to server
         if (app.isValid(name)) {
-    		app.setMyUser(name, num, sex);
         	proDialog = new ProgressDialog(this);
             proDialog.setIndeterminate(true);
             proDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
@@ -422,9 +378,7 @@ public class MainActivity extends Activity {
             app.dbHelper.setMyInfo(userData);
 
             try {
-				app.getMyUser().setUid(userData.getString("UID"));
-				app.setLat((float)userData.getDouble("LOC_LAT"));
-				app.setLong((float)userData.getDouble("LOC_LONG"));
+        		app.setMyUser(userData.getString("UID"), name, num, sex);
 				app.setDist(userData.getInt("DIST_LIM"));
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block

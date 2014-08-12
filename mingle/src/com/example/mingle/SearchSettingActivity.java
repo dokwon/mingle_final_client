@@ -3,7 +3,12 @@ package com.example.mingle;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +32,7 @@ public class SearchSettingActivity extends Activity {
 	
 	private boolean locChanged = false;
 	private boolean filterChanged = false;
+	private Context context;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +40,7 @@ public class SearchSettingActivity extends Activity {
 		setContentView(R.layout.activity_search_setting);
 		
 		app = (MingleApplication)this.getApplication();
+		context = this;
 		distanceSetting();
 		locationSetting();
 		notificationSetting();
@@ -68,8 +75,32 @@ public class SearchSettingActivity extends Activity {
 		locButton.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View view){
-				locChanged = true;
-				app.getCurrentLocation();
+				if(!app.isLocationEnabled()) {
+                	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(context)
+															.setTitle("Mingle")
+															.setCancelable(false)
+															.setMessage("GPS is not enabled. Do you want to go to settings menu?.")
+															.setIcon(R.drawable.mingle_logo)
+															.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+																@Override
+																public void onClick(DialogInterface dialog, int id) {
+																	dialog.dismiss();
+																	Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+																	context.startActivity(intent);
+																}
+															})
+															.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+																@Override
+																public void onClick(DialogInterface dialog, int id) {
+																	dialog.dismiss();
+																}
+															});
+                	AlertDialog popupDialog = popupBuilder.create();
+                	popupDialog.show();
+                } else {
+                	locChanged = true;
+                	app.getCurrentLocation();
+                }
 			}
 		});
 	}

@@ -1,17 +1,25 @@
 package com.example.mingle;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -24,6 +32,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.ExifInterface;
+import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.WindowManager;
@@ -66,6 +75,8 @@ public class MingleApplication extends Application {
     private ArrayList<String> choices = new ArrayList<String>();
     private ArrayList<ArrayList<String>> pop_users = new ArrayList<ArrayList<String>>();
     
+ 
+    
     
    public void initializeApplication(){
     	koreanTypeFace = Typeface.createFromAsset(getAssets(), "fonts/UnGraphic.ttf");
@@ -73,23 +84,9 @@ public class MingleApplication extends Application {
     	blankProfileImageSmall = R.drawable.blankprofile;
     }
 
-   public void createMyUser(JSONObject userData){
-    	try {
-	    	my_user = new MingleUser(userData.getString("UID"), 
-	    			userData.getString("COMM"), 
-	    			userData.getInt("NUM"), 
-	    			photoPaths.size(), null, 
-	    			userData.getString("SEX"));
-	        setLat((float)userData.getDouble("LOC_LAT"));
-	        setLong((float)userData.getDouble("LOC_LONG"));
-	        setDist(userData.getInt("DIST_LIM"));
-    	} catch(JSONException e) {
-    		e.printStackTrace();
-    	}
-    }
    
    public void createDefaultMyUser(){
-   		my_user = new MingleUser("","",0,0,null,"");
+   		my_user = new MingleUser("", "", 0, 0, null, "");
    }
    
    public Bitmap rotatedBitmap(Bitmap source, String photoPath) {
@@ -127,19 +124,20 @@ public class MingleApplication extends Application {
 	   return question_of_the_day;
    }
    
-   public void setMyUser(String name, int num, String sex){
-	   getMyUser().setName(name);
-	   getMyUser().setNum(num);
-	   getMyUser().setSex(sex);
+   public void setMyUser(String uid, String name, int num, String sex){
+	   if(uid != null) my_user.setUid(uid);
+	   if(name != null) my_user.setName(name);
+	   if(num != 0) my_user.setNum(num);
+	   if(sex != null) my_user.setSex(sex);
 	   
-	   getMyUser().clearPics();
+	   my_user.clearPics();
 	   for(int i = 0; i < photoPaths.size(); i++){
 		   Bitmap bm;
            BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
+           btmapOptions.inSampleSize = 16;
            bm = rotatedBitmap(BitmapFactory.decodeFile(photoPaths.get(i), btmapOptions), photoPaths.get(i));
-           
 		   Drawable user_pic = new BitmapDrawable(getResources(),bm);
-		   getMyUser().addPic(user_pic);
+		   my_user.addPic(user_pic);
 	   }
    }
    
@@ -216,13 +214,6 @@ public class MingleApplication extends Application {
     	return rid;
     }
 
-    public void setLat(float latitude_var){
-        latitude = latitude_var;
-    }
-
-    public void setLong(float longitude_var){
-        longitude = longitude_var;
-    }
 
     public void setDist(int dist_lim_var){
         dist_lim = dist_lim_var;
@@ -317,8 +308,47 @@ public class MingleApplication extends Application {
     public void emptyPopList(){
     	pop_users.clear();
     }
-    
 
+    public void createNewChoiceUser(String uid, JSONObject new_user_data){
+    	String sex = "M";
+		if(my_user.getSex().equals("M")) sex = "F";
+		MingleUser new_user = null;
+		try {
+			new_user = new MingleUser(uid, new_user_data.getString("COMM"), new_user_data.getInt("NUM"), 
+											new_user_data.getInt("PHOTO_NUM"), (Drawable) this.getResources().getDrawable(blankProfileImage), sex);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
+		this.addMingleUser(new_user);
+		this.addChoice(uid);
+		
+		new ImageDownloader(this.getApplicationContext(), new_user.getUid(), -1).execute();
+		dbHelper.insertNewUID(uid, new_user.getNum(), new_user.getName(), 0, 0, 0);
+		
+		//download profile also
+    }
+    
+    public String getLocalTime(String timestamp){
+    	timestamp = timestamp.replaceAll("T"," ");
+    	timestamp = timestamp.replaceAll("\\..+","");
+    	SimpleDateFormat sourceFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	sourceFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+    	Date parsed = null;
+		try {
+			parsed = sourceFormat.parse(timestamp);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+
+    	SimpleDateFormat destFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	destFormat.setTimeZone(TimeZone.getDefault());
+
+    	String result = destFormat.format(parsed);
+    	return result;
+    }
     
     public void handleIncomingMsg(JSONObject get_msg_obj){
 		try {
@@ -326,19 +356,10 @@ public class MingleApplication extends Application {
 			String chat_user_uid = get_msg_obj.getString("send_uid");
 
 			MingleUser user = this.getMingleUser(chat_user_uid);
-			if(user == null){
-				String sex = "M";
-				if(my_user.getSex().equals("M")) sex = "F";
-				MingleUser new_user = new MingleUser(chat_user_uid, "", 0, 1, (Drawable) this.getResources().getDrawable(blankProfileImage),sex);
-				
-				this.addMingleUser(new_user);
-				this.addChoice(chat_user_uid);
-				
-				new ImageDownloader(this.getApplicationContext(), new_user.getUid(), -1).execute();
-				MingleUser currentMU = this.user_map.get(chat_user_uid);
-				dbHelper.insertNewUID(chat_user_uid, currentMU.getNum(), currentMU.getName(), 0, 0, 0);
-				
-				//download profile also
+			
+			if(user == null) {
+				connectHelper.getNewUser(chat_user_uid);				
+			
 			} else {
 				int candidate_pos = this.getCandidatePos(chat_user_uid);
 				if(candidate_pos >= 0){
@@ -357,10 +378,9 @@ public class MingleApplication extends Application {
 			}
 			
 			String msg = get_msg_obj.getString("msg");
-			String msg_ts = get_msg_obj.getString("ts");
+			String msg_ts = getLocalTime(get_msg_obj.getString("ts"));
     		this.getMingleUser(chat_user_uid).recvMsg(msg, msg_ts);
     		// Save to local storage
-			//((MingleApplication)currContext.getApplicationContext()).dbHelper.insertMessages(chat_user_uid, chat_user_uid, msg, msg_ts);
     		dbHelper.insertMessages(chat_user_uid, false, msg, msg_ts);
     		
     		if(this.getMingleUser(chat_user_uid).isInChat()) {
@@ -379,7 +399,7 @@ public class MingleApplication extends Application {
     	try{
     		String msg_recv_uid = msg_conf_obj.getString("recv_uid");
     		int msg_recv_counter = Integer.parseInt(msg_conf_obj.getString("msg_counter"));
-    		String msg_ts = msg_conf_obj.getString("ts");
+    		String msg_ts = getLocalTime(msg_conf_obj.getString("ts"));
     		ArrayList<Message> msg_list = user_map.get(msg_recv_uid).getMsgList();
     		String msg="";
     		for(Message obj : msg_list){
@@ -402,12 +422,25 @@ public class MingleApplication extends Application {
     	} 
     }
     
+    public boolean isLocationEnabled() {
+    	// Acquire a reference to the system Location Manager
+    	LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+    	// getting GPS status
+        boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
+        // getting network status
+        boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        if (!isGPSEnabled && !isNetworkEnabled) return false;
+        else return true;
+    }
+    
     // Get the users one-time location. Code available below to register for updates
     public void getCurrentLocation() {
     	
     	// Acquire a reference to the system Location Manager
     	LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
     	Criteria criteria = new Criteria();
     	String provider = locationManager.getBestProvider(criteria, true);
         Location location = locationManager.getLastKnownLocation(provider);
@@ -417,7 +450,6 @@ public class MingleApplication extends Application {
         	lat =(float) location.getLatitude();
         	lon =(float) location.getLongitude();
         } 
-        
         latitude = lat;
     	longitude = lon;
      
@@ -449,16 +481,20 @@ public class MingleApplication extends Application {
         proDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         proDialog.getWindow().getAttributes().dimAmount = (float)0.8;
         proDialog.show();
+
+        this.socketHelper.disconnectSocket();
+        this.dbHelper.deleteAll();
+        this.connectHelper.requestDeactivation(this.my_user.getUid());
         
         photoPaths.clear();
         user_map.clear();
         candidates.clear();
         choices.clear();
         pop_users.clear();
-
-        this.socketHelper.disconnectSocket();
-        this.dbHelper.deleteAll();
-        this.connectHelper.requestDeactivation(this.my_user.getUid());
+        
+        notification_on = true;
+        for(int i = 0 ; i < 5 ; i++) groupNumFilter[i] = true;
+        dist_lim = 3;
         
         proDialog.dismiss();
     }

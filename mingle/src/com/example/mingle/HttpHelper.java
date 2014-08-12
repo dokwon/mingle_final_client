@@ -43,6 +43,8 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 	  public final static String HANDLE_HTTP_ERROR = "com.example.mingle.HTTP_ERROR";		//Indicator of http error
 	  public final static String VOTE_RESULT = "com.example.mingle.VOTE_RESULT";			//Intent data to pass on when vote request returns
 	  public final static String HANDLE_VOTE_RESULT = "com.example.mingle.HANDLE_VOTE_RESULT";	//Indicator of vote complete
+	  public final static String INIT_INFO = "com.example.mingle.INIT_INFO";				//Intent data to pass on when init info request returns
+	  public final static String SET_INIT_INFO = "com.example.mingle.SET_INIT_INFO";		//Indicator of get init info complete
 
     private String server_url;				//URL of server
     private MingleApplication app;
@@ -93,7 +95,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     }
     
     /* Get vote question of the day*/
-    public void getQuestionOfTheDay() {
+    public void getInitInfo() {
         String baseURL = server_url;
     	baseURL += "get_init_info";
     	
@@ -110,13 +112,20 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 					e.printStackTrace();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
+					//handle http error
+					Intent dispatcher = new Intent(app, SplashScreenActivity.class);
+					dispatcher.setAction(HANDLE_HTTP_ERROR);
+					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
 					e.printStackTrace();
 				}
 				
 				//Save question
 				try {
-					JSONObject question_obj = new JSONObject(HttpResponseBody(response));
-					app.setQuestion(question_obj.getString("QUESTION"));
+					JSONObject init_obj = new JSONObject(HttpResponseBody(response));
+					Intent dispatcher = new Intent(app, SplashScreenActivity.class);
+					dispatcher.putExtra(INIT_INFO,init_obj.toString());
+					dispatcher.setAction(SET_INIT_INFO);
+					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -370,6 +379,32 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	}).start();	
     }
 
+    public void getNewUser(String uid) {
+    	String baseURL = server_url;
+    	baseURL += "get_user?";
+    	baseURL += "uid=" + uid;
+    	
+    	final String getUserURL = baseURL;
+    	final String new_uid = uid;
+    	new Thread(new Runnable() {
+    		public void run() {
+    			HttpClient client = new DefaultHttpClient();
+    	        HttpGet poster = new HttpGet(getUserURL);
+    	        HttpResponse response = null;
+    	        JSONObject success_obj = null;
+				try {
+					response = client.execute(poster);
+					success_obj = new JSONObject(HttpResponseBody(response));
+					app.createNewChoiceUser(new_uid, success_obj);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		}
+
+    	}).start();	
+    }
+    
     //@Override
     protected Integer doInBackground(String... urls) {
         return 0;
