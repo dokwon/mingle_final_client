@@ -44,9 +44,7 @@ public class CandidateFragment extends Fragment {
 	  candidatelistview.setDivider(null);
       candidate_list = ((MingleApplication) parent.getApplication()).getCandidateList();
       adapter=new CandidateAdapter(parent, R.layout.candidate_row,candidate_list, (MingleApplication)parent.getApplicationContext());
-	  
-      
-      
+
       final Activity curActivity = parent;
       
       candidatelistview.setSwipeListViewListener(new BaseSwipeListViewListener() {

@@ -57,6 +57,7 @@ public class MingleApplication extends Application {
     private int extra_match_num = 5;
     private boolean can_get_more_candidate = true;
     private boolean notification_on = true;
+    private boolean[] groupNumFilter = {true, true, true, true, true};
     
     private HashMap<String, MingleUser> user_map = new HashMap<String, MingleUser>();
     
@@ -141,7 +142,11 @@ public class MingleApplication extends Application {
    public void setNotiFlag(boolean bool){
 	   this.notification_on = bool;
    }
-    
+   
+   public boolean[] getGroupNumFilter(){
+	   return this.groupNumFilter;
+   }
+   
    public boolean getNotiFlag(){
 	   return this.notification_on;
    }

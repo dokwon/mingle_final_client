@@ -95,7 +95,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    	ArrayList<ContentValues> chatters = mingleApp.dbHelper.getUserList();
 	    	System.out.println(chatters.size() + " is the size of chatters");
 	    	for(int i=0; i<chatters.size(); i++){
-	    		System.out.println(chatters.get(i));
+	    		Log.i("sktag", "wtf?");
 	    		ArrayList<Message> tempmsgs = mingleApp.dbHelper.getMsgList(chatters.get(i).getAsString("UID"));
 	    		String sex_var = "M";
 	    		if(((MingleApplication) this.getApplicationContext()).getMyUser().getSex() == "M") sex_var = "F";
@@ -234,8 +234,9 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	                profile_intent.putExtra(ProfileActivity.PROFILE_TYPE, "setting");
 	                curActivity.startActivity(profile_intent);
 	            } else if(position == 1){
-	            
-	            
+	            	Intent setting_intent = new Intent(curActivity, SearchSettingActivity.class);
+	            	setting_intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+	            	curActivity.startActivity(setting_intent);            
 	    		} else if(position == 2){
 	            	//1. popup dialog to confirm deactivation
 	            	//2. send msg to server that the user deactivates, should get confirm msg

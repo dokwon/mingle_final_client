@@ -66,8 +66,7 @@ public class CandidateAdapter extends ArrayAdapter {
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-  	  NewsHolder holder = null;
+      NewsHolder holder = null;
   	  View row = convertView;
 
         if(row == null) {

@@ -288,8 +288,13 @@ public void getQuestionOfTheDay() {
     	baseURL += "dist_lim=" + (new Integer(dist_lim)).toString() + "&";
     	baseURL += "loc_long=" + (new Float(longitude)).toString() + "&";
     	baseURL += "loc_lat=" + (new Float(latitude)).toString() + "&";
-    	baseURL += "list_num=" + (new Integer(num_of_users)).toString();
-    	
+    	baseURL += "list_num=" + (new Integer(num_of_users)).toString() + "&";
+    	baseURL += "filter_2=" + (app.getGroupNumFilter()[0]? 1 : 0) + "&";
+    	baseURL += "filter_3=" + (app.getGroupNumFilter()[1]? 1 : 0) + "&";
+    	baseURL += "filter_4=" + (app.getGroupNumFilter()[2]? 1 : 0) + "&";
+    	baseURL += "filter_5=" + (app.getGroupNumFilter()[3]? 1 : 0) + "&";
+    	baseURL += "filter_6=" + (app.getGroupNumFilter()[4]? 1 : 0);
+
     	//Add list of MingleUsers' uids to URL as parameter
         int uid_list_size = uid_list.size();
         if(uid_list_size > 0) baseURL += "&";

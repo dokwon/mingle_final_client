@@ -11,7 +11,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="56dp"
-        android:max="5" />
+        android:max="4" />
 
     <TextView
         android:id="@+id/editText1"
@@ -90,61 +90,52 @@
         android:text="@string/select_number" />
 
     <CheckBox
-        android:id="@+id/checkBox1"
+        android:id="@+id/numFilter1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
         android:layout_below="@+id/textView1"
-        android:text="1" />
-
-    <CheckBox
-        android:id="@+id/checkBox2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/checkBox1"
-        android:layout_alignBottom="@+id/checkBox1"
-        android:layout_marginLeft="13dp"
-        android:layout_toRightOf="@+id/checkBox1"
         android:text="2" />
 
     <CheckBox
-        android:id="@+id/checkBox3"
+        android:id="@+id/numFilter2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/checkBox2"
-        android:layout_alignBottom="@+id/checkBox2"
-        android:layout_marginLeft="13dp"
-        android:layout_toRightOf="@+id/checkBox2"
+        android:layout_alignBaseline="@+id/numFilter1"
+        android:layout_alignBottom="@+id/numFilter1"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/numFilter1"
         android:text="3" />
 
     <CheckBox
-        android:id="@+id/checkBox4"
+        android:id="@+id/numFilter3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/checkBox3"
-        android:layout_alignBottom="@+id/checkBox3"
-        android:layout_marginLeft="13dp"
-        android:layout_toRightOf="@+id/checkBox3"
+        android:layout_alignBaseline="@+id/numFilter2"
+        android:layout_alignBottom="@+id/numFilter2"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/numFilter2"
         android:text="4" />
 
     <CheckBox
-        android:id="@+id/checkBox5"
+        android:id="@+id/numFilter4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/checkBox4"
-        android:layout_alignBottom="@+id/checkBox4"
-        android:layout_marginLeft="13dp"
-        android:layout_toRightOf="@+id/checkBox4"
+        android:layout_alignBaseline="@+id/numFilter3"
+        android:layout_alignBottom="@+id/numFilter3"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/numFilter3"
         android:text="5" />
 
     <CheckBox
-        android:id="@+id/checkBox6"
+        android:id="@+id/numFilter5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/checkBox5"
-        android:layout_alignBottom="@+id/checkBox5"
-        android:layout_marginLeft="13dp"
-        android:layout_toRightOf="@+id/checkBox5"
+        android:layout_alignBaseline="@+id/numFilter4"
+        android:layout_alignBottom="@+id/numFilter4"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/numFilter4"
         android:text="6" />
 
 </RelativeLayout>

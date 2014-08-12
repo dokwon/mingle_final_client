@@ -35,7 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 
 	  private static final String DATABASE_NAME = "minglelocal.db";
 	  private static final int DATABASE_VERSION = 1;
-	  public HashMap uid_list;
+	  private static ArrayList<String> uid_list = new ArrayList<String>();
 	  
 	  // Database creation sql statement
 	  private static final String DATABASE_CREATE = "create table "
@@ -111,6 +111,8 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 				  + "(" + COLUMN_IS_ME + " text not null, " + COLUMN_MSG + " text not null, " 
 				  + COLUMN_TIMESTAMP + " text not null);";
 		  db.execSQL(createUIDTableQuery);
+		  
+		  uid_list.add(uid);
 		  return true;
 	  }
 	  
@@ -192,7 +194,8 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  if(cursor!=null){
 			  while(cursor.moveToNext()){
 				  boolean tempIsMe = true;
-				  if(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_IS_ME))=="N") tempIsMe=false;
+				  if(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_IS_ME)).equals("N")) tempIsMe = false;
+				  
 				  Message newMsg = new Message(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MSG)),-1,
 						  cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_TIMESTAMP)),1,tempIsMe);
 				  msgList.add(newMsg);
@@ -291,7 +294,15 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 	  
 	  public void deleteAll(){
 		  SQLiteDatabase db = this.getWritableDatabase();
-		  db.execSQL("DELETE FROM " + TABLE_UIDLIST);
-		  db.execSQL("DELETE FROM " + TABLE_MYUID);
+		  db.execSQL("DROP TABLE " + TABLE_UIDLIST);
+		  db.execSQL("DROP TABLE " + TABLE_MYUID);
+		  for(int i = 0; i < uid_list.size(); i++) {
+			  Log.i("sktag", "DROP TABLE IF EXISTS \"" + uid_list.get(i) + "\"");
+			  db.execSQL("DROP TABLE IF EXISTS \"" + uid_list.get(i) + "\"");
+		  }
+		  uid_list.clear();
+		  
+		  db.execSQL(DATABASE_CREATE);
+		  db.execSQL(MYUID_CREATE);
 	  }
 }

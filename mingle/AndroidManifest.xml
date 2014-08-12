@@ -41,7 +41,8 @@
         <activity
             android:name=".HuntActivity"
             android:label="@string/title_activity_hunt"
-            android:theme="@style/Theme.AppCompat.Light" >
+            android:theme="@style/Theme.AppCompat.Light" 
+            android:taskAffinity="com.example.mingle.main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -81,7 +82,8 @@
             android:name=".ChatroomActivity"
             android:label="@string/title_activity_chatroom"
             android:launchMode="singleTop"
-            android:theme="@style/ChatRoomTheme" >
+            android:theme="@style/ChatRoomTheme"
+            android:taskAffinity="com.example.mingle.main" >
         </activity>
         <activity
             android:name=".ProfileActivity"
