@@ -20,10 +20,11 @@ public class MsgAdapter extends ArrayAdapter {
       int layoutResID;
       int my_layoutResID;
       MingleUser user;
+      MingleApplication app; 
  
       public MsgAdapter(Context context, int layoutResourceId, int my_layoutResourceId, List data, MingleUser receiver) {
     	  super(context, layoutResourceId, data);
- 
+    	  this.app = (MingleApplication) ((Activity) context).getApplication();
     	  this.data=data;
     	  this.context=context;
     	  this.layoutResID=layoutResourceId;
@@ -39,17 +40,17 @@ public class MsgAdapter extends ArrayAdapter {
     	  View row = convertView;
     	  
           Message msg_data = (Message)data.get(position);
- 
+          
           LayoutInflater inflater = ((Activity)context).getLayoutInflater();
           
           if(msg_data.isMyMsg()) row = inflater.inflate(my_layoutResID,parent,false);
           else row = inflater.inflate(layoutResID, parent, false);
- 
+          
           holder = new NewsHolder();
           holder.msg_view = (TextView)row.findViewById(R.id.msg);
-          holder.timestamp_view =(TextView)row.findViewById(R.id.timestamp);
+          //holder.timestamp_view =(TextView)row.findViewById(R.id.timestamp);
           if(!msg_data.isMyMsg()){
-        	  holder.pic=(ImageView)row.findViewById(R.id.sender_image);
+        	  holder.pic=(RoundedImageView)row.findViewById(R.id.sender_image);
         	  holder.name_view =(TextView)row.findViewById(R.id.name);
           }
         	  
@@ -57,7 +58,7 @@ public class MsgAdapter extends ArrayAdapter {
  
           RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) holder.msg_view.getLayoutParams();
           holder.msg_view.setText(msg_data.getContent());
-          holder.timestamp_view.setText(msg_data.getTimestamp().toString());
+          //holder.timestamp_view.setText(msg_data.getTimestamp().toString());
           if(!msg_data.isMyMsg()){
         	  holder.pic.setImageDrawable(user.getPic(0));
         	  final String profile_uid = user.getUid();
@@ -82,9 +83,9 @@ public class MsgAdapter extends ArrayAdapter {
       
       static class NewsHolder{
     	  TextView msg_view;
-    	  TextView timestamp_view;
+    	  //TextView timestamp_view;
     	  TextView name_view;
-    	  ImageView pic;
+    	  RoundedImageView pic;
       }
 }
  

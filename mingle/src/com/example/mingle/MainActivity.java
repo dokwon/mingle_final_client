@@ -111,16 +111,18 @@ public class MainActivity extends Activity {
 	
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	ImageView imageView = FindAppropriateImageView();
+    	
     	String photoPath = "";
     	if (resultCode == RESULT_OK) {
+    		if(requestCode != REQUEST_IMAGE_CAPTURE && requestCode != SELECT_FILE) return;
+    		ImageView imageView = FindAppropriateImageView();
     		if (requestCode == REQUEST_IMAGE_CAPTURE) {   // If the user requested taking a photo
                 getContentResolver().notifyChange(imageUri, null);
                 photoPath = imageUri.getPath();
             }  else if (requestCode == SELECT_FILE) { // If the user wants to select a file
                 imageUri = data.getData();
                 photoPath = getPath(imageUri, MainActivity.this);
-            }
+            } 
     		 app.addPhotoPath(photoPath);
              Bitmap bm;
              BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
@@ -132,7 +134,7 @@ public class MainActivity extends Activity {
     
     // Helper method to retrieve the filepath of selected image
     public String getPath(Uri uri, Activity activity) {
-        String[] projection = { MediaColumns.DATA };
+        String[] projection = { MediaColumns.DATA }; 
         Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
         int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
         cursor.moveToFirst(); 

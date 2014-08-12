@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:swipe="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:background="@color/titlebackgroundcolor"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
@@ -12,7 +13,7 @@
 	    
 	    
 	</LinearLayout>
-	
+	<!--  
 	<ListView
 		android:id="@+id/setting_option_list"
 		android:layout_width="wrap_content"
@@ -20,5 +21,5 @@
 		android:layout_marginLeft="150dp"
 		android:layout_marginBottom="200dp">
 	</ListView>
-	
+	-->
 </RelativeLayout>

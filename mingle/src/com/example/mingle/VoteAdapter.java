@@ -36,11 +36,7 @@ public class VoteAdapter extends ArrayAdapter {
   	  // TODO Auto-generated constructor stub
     }
 
-    public void showProfile(View v) {
-    	
-    	System.out.println("show Profile called!!");
-    }
-    
+
     private void setRankNumberView(int position, View row, NewsHolder holder) {
     
     	holder.female_rank = (ImageView) row.findViewById(R.id.top_female_rank);

@@ -3,24 +3,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="${packageName}.${activityClass}" >
-
-    <ViewFlipper
-        android:id="@+id/view_flipper"
-        android:layout_width="270dp"
-        android:layout_height="290dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="20dip"
-        android:layout_marginTop="38dp" >
-    </ViewFlipper>
-
+	<FrameLayout 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:id="@+id/view_flipper_wrapper">"
+		    <ViewFlipper
+		        android:id="@+id/view_flipper"
+		        android:layout_width="270dp"
+		        android:layout_height="290dp"
+		        android:layout_alignParentTop="true"
+		        android:layout_centerHorizontal="true"
+		        android:layout_margin="20dip"
+		        android:layout_marginTop="38dp" >
+		    </ViewFlipper>
+ 			 <ImageView 
+			         android:src="@drawable/photo_corner_border"
+			         android:layout_margin="1dp"
+			         android:layout_width="match_parent"
+			         android:layout_height="match_parent" />
+	     </FrameLayout>
     <TextView
         android:id="@+id/profile_user_num"
         style="@style/MyListTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/view_flipper"
-        android:layout_below="@+id/view_flipper"/>
+        android:layout_alignLeft="@+id/view_flipper_wrapper"
+        android:layout_below="@+id/view_flipper_wrapper"/>
 
     <TextView
         android:id="@+id/profile_user_name"
@@ -36,7 +44,7 @@
         android:id="@+id/vote_button"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/view_flipper"
+        android:layout_alignLeft="@+id/view_flipper_wrapper"
         android:layout_below="@+id/profile_user_num"
         android:onClick="voteUser"
         android:text="Vote" />

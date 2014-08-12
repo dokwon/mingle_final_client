@@ -38,7 +38,8 @@ import com.example.mingle.MingleUser.MsgComparator;
 public class MingleApplication extends Application {
     public final static String UPDATE_MSG_LIST = "com.example.mingle.UPDATE_MSG_LIST";
     public Typeface koreanTypeFace;
-
+    public int blankProfileImage;
+    public int blankProfileImageSmall;
     private String question_of_the_day;
 	
     public HttpHelper connectHelper;
@@ -64,8 +65,11 @@ public class MingleApplication extends Application {
     private ArrayList<String> choices = new ArrayList<String>();
     private ArrayList<ArrayList<String>> pop_users = new ArrayList<ArrayList<String>>();
     
+    
    public void initializeApplication(){
     	koreanTypeFace = Typeface.createFromAsset(getAssets(), "fonts/UnGraphic.ttf");
+    	blankProfileImage = R.drawable.blankprofilelarge;
+    	blankProfileImageSmall = R.drawable.blankprofile;
     }
 
    public void createMyUser(JSONObject userData){
@@ -320,7 +324,7 @@ public class MingleApplication extends Application {
 			if(user == null){
 				String sex = "M";
 				if(my_user.getSex().equals("M")) sex = "F";
-				MingleUser new_user = new MingleUser(chat_user_uid, "", 0, 1, (Drawable) this.getResources().getDrawable(R.drawable.ic_launcher),sex);
+				MingleUser new_user = new MingleUser(chat_user_uid, "", 0, 1, (Drawable) this.getResources().getDrawable(blankProfileImage),sex);
 				
 				this.addMingleUser(new_user);
 				this.addChoice(chat_user_uid);

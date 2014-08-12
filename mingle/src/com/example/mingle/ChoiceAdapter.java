@@ -58,7 +58,7 @@ public class ChoiceAdapter extends ArrayAdapter {
         MingleUser choice = app.getMingleUser(choice_uid);
         holder.msg_view.setText(choice.getLastMsg());
         holder.user_name.setText(choice.getName());
-        holder.user_pic.setImageDrawable(choice.getPic(-1));
+        holder.user_pic.setImageDrawable(choice.getPic(0));
         
         return row;
 
@@ -67,7 +67,7 @@ public class ChoiceAdapter extends ArrayAdapter {
     
     static class NewsHolder{
   	  TextView msg_view;
-  	TextView user_name;
+  	  TextView user_name;
   	  RoundedImageView user_pic;
     }
 }

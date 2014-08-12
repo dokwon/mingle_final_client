@@ -42,6 +42,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.RelativeLayout.LayoutParams;
 import android.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -65,8 +66,8 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	 public ChoiceFragment choiceFragment;				//Fragment for list of users whom current user is chatting with
 	 public VoteFragment voteFragment;					//Fragment for list of top male and female users
 
-	public ListView setting_list_view;
-	private SettingAdapter setting_adapter;
+	//public ListView setting_list_view;
+	//private SettingAdapter setting_adapter;
 		
 	 MingleApplication app;
 	 private static final String server_url = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080";
@@ -104,11 +105,10 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    				chatters.get(i).getAsString("COMM"),
 	    				(int) chatters.get(i).getAsInteger("NUM"),
 	    				1,
-	    				mingleApp.getResources().getDrawable(R.drawable.ic_launcher),
+	    				mingleApp.getResources().getDrawable(R.drawable.blankprofilelarge),
 	    				sex_var);
 	    		if(mingleApp.getChoicePos(newUser.getUid())==-1) {
 	    			mingleApp.addMingleUser(newUser);
-	    		
 	    			mingleApp.addChoice(newUser.getUid());
 	    			new ImageDownloader(this.getApplicationContext(), newUser.getUid(), 0).execute();
 		    		for(int j =0; j<tempmsgs.size(); j++){
@@ -130,17 +130,19 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	 private void customizeActionBar() {
 		// Set up the action bar to show tabs.
 	        actionBar = getActionBar();
+	        
+			View mCustomView = LayoutInflater.from(this).inflate(R.layout.custom_actionbar, null);
+			LayoutParams layout = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+			mCustomView.setLayoutParams(layout);
+	        actionBar.setCustomView(mCustomView);
+	        
 	        actionBar.setBackgroundDrawable(new ColorDrawable(0xFFFFFFFF));
 	        actionBar.setDisplayShowTitleEnabled(false);
 	        actionBar.setDisplayShowHomeEnabled(true);
 	        View homeIcon = findViewById(android.R.id.home);
-	        homeIcon.setVisibility(View.GONE);
+	        ((View)homeIcon.getParent()).setVisibility(View.GONE);
+	        
 	        actionBar.setDisplayHomeAsUpEnabled(false);
-	        
-			View mCustomView = LayoutInflater.from(this).inflate(R.layout.custom_actionbar, null);
-	        
-	        actionBar.setCustomView(mCustomView);
-	      
 	        actionBar.setDisplayShowCustomEnabled(true);
 	        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 	        
@@ -212,70 +214,6 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
         
-       
-        setting_list_view = (ListView) findViewById(R.id.setting_option_list);
-        ArrayList<String> setting_list = new ArrayList<String>();
-		setting_list.add("Profile");
-		setting_list.add("Search Setting");
-		setting_list.add("Delete");
-		
-	    setting_adapter = new SettingAdapter(this, R.layout.setting_row, setting_list, (MingleApplication) getApplicationContext());
-	    setting_adapter.notifyDataSetChanged();
-	    
-	    final Activity curActivity = this;
-	    setting_list_view.setOnItemClickListener(new OnItemClickListener() {
-	    	@Override
-	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-	    		// TODO Auto-generated method stub
-	            if(position == 0){
-	            	final String profile_uid = ((MingleApplication) curActivity.getApplication()).getMyUser().getUid();
-	            	Intent profile_intent = new Intent(curActivity, ProfileActivity.class);
-	                profile_intent.putExtra(ProfileActivity.PROFILE_UID, profile_uid);
-	                profile_intent.putExtra(ProfileActivity.PROFILE_TYPE, "setting");
-	                curActivity.startActivity(profile_intent);
-	            } else if(position == 1){
-	            
-	            
-	    		} else if(position == 2){
-	            	//1. popup dialog to confirm deactivation
-	            	//2. send msg to server that the user deactivates, should get confirm msg
-	            	//	At server
-	            	//	1. clear all data except uid
-	            	//	2. handle other occasions and sync with client --> Must be shit. Hardest part maybe.
-	            	//3. clear data in the database
-	            	//4. cut socket and flush all data in mingleapplication
-	            	
-	            	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(curActivity)
-																.setTitle("Mingle")
-																.setCancelable(false)
-																.setMessage("Your account will be deactivated.")
-																.setIcon(R.drawable.ic_launcher)
-																.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-																	@Override
-																	public void onClick(DialogInterface dialog, int id) {
-																		dialog.dismiss();
-																		((MingleApplication)curActivity.getApplication()).deactivateApp((Context)curActivity);
-																        Intent backToMain = new Intent(curActivity, HuntActivity.class);
-																        backToMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-																        startActivity(backToMain);
-																	}
-																})
-																.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-																	@Override
-																	public void onClick(DialogInterface dialog, int id) {
-																		dialog.dismiss();
-																	}
-																});
-	            	AlertDialog popupDialog = popupBuilder.create();
-	        		popupDialog.show();
-	            }	        	
-	    	}
-	    });
-	    
-	    // Set the ArrayAdapter as the ListView's adapter.  
-	    setting_list_view.setAdapter(setting_adapter);    
-	    setting_list_view.setBackgroundColor(Color.GRAY);
-	    setting_list_view.setVisibility(View.GONE);
     }
     
 	
@@ -301,8 +239,8 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
         ImageView image = new ImageView(this);
         
         ActionBar.LayoutParams params = 
-        		new ActionBar.LayoutParams(50, 
-        				50, 0x10|0x01);
+        		new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, 
+        				ActionBar.LayoutParams.MATCH_PARENT, 0x10|0x01);
         
         params.setMargins(15, 15, 15, 15);
         
@@ -346,24 +284,63 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    public boolean onCreateOptionsMenu(Menu menu) {
 	        // Inflate the menu; this adds items to the action bar if it is present.
 	        super.onCreateOptionsMenu(menu);
-	        //menu.clear();
-	        //getMenuInflater().in
-	        //menu.
-	        //getMenuInflater().inflate(R.menu.chat, menu);
+	        
+	        getMenuInflater().inflate(R.menu.setting_menu, menu);
 	        return true;  
 	    }
 	  
 	  @Override
 	  public boolean onOptionsItemSelected(MenuItem item) {
 	      // Handle item selection
-	      /*switch (item.getItemId()) {
-	      	case R.id.personal_settings:
-	      		Intent intent = new Intent(this, SettingActivity.class);
-	      	    startActivity(intent);
-	            return true;
-	          default:*/
+		  System.out.println("Print a bunch of crap");
+	      switch (item.getItemId()) {
+	      	case R.id.setting_option_profile:
+	      		final String profile_uid = ((MingleApplication) this.getApplication()).getMyUser().getUid();
+            	Intent profile_intent = new Intent(this, ProfileActivity.class);
+                profile_intent.putExtra(ProfileActivity.PROFILE_UID, profile_uid);
+                profile_intent.putExtra(ProfileActivity.PROFILE_TYPE, "setting");
+                this.startActivity(profile_intent);
+	            break;
+	            
+	      	case R.id.setting_option_search:
+	      		break;
+	      	case R.id.setting_option_delete:
+	      	//1. popup dialog to confirm deactivation
+            	//2. send msg to server that the user deactivates, should get confirm msg
+            	//	At server
+            	//	1. clear all data except uid
+            	//	2. handle other occasions and sync with client --> Must be shit. Hardest part maybe.
+            	//3. clear data in the database
+            	//4. cut socket and flush all data in mingleapplication
+	      		final Activity curActivity = this;
+            	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
+															.setTitle("Mingle")
+															.setCancelable(false)
+															.setMessage("Your account will be deactivated.")
+															.setIcon(R.drawable.mingle_logo)
+															.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+																@Override
+																public void onClick(DialogInterface dialog, int id) {
+																	dialog.dismiss();
+																	((MingleApplication)curActivity.getApplication()).deactivateApp((Context)curActivity);
+															        Intent backToMain = new Intent(curActivity, HuntActivity.class);
+															        backToMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+															        startActivity(backToMain);
+																}
+															})
+															.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+																@Override
+																public void onClick(DialogInterface dialog, int id) {
+																	dialog.dismiss();
+																}
+															});
+            	AlertDialog popupDialog = popupBuilder.create();
+        		popupDialog.show();
+	      		break;
+	          default:
 	              return super.onOptionsItemSelected(item);
-	      //}
+	      }
+	      return true;
 	  }
 	 
 	  @Override
@@ -454,10 +431,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 		  }
 	  }
 	  
-	  public void showSettingOptions(View v){
-		  if(setting_list_view.getVisibility() == View.VISIBLE) setting_list_view.setVisibility(View.GONE);
-		  else setting_list_view.setVisibility(View.VISIBLE);
-	  }
+	
 	    
 	  public void handleCandidateList(JSONArray list_of_users){
 		  System.out.println(list_of_users.toString());
@@ -477,7 +451,12 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 					if(candidate == null){
 						String sex_var = "M";
 						if(app.getMyUser().getSex().equals("M")) sex_var = "F";
-						candidate = new MingleUser(shownUser.getString("UID"), shownUser.getString("COMM"), Integer.valueOf(shownUser.getString("NUM")), Integer.valueOf(shownUser.getString("PHOTO_NUM")), (Drawable) this.getResources().getDrawable(R.drawable.ic_launcher),sex_var);
+						candidate = new MingleUser(shownUser.getString("UID"), 
+								shownUser.getString("COMM"), 
+								Integer.valueOf(shownUser.getString("NUM")), 
+								Integer.valueOf(shownUser.getString("PHOTO_NUM")), 
+								(Drawable) this.getResources().getDrawable(app.blankProfileImage),
+								sex_var);
 
 						app.addMingleUser(candidate);
 					}
@@ -505,7 +484,12 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    			JSONObject shownUser = list_of_top.getJSONObject(i);
 	    		MingleUser pop_user = app.getMingleUser(shownUser.getString("UID"));
 	    		if(pop_user == null){
-	    			MingleUser new_user = new MingleUser(shownUser.getString("UID"), shownUser.getString("COMM"), Integer.valueOf(shownUser.getString("NUM")), Integer.valueOf(shownUser.getString("PHOTO_NUM")), (Drawable) this.getResources().getDrawable(R.drawable.ic_launcher),shownUser.getString("SEX"));
+	    			MingleUser new_user = new MingleUser(shownUser.getString("UID"), 
+	    					shownUser.getString("COMM"), 
+	    					Integer.valueOf(shownUser.getString("NUM")), 
+	    					Integer.valueOf(shownUser.getString("PHOTO_NUM")), 
+	    					(Drawable) this.getResources().getDrawable(app.blankProfileImage),
+	    					shownUser.getString("SEX"));
 	    			app.addMingleUser(new_user);
 	    			new ImageDownloader(this.getApplicationContext(), new_user.getUid(), -1).execute();
 	    		}

@@ -10,26 +10,39 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.app.FragmentTransaction;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout.LayoutParams;
+import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
-public class ChatroomActivity extends ListActivity {
+public class ChatroomActivity extends ListActivity implements ActionBar.TabListener{
 
 	
 	Button btnSend;
@@ -75,6 +88,26 @@ public class ChatroomActivity extends ListActivity {
         
         recv_user = app.getMingleUser(recv_uid);
         recv_user.setInChat(true);
+        
+        
+        ActionBar actionBar = getActionBar();
+	    //actionBar.hide();
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM  | ActionBar.DISPLAY_SHOW_HOME);
+        //actionBar.setH
+        //actionBar.setHomeAsUpIndicator(R.drawable.back_button);
+        View titleView =  LayoutInflater.from(this).inflate(R.layout.chatactivity_title_custom_view, null);
+        LayoutParams layout = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        titleView.setLayoutParams(layout);
+        actionBar.setCustomView(titleView);
+	    actionBar.setDisplayHomeAsUpEnabled(true);
+	    TextView chatter_name = (TextView)findViewById(R.id.chatter_name_chat);
+	    
+	    chatter_name.setText(recv_user.getName());
+	    ImageView member_num = (ImageView)findViewById(R.id.member_num_chat);
+	    member_num.setImageResource(memberNumRsId(recv_user.getNum()));
+	    actionBar.setBackgroundDrawable(new ColorDrawable(0xFFFFFFFF));
+	    
+	   
 		
         //Should be fixed here!!!
         msg_counter = -1;
@@ -95,14 +128,44 @@ public class ChatroomActivity extends ListActivity {
     	super.onPause();
     }
     
+    
+   private int memberNumRsId(int numOfMembers) {
+    	
+    	int rval = -1; 
+    	switch(numOfMembers) {
+	    	case 2:
+	    		rval = R.drawable.membercount2;
+	    		break;
+	    	case 3: 
+	    		rval = R.drawable.membercount3;
+	    		break;
+	    	case 4: 
+	    		rval = R.drawable.membercount4;
+	    		break;
+	    	case 5:
+	    		rval = R.drawable.membercount5;
+	    		break;
+	    	case 6:
+	    		rval = R.drawable.membercount6;
+	    		break;
+    		
+    	}
+    	return rval; 
+    }
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    
+     
         LocalBroadcastManager.getInstance(this).registerReceiver(refListReceiver,
         		  new IntentFilter(MingleApplication.UPDATE_MSG_LIST));
-        
+        if(android.os.Build.VERSION.SDK_INT < 11) { 
+		    requestWindowFeature(Window.FEATURE_NO_TITLE); 
+		} 
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
 		setContentView(R.layout.activity_chatroom);
+		
+		
     }
     
     public void sendSMS(View v){
@@ -197,4 +260,35 @@ public class ChatroomActivity extends ListActivity {
     	LocalBroadcastManager.getInstance(this).unregisterReceiver(refListReceiver);
     	super.onDestroy();
     }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
+            NavUtils.navigateUpFromSameTask(this);
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    
+    
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
 }

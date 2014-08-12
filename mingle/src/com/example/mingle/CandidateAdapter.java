@@ -6,10 +6,12 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.graphics.Typeface;
 
 
 import android.graphics.drawable.Drawable;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,6 +40,7 @@ public class CandidateAdapter extends ArrayAdapter {
 
   	  // TODO Auto-generated constructor stub
     }
+
 
     
     private int memberNumRsId(int numOfMembers) {
@@ -73,7 +76,7 @@ public class CandidateAdapter extends ArrayAdapter {
         if(row == null) {
       	  LayoutInflater inflater = ((Activity)context).getLayoutInflater();
       	  row = inflater.inflate(layoutResID, parent, false);
-
+      	 
       	  holder = new NewsHolder();
 
       	  holder.user_num = (ImageView)row.findViewById(R.id.member_num);
@@ -81,7 +84,6 @@ public class CandidateAdapter extends ArrayAdapter {
           holder.user_name.setTypeface(app.koreanTypeFace);
 
       	  holder.user_pic=(ImageView)row.findViewById(R.id.user_pic);
-      	  holder.user_pic.setScaleType(ScaleType.FIT_XY);
 
       	  row.setTag(holder);
         } else {
@@ -89,7 +91,9 @@ public class CandidateAdapter extends ArrayAdapter {
         }
         String candidate_uid = ((ArrayList<String>)data).get(position);
         MingleUser candidate = app.getMingleUser(candidate_uid);
-        holder.user_num.setImageResource(memberNumRsId(candidate.getNum()));
+        
+        final int num_pic_id = memberNumRsId(candidate.getNum());
+        holder.user_num.setImageResource(num_pic_id);
         holder.user_name.setText(candidate.getName());
         Drawable main_drawable = candidate.getPic(0);
         holder.user_pic.setImageDrawable(main_drawable);

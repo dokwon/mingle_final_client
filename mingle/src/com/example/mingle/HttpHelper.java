@@ -94,7 +94,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 public void getQuestionOfTheDay() {
         
         String baseURL = server_url;
-    	baseURL += "get_question";
+    	baseURL += "get_init_info";
     	
     	final String cps = baseURL;
        
@@ -149,7 +149,7 @@ public void getQuestionOfTheDay() {
     	new Thread(new Runnable() {
     		public void run() {
     			try {
-					HttpResponse response = PhotoPoster.postPhoto(app.getPhotoPaths(), cpy);
+					HttpResponse response = PhotoPoster.postPhoto(app.getPhotoPaths(), cpy, app);
 					JSONObject user_info = new JSONObject(HttpResponseBody(response));
 					System.out.println(user_info);
 					
@@ -186,7 +186,7 @@ public void getQuestionOfTheDay() {
     	new Thread(new Runnable() {
     		public void run() {
     			try {
-					HttpResponse response = PhotoPoster.postPhoto(app.getPhotoPaths(), cpy);
+					HttpResponse response = PhotoPoster.postPhoto(app.getPhotoPaths(), cpy, app);
 					//JSONObject user_info = new JSONObject(HttpResponseBody(response));
 					//System.out.println(user_info);
 					

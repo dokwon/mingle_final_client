@@ -35,13 +35,13 @@
         android:name=".MingleApplication"
         android:label="@string/app_name"
         android:allowBackup="true"
+        android:theme="@style/CustomActionBarTheme"
         android:icon="@drawable/mingle_logo"
         android:logo="@drawable/mingle_logo"
-        android:theme="@style/WhiteTheme" >
+         >
         <activity
             android:name=".HuntActivity"
-            android:label="@string/title_activity_hunt"
-            android:theme="@style/Theme.AppCompat.Light" >
+            android:label="@string/title_activity_hunt">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -80,8 +80,13 @@
         <activity
             android:name=".ChatroomActivity"
             android:label="@string/title_activity_chatroom"
+            
             android:launchMode="singleTop"
-            android:theme="@style/ChatRoomTheme" >
+            >
+            
+             <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.example.mingle.HuntActivity" />
         </activity>
         <activity
             android:name=".ProfileActivity"

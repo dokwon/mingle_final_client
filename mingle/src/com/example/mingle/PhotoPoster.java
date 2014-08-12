@@ -27,7 +27,7 @@ import android.graphics.BitmapFactory;
 
 public class PhotoPoster {
 	
-	public static HttpResponse postPhoto(ArrayList<String> photoPaths, final String baseURL) throws Exception {
+	public static HttpResponse postPhoto(ArrayList<String> photoPaths, final String baseURL, MingleApplication app) throws Exception {
 		HttpClient client = new DefaultHttpClient();
 	    client.getParams().setParameter(CoreProtocolPNames.USER_AGENT, System.getProperty("http.agent"));
 	    
@@ -42,7 +42,7 @@ public class PhotoPoster {
 			BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
             btmapOptions.inSampleSize = 8;
             String photoPath = photoPaths.get(i);
-			Bitmap bm = BitmapFactory.decodeFile(photoPath, btmapOptions);
+			Bitmap bm = app.rotatedBitmap(BitmapFactory.decodeFile(photoPath, btmapOptions), photoPath);
 			ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
 			bm.compress(CompressFormat.PNG, 0 /*ignored for PNG*/, bos); 
 			    
