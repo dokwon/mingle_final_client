@@ -37,10 +37,10 @@
         android:allowBackup="true"
         android:theme="@style/CustomActionBarTheme"
         android:icon="@drawable/mingle_logo"
-        android:logo="@drawable/mingle_logo"
-         >
+        android:logo="@drawable/mingle_logo">
         <activity
             android:name=".HuntActivity"
+            android:taskAffinity="com.example.mingle.main" 
             android:label="@string/title_activity_hunt">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -80,9 +80,8 @@
         <activity
             android:name=".ChatroomActivity"
             android:label="@string/title_activity_chatroom"
-            
-            android:launchMode="singleTop"
-            >
+            android:taskAffinity="com.example.mingle.main" >
+           
             
              <meta-data
             android:name="android.support.PARENT_ACTIVITY"

@@ -1,11 +1,5 @@
 package com.example.mingle;
 
-
-import java.sql.Timestamp;
-
-import android.graphics.drawable.Drawable;
-
-
 public class Message {
 	private String content;
 	private int counter;

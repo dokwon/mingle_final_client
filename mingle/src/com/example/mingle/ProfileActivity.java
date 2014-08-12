@@ -10,17 +10,14 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 public class ProfileActivity extends Activity {
@@ -53,12 +50,10 @@ public class ProfileActivity extends Activity {
          String type = intent.getExtras().getString(ProfileActivity.PROFILE_TYPE);
          
          MingleApplication app = ((MingleApplication) this.getApplication());
-         MingleUser me = app.getMyUser();
 
-         if(type.equals("preview") || app.getMyUser().getUid().equals(uid)) user = app.getMyUser();
+         if(type.equals("preview") || type.equals("setting")) user = app.getMyUser();
          else user = app.getMingleUser(uid);
          photo_num = user.getPhotoNum();
-         System.out.println("photo num: "+photo_num);
                   
          LayoutInflater inflater = getLayoutInflater();
          for(int i = 0; i < photo_num; i++){
@@ -72,7 +67,13 @@ public class ProfileActivity extends Activity {
          }
          
          LocalBroadcastManager.getInstance(this).registerReceiver(imageUpdateReceiver,
-         		  new IntentFilter(ImageDownloader.UPDATE_PROFILE));
+        		  new IntentFilter(ImageDownloader.UPDATE_PROFILE));
+         
+         LocalBroadcastManager.getInstance(this).registerReceiver(voteResultReceiver,
+        		  new IntentFilter(HttpHelper.HANDLE_VOTE_RESULT));
+         
+         LocalBroadcastManager.getInstance(this).registerReceiver(httpErrorReceiver,
+         		  new IntentFilter(HttpHelper.HANDLE_HTTP_ERROR));
          
          TextView num_view = (TextView) findViewById(R.id.profile_user_num);
          num_view.setText(String.valueOf(user.getNum()));
@@ -86,6 +87,8 @@ public class ProfileActivity extends Activity {
          
          if(type.equals("preview") || type.equals("setting")){
         	 vote_button.setVisibility(View.GONE);
+         } else {
+        	 getNewImage(0);
          }
          if(!type.equals("candidate")){
         	 chat_button.setVisibility(View.GONE);
@@ -201,4 +204,33 @@ public class ProfileActivity extends Activity {
         i.putExtra(MainActivity.MAIN_TYPE, "update");
         startActivity(i);
     }
+    
+    /* Broadcast Receiver for notification of vote result*/
+	  private BroadcastReceiver voteResultReceiver = new BroadcastReceiver() {
+	    	@Override
+	    	public void onReceive(Context context, Intent intent) {
+	    		String result = intent.getExtras().getString(HttpHelper.VOTE_RESULT);
+	    		if(result.equals("success")){
+		    		Toast.makeText(getApplicationContext(), "Vote success!", Toast.LENGTH_SHORT).show();
+	    		} else {
+		    		Toast.makeText(getApplicationContext(), "Can't vote yet!", Toast.LENGTH_SHORT).show();
+	    		}
+	    	}
+	  };
+	  
+	  /* Broadcast Receiver for notification of http error*/
+	  private BroadcastReceiver httpErrorReceiver = new BroadcastReceiver() {
+	    	@Override
+	    	public void onReceive(Context context, Intent intent) {
+	    		Toast.makeText(getApplicationContext(), getResources().getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+	    	}
+	  };
+    
+	  @Override
+	  public void onDestroy(){
+		  LocalBroadcastManager.getInstance(this).unregisterReceiver(imageUpdateReceiver);
+		  LocalBroadcastManager.getInstance(this).unregisterReceiver(httpErrorReceiver);
+
+		  super.onDestroy();
+	  }
 }

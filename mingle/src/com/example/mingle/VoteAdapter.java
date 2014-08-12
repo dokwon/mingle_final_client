@@ -3,18 +3,15 @@ package com.example.mingle;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -79,11 +76,14 @@ public class VoteAdapter extends ArrayAdapter {
 
       	  holder = new NewsHolder();
 
+      	  holder.female_layout = (FrameLayout)row.findViewById(R.id.female_vote_rl);
       	  holder.female_name = (TextView)row.findViewById(R.id.top_female_name);
       	  holder.female_name.setTypeface(app.koreanTypeFace);
     	  holder.female_pic=(ImageView)row.findViewById(R.id.top_female_image);
+    	  
+    	  holder.male_layout = (FrameLayout)row.findViewById(R.id.male_vote_rl);
     	  holder.male_name = (TextView)row.findViewById(R.id.top_male_name);
-			holder.male_name.setTypeface(app.koreanTypeFace);
+    	  holder.male_name.setTypeface(app.koreanTypeFace);
       	  holder.male_pic=(ImageView)row.findViewById(R.id.top_male_image);
       	  setRankNumberView(position, row, holder);
       	  row.setTag(holder);
@@ -100,7 +100,7 @@ public class VoteAdapter extends ArrayAdapter {
         	holder.female_name.setText(female_pop.getName());
         	holder.female_pic.setImageDrawable(female_pop.getPic(-1));
         	final String profile_uid = female_uid;
-        	holder.female_pic.setOnClickListener(new OnClickListener()
+        	holder.female_layout.setOnClickListener(new OnClickListener()
             {
 
             	@Override
@@ -118,7 +118,7 @@ public class VoteAdapter extends ArrayAdapter {
         	holder.male_name.setText(male_pop.getName());
         	holder.male_pic.setImageDrawable(male_pop.getPic(-1));
         	final String profile_uid = male_uid;
-        	holder.male_pic.setOnClickListener(new OnClickListener()
+        	holder.male_layout.setOnClickListener(new OnClickListener()
             {
 
             	@Override
@@ -137,6 +137,8 @@ public class VoteAdapter extends ArrayAdapter {
 
     
     static class NewsHolder {
+    	FrameLayout female_layout;
+    	FrameLayout male_layout;
     	ImageView female_rank;
     	ImageView male_rank;
   	  	ImageView female_pic;

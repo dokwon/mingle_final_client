@@ -2,10 +2,8 @@ package com.example.mingle;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,7 +15,6 @@ import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,94 +35,86 @@ import com.example.mingle.MingleApplication;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.RelativeLayout.LayoutParams;
 import android.app.ActionBar;
+import android.widget.RelativeLayout.LayoutParams;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 public class HuntActivity extends FragmentActivity implements ActionBar.TabListener	 {
+	public CandidateFragment candidateFragment;			//Fragment for list of candidates
+	public ChoiceFragment choiceFragment;				//Fragment for list of choices
+	public VoteFragment voteFragment;					//Fragment for list of popular users
 
-	 public CandidateFragment candidateFragment;		//Fragment for list of chattable users
-	 public ChoiceFragment choiceFragment;				//Fragment for list of users whom current user is chatting with
-	 public VoteFragment voteFragment;					//Fragment for list of top male and female users
-
-	//public ListView setting_list_view;
-	//private SettingAdapter setting_adapter;
+	 
+	//For GCM below
+	public static final String EXTRA_MESSAGE = "message";
+	public static final String PROPERTY_REG_ID = "registration_id";
+	private static final String PROPERTY_APP_VERSION = "appVersion";
+	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+	private String SENDER_ID = "5292889580";
+	private GoogleCloudMessaging gcm;
+	private String regid;
+	static final String TAG = "GCMDemo";
 		
-	 MingleApplication app;
-	 private static final String server_url = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080";
-	 private ActionBar actionBar;
+	MingleApplication app;
+	private static final String server_url = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080";
+	private ActionBar actionBar;
+	private ArrayList<Integer> tabOnIcons; 
+	private ArrayList<Integer> tabOffIcons;
 	 
-	    //For GCM below
-		public static final String EXTRA_MESSAGE = "message";
-		public static final String PROPERTY_REG_ID = "registration_id";
-		private static final String PROPERTY_APP_VERSION = "appVersion";
-		private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-		private String SENDER_ID = "5292889580";
-		private GoogleCloudMessaging gcm;
-		private String regid;
-		static final String TAG = "GCMDemo";
-		private Context context;
+	private Context context;
 
-		private boolean AppOnFirstTime() {
-	    	DatabaseHelper db = ((MingleApplication) this.getApplication()).dbHelper;
-	    	MingleApplication mingleApp = (MingleApplication) this.getApplication();
-	    	if(db.isFirst()) {
-	    		System.out.println("Saving for the first time!!");
-	    		return true;
+	//Check if current user is using the application for the first time, and if not bring data from local DB
+	private boolean AppOnFirstTime() {
+	   	DatabaseHelper db = ((MingleApplication) this.getApplication()).dbHelper;
+	   	MingleApplication mingleApp = (MingleApplication) this.getApplication();
+	   	if(db.isFirst()) {
+	   		System.out.println("Saving for the first time!!");
+	   		return true;
+	   	}
+	   	
+	   	mingleApp.createMyUser(mingleApp.dbHelper.getUserData());
+	   	ArrayList<ContentValues> chatters = mingleApp.dbHelper.getUserList();
+	   	for(int i=0; i<chatters.size(); i++){
+	   		ArrayList<Message> tempmsgs = mingleApp.dbHelper.getMsgList(chatters.get(i).getAsString("UID"));
+	   		String sex_var = "M";
+	   		if(((MingleApplication) this.getApplicationContext()).getMyUser().getSex().equals("M")) sex_var = "F";
+	   		
+	   		MingleUser newUser = new MingleUser(chatters.get(i).getAsString("UID"),
+	   				chatters.get(i).getAsString("COMM"),
+	   				(int) chatters.get(i).getAsInteger("NUM"),
+	   				1,
+	   				mingleApp.getResources().getDrawable(R.drawable.blankprofilelarge),
+	   				sex_var);
+	   		if(mingleApp.getChoicePos(newUser.getUid())==-1) {
+	   			mingleApp.addMingleUser(newUser);
+	   		
+	   			mingleApp.addChoice(newUser.getUid());
+	   			new ImageDownloader(this.getApplicationContext(), newUser.getUid(), 0).execute();
+	    		for(int j =0; j<tempmsgs.size(); j++){
+	    			newUser.addMsgObj(tempmsgs.get(j));
+	    		}
 	    	}
 	    	
-	    	mingleApp.createMyUser(mingleApp.dbHelper.getUserData());
-	    	ArrayList<ContentValues> chatters = mingleApp.dbHelper.getUserList();
-	    	System.out.println(chatters.size() + " is the size of chatters");
-	    	for(int i=0; i<chatters.size(); i++){
-	    		System.out.println(chatters.get(i));
-	    		ArrayList<Message> tempmsgs = mingleApp.dbHelper.getMsgList(chatters.get(i).getAsString("UID"));
-	    		String sex_var = "M";
-	    		if(((MingleApplication) this.getApplicationContext()).getMyUser().getSex() == "M") sex_var = "F";
-	    		
-	    		MingleUser newUser = new MingleUser(chatters.get(i).getAsString("UID"),
-	    				chatters.get(i).getAsString("COMM"),
-	    				(int) chatters.get(i).getAsInteger("NUM"),
-	    				1,
-	    				mingleApp.getResources().getDrawable(R.drawable.blankprofilelarge),
-	    				sex_var);
-	    		if(mingleApp.getChoicePos(newUser.getUid())==-1) {
-	    			mingleApp.addMingleUser(newUser);
-	    			mingleApp.addChoice(newUser.getUid());
-	    			new ImageDownloader(this.getApplicationContext(), newUser.getUid(), 0).execute();
-		    		for(int j =0; j<tempmsgs.size(); j++){
-		    			newUser.addMsgObj(tempmsgs.get(j));
-		    		}
-		    	}
-	    	}
-	    	
-	    	// Populate other fields with UID
-	    	return false;
-	    }
 	 
-	 private ArrayList<Integer> tabOnIcons; 
-	 private ArrayList<Integer> tabOffIcons;
-	 
-	 
-	 
+	   	}
+	   	
+	   	// Populate other fields with UID
+	   	return false;
+	}
+	
+	//Set up Action bar
+	    
 	 
 	 private void customizeActionBar() {
 		// Set up the action bar to show tabs.
@@ -143,6 +132,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	        ((View)homeIcon.getParent()).setVisibility(View.GONE);
 	        
 	        actionBar.setDisplayHomeAsUpEnabled(false);
+
 	        actionBar.setDisplayShowCustomEnabled(true);
 	        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 	        
@@ -171,23 +161,21 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    // If the app is not on for the first time, start HuntActivity
 	    // and populate it with data from local storage
 	    if(AppOnFirstTime()) {
-	    	//Start activity for new user
+	    	//Create MyUser and add default values
 		    app.createDefaultMyUser();
 	        Intent i = new Intent(this, MainActivity.class);
 	        i.putExtra(MainActivity.MAIN_TYPE, "new");
 	        startActivity(i);
 	        finish();
 	    }
-	        
-	       
+   
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hunt);
 	    initializeTabIconElems();
 
-
         app.socketHelper = new Socket(server_url, app);
         
-         customizeActionBar();
+        customizeActionBar();
         
         LocalBroadcastManager.getInstance(this).registerReceiver(userListReceiver,
       		  new IntentFilter(HttpHelper.HANDLE_CANDIDATE));
@@ -198,8 +186,12 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
         LocalBroadcastManager.getInstance(this).registerReceiver(listUpdateReceiver,
       		  new IntentFilter(ImageDownloader.UPDATE_HUNT));
         
+        LocalBroadcastManager.getInstance(this).registerReceiver(httpErrorReceiver,
+      		  new IntentFilter(HttpHelper.HANDLE_HTTP_ERROR));
+        
         //GCM Setup here
         context = (Context)this;
+        
         // Check device for Play Services APK. If check succeeds, proceed with
         //  GCM registration.
         if (checkPlayServices()) {
@@ -214,9 +206,10 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
         
+       
     }
     
-	
+	//Set up Tab icon images
 	private void initializeTabIconElems() {
 		tabOnIcons = new ArrayList<Integer>();
         tabOnIcons.add(R.drawable.vote_tab_on);
@@ -229,10 +222,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
         tabOffIcons.add(R.drawable.choice_tab_off);
         
 	}
-    public void showProfile(View v) {
-    	
-    	System.out.println("show Profile called!!");
-    }
+
     
 	private ImageView getViewForIcon(int id) {
 		BitmapDrawable icon = (BitmapDrawable)getResources().getDrawable(id);
@@ -291,6 +281,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	  
 	  @Override
 	  public boolean onOptionsItemSelected(MenuItem item) {
+	      
 	      // Handle item selection
 		  System.out.println("Print a bunch of crap");
 	      switch (item.getItemId()) {
@@ -378,6 +369,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	   
 	  }
 	  
+	    /* Broadcast Receiver for notification of receiving candidate list from the server*/
 	   private BroadcastReceiver userListReceiver = new BroadcastReceiver() {
 	    	@Override
 	    	public void onReceive(Context context, Intent intent) {
@@ -396,6 +388,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    	  }
 	    };
 	  
+	    /* Broadcast Receiver for notification of receiving popular list from the server*/
 	    private BroadcastReceiver popListReceiver = new BroadcastReceiver() {
 	    	@Override
 	    	public void onReceive(Context context, Intent intent) {
@@ -404,8 +397,13 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    	   Log.d("receiver", "Got message: " + data);
 	    	   
 	    	   try {
-	    		   JSONArray pop_list_arr = new JSONArray(data);
-	    		   handlePopList(pop_list_arr);
+	    		   JSONObject pop_result = new JSONObject(data);
+	    		   if(pop_result.getString("RESULT").equals("success")){
+	    			   JSONArray pop_list_arr = new JSONArray(pop_result.getString("POP_LIST"));
+	    			   handlePopList(pop_list_arr);
+	    		   } else {
+	   	    			Toast.makeText(getApplicationContext(), "Event not available yet!", Toast.LENGTH_SHORT).show();
+ 	    		   }
 	    	   } catch (JSONException e) {
 	    		   // TODO Auto-generated catch block
 	    		   e.printStackTrace();
@@ -414,7 +412,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    	  }
 	    };
 
-	  
+	  /* TimerTask for load more when the server doesn't have more candidates */
 	  class CandidateTimerTask extends TimerTask {
 		  MingleApplication ma;
 		  public CandidateTimerTask(MingleApplication ma){
@@ -432,18 +430,19 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	  }
 	  
 	
-	    
+	  
+	  /* If no more candidates, start TimeTask.
+	   * Otherwise, save new candidates into candidate list and dispatch image downloader
+	   */
 	  public void handleCandidateList(JSONArray list_of_users){
-		  System.out.println(list_of_users.toString());
 		MingleApplication app = ((MingleApplication) this.getApplicationContext());
 		if(list_of_users.length() == 0){
 			app.noMoreCandidate();
-			System.out.println("app candidate bool: " +app.canGetMoreCandidate());
 			CandidateTimerTask ctt = new CandidateTimerTask(app);
 			new Timer().schedule(ctt, 30000);
 		} else {
 		  
-			//update ChattableUser list and dispatch image downloader
+			//update candidate list and dispatch image downloader
 			for(int i = 0 ; i < list_of_users.length(); i++) {
 				try {
 					JSONObject shownUser = list_of_users.getJSONObject(i);
@@ -472,13 +471,13 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 		if(candidateFragment != null) candidateFragment.candidateLoadMoreComplete();
 	  }
 	  
+	  /* Save new popular list into popular list and dispatch image downloader */
 	  public void handlePopList(JSONArray list_of_top){
 		MingleApplication app = ((MingleApplication) this.getApplicationContext());
 		    
-		//update MingleUser list and dispatch image downloader
+		//get female and male popular list
 	    ArrayList<String> female_list = new ArrayList<String>();
 	    ArrayList<String> male_list = new ArrayList<String>();
-	    
 	    for(int i = 0 ; i < list_of_top.length(); i++) {
 	    	try {
 	    			JSONObject shownUser = list_of_top.getJSONObject(i);
@@ -502,8 +501,9 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    	}
 	    }
 	    		
-	    //add female and male pop users to list
 	    app.emptyPopList();
+	    
+	  //add female and male pop users to list
 	    for(int i = 0; i < female_list.size() || i < male_list.size(); i++){
 	    	String female_uid = "";
 	    	String male_uid = "";
@@ -519,6 +519,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    popListUpdate();
 	  }
 	  
+	  /* Broadcast Receiver for notification of need for lists update from the server*/
 	  private BroadcastReceiver listUpdateReceiver = new BroadcastReceiver() {
 	    	@Override
 	    	public void onReceive(Context context, Intent intent) {
@@ -535,12 +536,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    	  }
 	    };
 	  
-	  public void allListsUpdate(){
-		  candidateListUpdate();
-		  choiceListUpdate();
-		  popListUpdate();
-	  }
-	  
+
 	  public void candidateListUpdate(){
 		  if(candidateFragment != null) candidateFragment.listDataChanged();
 	  }
@@ -552,6 +548,14 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	  public void popListUpdate(){
 		  if(voteFragment != null) voteFragment.listDataChanged();
 	  }
+	  
+	  /* Broadcast Receiver for notification of http error*/
+	  private BroadcastReceiver httpErrorReceiver = new BroadcastReceiver() {
+	    	@Override
+	    	public void onReceive(Context context, Intent intent) {
+	    		Toast.makeText(getApplicationContext(), getResources().getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+	    	}
+	  };
 	  
 	  @Override
 	  public void onResume(){
@@ -566,6 +570,8 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	  public void onDestroy(){
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(userListReceiver);
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(popListReceiver);  
+		  LocalBroadcastManager.getInstance(this).unregisterReceiver(listUpdateReceiver);  
+		  LocalBroadcastManager.getInstance(this).unregisterReceiver(httpErrorReceiver);  
 
 		  super.onDestroy();
 	  }

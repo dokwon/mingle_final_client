@@ -6,9 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.graphics.drawable.Drawable;
 
 public class MingleUser {
@@ -22,6 +19,7 @@ public class MingleUser {
 	String sex;
 	boolean voted;
 	ArrayList<Message> msg_list;
+	int my_msg_counter;
     boolean inChat;
 
     public MingleUser(String uid, String name, int num, int photo_num, Drawable drawable, String sex) {
@@ -32,6 +30,7 @@ public class MingleUser {
           this.sex = sex;
           this.voted = false;
           this.msg_list = new ArrayList<Message>();
+          this.my_msg_counter = -1;
           this.thumb = drawable;
           this.thumb_bool = false;
           this.pics = new ArrayList<Drawable>();
@@ -102,6 +101,14 @@ public class MingleUser {
     	return msg_list;
     }
     
+    public int getMsgCounter(){
+    	return my_msg_counter;
+    }
+    
+    public void incrementMsgCounter(){
+    	my_msg_counter++;
+    }
+    
     public Drawable getPic(int index) {
     	  if(pics.size() <= index || index < -1) return null;
     	  if(index == -1) return thumb;
@@ -141,9 +148,9 @@ public class MingleUser {
     public void addMsg(String msg, int msg_counter, int status){
     	Date date= new Date();
 		Timestamp timestamp = (new Timestamp(date.getTime()));
-		Message msg_obj = new Message(msg, msg_counter, timestamp.toString(), 0, true);
+		String curr_time = timestamp.toString().replaceAll("\\..+", "");
+		Message msg_obj = new Message(msg, msg_counter, curr_time, 0, true);
 		msg_list.add(msg_obj);
-		Collections.sort(msg_list, new MsgComparator());
     }
     
     public void addMsgObj(Message msg){
@@ -173,9 +180,9 @@ public class MingleUser {
 		Collections.sort(msg_list, new MsgComparator());
     }
     
-    public String getLastMsg(){
-		if(msg_list.size() > 0) return msg_list.get(msg_list.size() - 1).getContent();
-		return "";
+    public Message getLastMsg(){
+		if(msg_list.size() > 0) return msg_list.get(msg_list.size() - 1);
+		return null;
 	}
     
     class MsgComparator implements Comparator<Message> {

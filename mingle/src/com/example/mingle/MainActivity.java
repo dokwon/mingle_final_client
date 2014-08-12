@@ -6,9 +6,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.media.ExifInterface;
 import android.net.Uri;
-
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -18,10 +16,10 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+
 
 
 import android.app.Activity;
@@ -32,14 +30,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 
 import com.example.mingle.HttpHelper;
 
@@ -47,8 +41,10 @@ import com.example.mingle.HttpHelper;
 
 
 
+
 import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
+
 
 
 
@@ -66,6 +62,7 @@ public class MainActivity extends Activity {
 	private ArrayList<View> memberViewArr;
 	private ArrayList<ImageView> photoViewArr;
 
+	private String type;
 	private Context context;
 	private ProgressDialog proDialog;
 	
@@ -220,7 +217,7 @@ public class MainActivity extends Activity {
     }
     
     
-    private void initializeUIViews(String type) {
+    private void initializeUIViews() {
     	//Set Default Values
     	if(type.equals("new")){
     		name = "";
@@ -331,8 +328,8 @@ public class MainActivity extends Activity {
         context = (Context)this;
 
         Intent intent = getIntent();
-        String type = intent.getExtras().getString(MainActivity.MAIN_TYPE);
-        initializeUIViews(type);
+        type = intent.getExtras().getString(MainActivity.MAIN_TYPE);
+        initializeUIViews();
       
        
         if(type.equals("new")){
@@ -342,6 +339,9 @@ public class MainActivity extends Activity {
             LocalBroadcastManager.getInstance(context).registerReceiver(userUpdateReceiver,
             		  new IntentFilter(HttpHelper.UPDATE_USER));
         }        
+        
+        LocalBroadcastManager.getInstance(this).registerReceiver(httpErrorReceiver,
+        		  new IntentFilter(HttpHelper.HANDLE_HTTP_ERROR));
     }
 
     
@@ -482,10 +482,25 @@ public class MainActivity extends Activity {
         .setIcon(android.R.drawable.ic_dialog_alert)
          .show();	
     }
+    
+	  /* Broadcast Receiver for notification of http error*/
+	  private BroadcastReceiver httpErrorReceiver = new BroadcastReceiver() {
+	    	@Override
+	    	public void onReceive(Context context, Intent intent) {
+	        	proDialog.dismiss();
+	    		Toast.makeText(getApplicationContext(), getResources().getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+	    	}
+	  };
 
 	  @Override
 	  public void onDestroy(){
-		  LocalBroadcastManager.getInstance(this).unregisterReceiver(userRequestReceiver);
+		  if(type.equals("new")){
+			  LocalBroadcastManager.getInstance(this).unregisterReceiver(userRequestReceiver);
+		  } else {
+			  LocalBroadcastManager.getInstance(this).unregisterReceiver(userUpdateReceiver);
+		  }
+		  LocalBroadcastManager.getInstance(this).unregisterReceiver(httpErrorReceiver);
+
 		  super.onDestroy();
 	  }
 }

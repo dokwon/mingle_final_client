@@ -5,13 +5,10 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class ChoiceAdapter extends ArrayAdapter {
@@ -54,9 +51,10 @@ public class ChoiceAdapter extends ArrayAdapter {
       	  holder = (NewsHolder)row.getTag();
         }
 
+        //Set values for this row
         String choice_uid = (String)data.get(position);
         MingleUser choice = app.getMingleUser(choice_uid);
-        holder.msg_view.setText(choice.getLastMsg());
+        holder.msg_view.setText(choice.getLastMsg().getContent());
         holder.user_name.setText(choice.getName());
         holder.user_pic.setImageDrawable(choice.getPic(0));
         

@@ -5,10 +5,8 @@ import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
 import com.fortysevendeg.swipelistview.SwipeListView;
 import com.fortysevendeg.swipelistview.SwipeListView.OnLoadMoreListener;
 import android.app.Activity;
-import android.app.Application;
 import android.app.Fragment;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -23,32 +21,24 @@ import android.view.ViewGroup;
 public class CandidateFragment extends Fragment {
   public static final String ARG_SECTION_NUMBER = "placeholder_text";
 
-  public SwipeListView candidatelistview;	//Listview for chattable users
-  private ArrayList<String>candidate_list;
-  private CandidateAdapter adapter;
-  
-  private boolean is_first_time = true;
-  
-  private Activity parent;	//Parent Activity: HuntActivity
+  public SwipeListView candidatelistview;	//Listview for candidate mingle users
+  private CandidateAdapter adapter;			//Listview Adapter for candidatelistview 
+  private Activity parent;					//Parent Activity: HuntActivity
   
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
-	  System.out.println("cand frag create");
 	  parent = getActivity();
-
-	  
 	  View rootView = inflater.inflate(R.layout.candidate_fragment, container, false);
 	  
+	  //Initialize list view and adapter
 	  candidatelistview=  (SwipeListView)(rootView.findViewById(R.id.All));
 	  candidatelistview.setDivider(null);
-      candidate_list = ((MingleApplication) parent.getApplication()).getCandidateList();
+      ArrayList<String> candidate_list = ((MingleApplication) parent.getApplication()).getCandidateList();
       adapter=new CandidateAdapter(parent, R.layout.candidate_row,candidate_list, (MingleApplication)parent.getApplicationContext());
-	  
-      
-      
+	    
+      //Initialize candidatelistview as swipelistview
       final Activity curActivity = parent;
-      
       candidatelistview.setSwipeListViewListener(new BaseSwipeListViewListener() {
           @Override
           public void onOpened(int position, boolean toRight) {
@@ -72,18 +62,18 @@ public class CandidateFragment extends Fragment {
               candidatelistview.openAnimate(position); //when you touch front view it will open
               
               MingleApplication currentUser = ((MingleApplication) parent.getApplication());
-                                         
-              // Create chatroom in local sqlite
-              //((MingleApplication) parent.getApplication()).dbHelper.insertNewUID(chat_user_uid);
-           	  
               String user_uid = currentUser.getCandidate(position);
+              
+              //Save selected user as candidate in local DB
               MingleUser targetMU = currentUser.getMingleUser(user_uid);
               currentUser.dbHelper.insertNewUID(user_uid, targetMU.getNum(), targetMU.getName(), 0,0,0);
               
+              //Switch selected user from candidate to choice
               currentUser.switchCandidateToChoice(position);
               ((HuntActivity)parent).candidateListUpdate();
               ((HuntActivity)parent).choiceListUpdate();
 
+              //Open Chat room
               Intent chat_intent = new Intent(curActivity, ChatroomActivity.class);
        		  chat_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
               chat_intent.putExtra(ChatroomActivity.USER_UID, currentUser.getMingleUser(user_uid).getUid());
@@ -116,8 +106,6 @@ public class CandidateFragment extends Fragment {
           
       });
       
-      //These are the swipe listview settings. you can change these
-      //setting as your requirement
       candidatelistview.setSwipeMode(SwipeListView.SWIPE_MODE_LEFT); // there are five swiping modes
       candidatelistview.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_REVEAL); //there are four swipe actions
       candidatelistview.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
@@ -126,6 +114,7 @@ public class CandidateFragment extends Fragment {
       candidatelistview.setAnimationTime(50); // animation time
       candidatelistview.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
       
+      //When scroll all the way to the bottom, load more options
       candidatelistview.setAdapter(adapter);
       candidatelistview.setOnLoadMoreListener(new OnLoadMoreListener() {
           public void onLoadMore() {
@@ -133,17 +122,16 @@ public class CandidateFragment extends Fragment {
           }
       });
       
-      //Load more matches if first time or has only a few
+      //Load more matches if has only a few candidates in current list
       int match_num = candidate_list.size();
-      System.out.println("is first time:" + is_first_time + " match_num_tot:"+match_num);
-      if(is_first_time || match_num <  ((MingleApplication)parent.getApplication()).getFirstMatchNum()) {
-    	  is_first_time = false;
+      if(match_num <  ((MingleApplication)parent.getApplication()).getFirstMatchNum()) {
     	  loadNewMatches( ((MingleApplication)parent.getApplication()).getFirstMatchNum());
       }
       
     return rootView;
   }
   
+  //Update candidate list
   public void listDataChanged(){
 	  parent.runOnUiThread(new Runnable() {
 	  		public void run() {
@@ -151,9 +139,13 @@ public class CandidateFragment extends Fragment {
 	  		}
 	  });
   }
+  
+  //Complete when more candidates are loaded
   public void candidateLoadMoreComplete(){
 	  candidatelistview.onLoadMoreComplete();
   }
+  
+  //Load num_of_matches more candidates to the list if there are more candidates available at server
   public void loadNewMatches(int num_of_matches) {
 	  MingleApplication app = (MingleApplication) parent.getApplication();
 	  if(app.canGetMoreCandidate()) {

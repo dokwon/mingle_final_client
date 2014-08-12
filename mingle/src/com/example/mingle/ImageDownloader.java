@@ -15,14 +15,14 @@ import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 
 public class ImageDownloader extends AsyncTask<Void, Integer, Void> {
-	public final static String UPDATE_HUNT = "com.example.mingle.UPDATE_HUNT";	//Intent data to pass on when new Chatroom Activity started
-	public final static String UPDATE_PROFILE = "com.example.mingle.UPDATE_PROFILE";	//Intent data to pass on when new Chatroom Activity started
-	public final static String PIC_INDEX = "com.example.mingle.PIC_INDEX";	//Intent data to pass on when new Chatroom Activity started
+	public final static String UPDATE_HUNT = "com.example.mingle.UPDATE_HUNT";			//Indicator of image download complete for Hunt activity
+	public final static String UPDATE_PROFILE = "com.example.mingle.UPDATE_PROFILE";	//Indicator of image download complete for Profile activtiy
+	public final static String PIC_INDEX = "com.example.mingle.PIC_INDEX";				//Intent data to pass on for image download index
 
   	private Context context;
-  	private String url;
-  	private String uid;
-  	private int pic_index;
+  	private String url;				//Image download URL
+  	private String uid;				//UID of image owner
+  	private int pic_index;			//Index of image
   	private Bitmap bm;
   	
   	public ImageDownloader(Context context, String uid, int pic_index) {
@@ -47,6 +47,7 @@ public class ImageDownloader extends AsyncTask<Void, Integer, Void> {
 			if (isCancelled()) {
 				return null;
 			}
+			//Download image from URL
 			bm = getBitmapFromURL(url);
 
 			return null;
@@ -57,6 +58,7 @@ public class ImageDownloader extends AsyncTask<Void, Integer, Void> {
 			MingleApplication app= (MingleApplication) context;
 			MingleUser user = app.getMingleUser(uid);
 
+			//Save image
 			user.setPic(pic_index, (Drawable) new BitmapDrawable(context.getResources(),bm));
 
 			//update lists on complete
@@ -80,10 +82,8 @@ public class ImageDownloader extends AsyncTask<Void, Integer, Void> {
 			System.out.println("cancled");
 	    }
 		
-		public Bitmap getBitmapFromURL(String link) {
-	        /*--- this method downloads an Image from the given URL, 
-	         *  then decodes and returns a Bitmap object
-	         ---*/
+		//Download image from URL and return it as a Bitmap
+		private Bitmap getBitmapFromURL(String link) {
 	        try {
 	            URL url = new URL(link);
 	            HttpURLConnection connection = (HttpURLConnection) url

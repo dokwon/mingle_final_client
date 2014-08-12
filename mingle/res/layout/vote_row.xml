@@ -13,7 +13,6 @@
             android:id="@+id/female_vote_rl"
             android:background="@drawable/vote_profile"
             android:padding="1dp"
-            android:onClick="showProfile"
             android:tag="front"
             style="@style/MyListFrontContent">
 		    	
@@ -41,7 +40,6 @@
             android:padding="1dp"
             android:background="@drawable/vote_profile"
             android:tag="front"
-            android:onClick="showProfile"
             style="@style/MyListFrontContent">
         			
         			<ImageView

@@ -1,15 +1,12 @@
 package com.example.mingle;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
@@ -17,18 +14,20 @@ import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -40,28 +39,24 @@ import android.widget.ListView;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
-import android.widget.Toast;
+
 
 public class ChatroomActivity extends ListActivity implements ActionBar.TabListener{
 
 	
-	Button btnSend;
-	EditText txtSMS;
+	
 	//LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
     ArrayList<String> listItems=new ArrayList<String>();
     
     public final static String USER_UID = "com.example.mingle.USER_SEL";	//Intent data to pass on when new Chatroom Activity started
     public final static String FROM_GCM = "com.example.mingle.FROM_GCM";	//Intent data to pass on when Chatroom Activity is started by GCM notification
 
+	Button btnSend;															//Button for sending a message
+	EditText txtSMS;														//Field that holds message content    
+	ListView msg_lv;														//Listview for messages
+    MsgAdapter adapter;														//Listview adapter for msg_lv
     
-    //DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
-    MsgAdapter adapter;
-    ListView msg_lv;
-    
-    String send_uid;
-    String recv_uid;
-    int msg_counter;
-    MingleUser recv_user;
+    MingleUser recv_user;													//Mingle User currently chatting with
 	
     @Override
     protected void onNewIntent(Intent intent){
@@ -73,20 +68,16 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
     protected void onResume(){
         super.onResume();
         
-        //Clear the notification from gcm.
-        ((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancelAll();
-        
-        MingleApplication app = ((MingleApplication) this.getApplication());
-        
+       
         Intent intent = getIntent();
-        recv_uid = intent.getExtras().getString(USER_UID);
+        String recv_uid = intent.getExtras().getString(USER_UID);
         
         //Set basic information required for this chat room
-        send_uid = app.getMyUser().getUid();
-		//for testing purpose, set myself as receiver
-		//recv_uid = send_uid;
-        
+        MingleApplication app = ((MingleApplication) this.getApplication());
         recv_user = app.getMingleUser(recv_uid);
+        
+        //Clear the notification from gcm.
+        ((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancelAll();
         recv_user.setInChat(true);
         
         
@@ -109,17 +100,13 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
 	    
 	   
 		
-        //Should be fixed here!!!
-        msg_counter = -1;
-		
+ 
 		//Associate this chat room's message list to adapter
+        msg_lv = (ListView) findViewById(android.R.id.list);
 		adapter=new MsgAdapter(this,
                 R.layout.msg_row, R.layout.my_msg_row,
                 recv_user.getMsgList(), recv_user);
-		
         setListAdapter(adapter);
-        
-        msg_lv = (ListView) findViewById(android.R.id.list);
     }
     
     @Override
@@ -159,6 +146,11 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
      
         LocalBroadcastManager.getInstance(this).registerReceiver(refListReceiver,
         		  new IntentFilter(MingleApplication.UPDATE_MSG_LIST));
+        
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(noUserReceiver,
+        		  new IntentFilter(Socket.NO_USER_NOTI));
+
         if(android.os.Build.VERSION.SDK_INT < 11) { 
 		    requestWindowFeature(Window.FEATURE_NO_TITLE); 
 		} 
@@ -168,38 +160,38 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
 		
     }
     
+    /* Function to be called when message send button is clicked */
     public void sendSMS(View v){
         MingleApplication app = ((MingleApplication) this.getApplication());
         
+        //Open socket if closed
         app.socketHelper.connectSocket();
 
-    	txtSMS=(EditText) findViewById(R.id.txt_inputText);
-    	
-		// TODO Auto-generated method stub
+		recv_user.incrementMsgCounter();;
+
+		txtSMS=(EditText) findViewById(R.id.txt_inputText);
 		String SMS=txtSMS.getText().toString();
 		
-		msg_counter++;
-		System.out.println("msg sent!");
-		System.out.println(send_uid + " "+ recv_uid+" "+msg_counter);
-		
+		//Determine if my message is response
 		boolean response_msg = true;
-
-		ArrayList<Message> list = recv_user.getMsgList();
-		if(list.size() > 0 && list.get(list.size()-1).isMyMsg()){
+		if(!recv_user.isMsgListEmpty() && recv_user.getLastMsg().isMyMsg()){
 			response_msg = false;
 			DatabaseHelper db = ((MingleApplication) this.getApplication()).dbHelper;
 			// Stores messages in DB
-			db.insertMessages(recv_uid, false, SMS , new Timestamp(System.currentTimeMillis()).toString());
+			db.insertMessages(recv_user.getUid(), false, SMS , new Timestamp(System.currentTimeMillis()).toString());
 		}
 		
 		//Send MSG to Server
 		JSONObject msgObject = new JSONObject();
         try {
-            msgObject.put("send_uid", send_uid);
-            msgObject.put("recv_uid", recv_uid);
+            msgObject.put("send_uid", app.getMyUser().getUid());
+            msgObject.put("recv_uid", recv_user.getUid());
             msgObject.put("msg", SMS);
-            msgObject.put("msg_counter", msg_counter);
+            msgObject.put("msg_counter", recv_user.getMsgCounter());
             
+            //If first message, identity = 2
+            //If not first but response message, identity = 1
+            //If not first and not response message, identity = 0
             if(recv_user.isMsgListEmpty()){
             	msgObject.put("identity", 2);
             } else if(response_msg){
@@ -212,31 +204,31 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
         }
 		
         //Save MSG and show it is in the process of getting sent.
-		recv_user.addMsg(SMS, msg_counter, 0);
+		recv_user.addMsg(SMS, recv_user.getMsgCounter(), 0);
 		updateMessageList();
-	
-		
         ((MingleApplication) this.getApplication()).socketHelper.sendMessageToServer(msgObject);
 		
 		txtSMS.setText("",BufferType.NORMAL);
 	}
     
+    /* Update message list */
     public void updateMessageList(){
     	runOnUiThread(new Runnable() {
     		public void run() {
     			adapter.notifyDataSetChanged();
     		}
     	});
+    	
+    	//Show the most recent message into view
     	msg_lv.post(new Runnable() {
 	        @Override
 	        public void run() {
-	            // Select the last row so it will scroll into view...
-	        	System.out.println("msg last: "+String.valueOf(adapter.getCount()));
 	            msg_lv.setSelection(adapter.getCount());
 	        }
 	    });
     }    
     
+    /* Broadcast Receiver for notification of receiving chat message from the server*/
     private BroadcastReceiver refListReceiver = new BroadcastReceiver() {
     	@Override
     	public void onReceive(Context context, Intent intent) {
@@ -246,6 +238,40 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
     	}
     };
     
+	 private BroadcastReceiver noUserReceiver = new BroadcastReceiver() {
+    	@Override
+    	public void onReceive(Context context, Intent intent) {
+    	   // Extract data included in the Intent
+    	   Log.d("chat receiver", "Got intent: ");
+    	   showNoUserPopup();
+    	}
+    };
+    
+    private void showNoUserPopup(){
+    	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
+												.setTitle("Mingle")
+												.setCancelable(false)
+												.setMessage("This user has been deactivated")
+												.setIcon(R.drawable.mingle_logo)
+												.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+													@Override
+													public void onClick(DialogInterface dialog, int id) {
+														dialog.dismiss();
+													}
+												});
+    	popupBuilder.show();
+    	
+    	/*
+ 	   	try {
+ 		   JSONObject obj = new JSONObject(intent.getExtras().getString(Socket.DEACT_USER));
+ 		   String uid = obj.getString("send_uid");
+ 	   	} catch (JSONException e) {
+			// TODO Auto-generated catch block
+ 		   e.printStackTrace();
+ 	   	}*/
+    }
+
+    /* If current activity is called from GCM not Hunt, start Hunt */
     @Override
     public void onBackPressed(){
     	if(this.isTaskRoot()){
@@ -258,6 +284,7 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
     @Override
     public void onDestroy(){    	
     	LocalBroadcastManager.getInstance(this).unregisterReceiver(refListReceiver);
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(noUserReceiver);
     	super.onDestroy();
     }
     

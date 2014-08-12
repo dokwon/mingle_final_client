@@ -1,52 +1,29 @@
 package com.example.mingle;
 //package com.hmkcode.android;
 
-        
-import android.annotation.SuppressLint;
-import android.app.Application;
-import android.app.Instrumentation;
-import android.content.Context;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import java.net.*;
 
-import io.socket.*;
-
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+
 
 import com.example.mingle.MingleUser;        
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.*;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -56,31 +33,29 @@ import java.lang.String;
  * Created by Tempnote on 2014-06-02.
  */
 public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
-	  public final static String USER_CONF = "com.example.mingle.USER_CONF";	//Intent data to pass on when new Chatroom Activity started
-	  public final static String JOIN_MINGLE = "com.example.mingle.JOIN_MINGLE";	//Intent data to pass on when new Chatroom Activity started
-	  public final static String UPDATE_USER = "com.example.mingle.UPDATE_USER";	//Intent data to pass on when new Chatroom Activity started
-	  public final static String USER_LIST = "com.example.mingle.USER_LIST";	//Intent data to pass on when new Chatroom Activity started
-	  public final static String HANDLE_CANDIDATE = "com.example.mingle.HANDLE_CANDIDATE";	//Intent data to pass on when new Chatroom Activity started
-	  public final static String POP_LIST = "com.example.mingle.POP_LIST";	//Intent data to pass on when new Chatroom Activity started
-	  public final static String HANDLE_POP = "com.example.mingle.HANDLE_POP";	//Intent data to pass on when new Chatroom Activity started
+	  public final static String USER_CONF = "com.example.mingle.USER_CONF";				//Intent data to pass on when user creation completes
+	  public final static String JOIN_MINGLE = "com.example.mingle.JOIN_MINGLE";			//Indicator of user creation's complete
+	  public final static String UPDATE_USER = "com.example.mingle.UPDATE_USER";			//Indicator of user update's complete
+	  public final static String USER_LIST = "com.example.mingle.USER_LIST";				//Intent data to pass on when list of candidates are fetched
+	  public final static String HANDLE_CANDIDATE = "com.example.mingle.HANDLE_CANDIDATE";	//Indicator of get candidates' complete
+	  public final static String POP_LIST = "com.example.mingle.POP_LIST";					//Intent data to pass on when list of popular users are fetched
+	  public final static String HANDLE_POP = "com.example.mingle.HANDLE_POP";				//Indicator of get popular users' complete
+	  public final static String HANDLE_HTTP_ERROR = "com.example.mingle.HTTP_ERROR";		//Indicator of http error
+	  public final static String VOTE_RESULT = "com.example.mingle.VOTE_RESULT";			//Intent data to pass on when vote request returns
+	  public final static String HANDLE_VOTE_RESULT = "com.example.mingle.HANDLE_VOTE_RESULT";	//Indicator of vote complete
 
-    private String server_url;
+    private String server_url;				//URL of server
+    private MingleApplication app;
     
-    private MingleApplication app; 
-    
+    /* Constructor for HttpHelper */
     public HttpHelper(String url, MingleApplication curApp){
     	app = curApp; 
     	server_url = url+"/"; 
     }
-    /*private String BitmapToString(Bitmap bmp) {
-    	ByteArrayOutputStream stream = new ByteArrayOutputStream();
-    	bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-    	
-    	return new String(stream.toByteArray());
+
     
-    }*/
-    
-    public String encodeString(String str){
+    /* encode given string in utf-8 */
+    private String encodeString(String str){
     	String encoded_str = "not available";
 		try {
 			encoded_str = URLEncoder.encode(str ,"utf-8");
@@ -91,149 +66,8 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 		return encoded_str;
     }
     
-public void getQuestionOfTheDay() {
-        
-        String baseURL = server_url;
-    	baseURL += "get_init_info";
-    	
-    	final String cps = baseURL;
-       
-    	//Start Thread that receives HTTP Response
-    	new Thread(new Runnable() {
-    		public void run() {
-    			System.out.println("get question: " +cps);
-    			HttpClient client = new DefaultHttpClient();
-    	        HttpGet poster = new HttpGet(cps);
-    	        HttpResponse response = null;
-				try {
-					response = client.execute(poster);
-					System.out.println(response.toString());
-				} catch (ClientProtocolException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				
-				try {
-					JSONObject question_obj = new JSONObject(HttpResponseBody(response));
-					app.setQuestion(question_obj.getString("QUESTION"));
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-    		}
-    	}).start();
-    }
-   
-  /*
-    * Sends login info along to the server, and hopefully what will be returned
-    * is the unique id of the user as well as some other useful information
-    */
-    public void userCreateRequest( final MingleApplication app,String name, String sex, int num)  {
-       	String baseURL = server_url.toString();
-    	baseURL += "create_user?";
-    	baseURL += "name=" + encodeString(name) + "&";
-    	baseURL += "sex=" + sex + "&";
-    	baseURL += "num=" + (Integer.valueOf(num).toString()) + "&";
-    	baseURL += "loc_long=" + (Float.valueOf(app.getLong())).toString() + "&";
-    	baseURL += "loc_lat=" + (Float.valueOf(app.getLat())).toString() + "&";
-    	baseURL += "photo_num=" + (Integer.valueOf(app.getPhotoPaths().size())).toString() + "&";
-    	baseURL += "rid=" + app.getRid();
-    	
-    	final String cpy = baseURL;
-    	
-    	new Thread(new Runnable() {
-    		public void run() {
-    			try {
-					HttpResponse response = PhotoPoster.postPhoto(app.getPhotoPaths(), cpy, app);
-					JSONObject user_info = new JSONObject(HttpResponseBody(response));
-					System.out.println(user_info);
-					
-					//join mingle
-					Intent dispatcher = new Intent(app, MainActivity.class);
-					dispatcher.putExtra(USER_CONF,user_info.toString());
-					dispatcher.setAction(JOIN_MINGLE);
-					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
-					
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-    		
-    		}
-    	}).start();
-    }
-    
-    
-    
-    public void userUpdateRequest( final MingleApplication app,String name, String sex, int num)  {  	
-    	String baseURL = server_url.toString();
-    	baseURL += "update_user?";
-    	baseURL += "uid=" + app.getMyUser().getUid() + "&";
-    	baseURL += "name=" + encodeString(name) + "&";
-    	baseURL += "sex=" + sex + "&";
-    	baseURL += "num=" + (Integer.valueOf(num).toString()) + "&";
-    	baseURL += "loc_long=" + (Float.valueOf(app.getLong())).toString() + "&";
-    	baseURL += "loc_lat=" + (Float.valueOf(app.getLat())).toString() + "&";
-    	baseURL += "photo_num=" + (Integer.valueOf(app.getPhotoPaths().size())).toString();
-    	
-    	final String cpy = baseURL;
-    	
-    	new Thread(new Runnable() {
-    		public void run() {
-    			try {
-					HttpResponse response = PhotoPoster.postPhoto(app.getPhotoPaths(), cpy, app);
-					//JSONObject user_info = new JSONObject(HttpResponseBody(response));
-					//System.out.println(user_info);
-					
-					//notify user for complete
-					Intent dispatcher = new Intent(app, MainActivity.class);
-					dispatcher.setAction(UPDATE_USER);
-					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
-					
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-    		
-    		}
-    	}).start();
-    }
-    
-       
-    public void voteUser(String uid)  {
-        String baseURL = server_url;
-    	baseURL += "vote?";
-    	baseURL += "uid=" + uid;
-    	
-    	final String voteURL = baseURL;
-    	new Thread(new Runnable() {
-    		public void run() {
-    			System.out.println(voteURL);
-    			HttpClient client = new DefaultHttpClient();
-    	        HttpGet poster = new HttpGet(voteURL);
-    	        HttpResponse response = null;
-				try {
-					response = client.execute(poster);
-					System.out.println(response.toString());
-				} catch (ClientProtocolException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-    		}
-    	}).start();
-    }
-    
-    //Fetch data from HttpResponse
-    public String HttpResponseBody(HttpResponse response) { 
-    	//System.out.println(Integer.valueOf(response.getStatusLine().getStatusCode()).toString());
+    /* Fetch data from HttpResponse */
+    private String HttpResponseBody(HttpResponse response) { 
     	if(response == null) {
     		return "";
     	}
@@ -241,7 +75,6 @@ public void getQuestionOfTheDay() {
         {
 			HttpEntity entity = response.getEntity();
 			assert (entity != null);
-			System.out.println("Entity:"+entity);
 			if (entity != null) {
 				String responseBody = "";
 				try {
@@ -259,28 +92,152 @@ public void getQuestionOfTheDay() {
     	return null;
     }
     
-    public Bitmap getBitmapFromURL(String link) {
-        /*--- this method downloads an Image from the given URL, 
-         *  then decodes and returns a Bitmap object
-         ---*/
-        try {
-            URL url = new URL(link);
-            HttpURLConnection connection = (HttpURLConnection) url
-                    .openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-
-            return myBitmap;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+    /* Get vote question of the day*/
+    public void getQuestionOfTheDay() {
+        String baseURL = server_url;
+    	baseURL += "get_init_info";
+    	
+    	final String cps = baseURL;       
+    	new Thread(new Runnable() {
+    		public void run() {
+    			HttpClient client = new DefaultHttpClient();
+    	        HttpGet poster = new HttpGet(cps);
+    	        HttpResponse response = null;
+				try {
+					response = client.execute(poster);
+				} catch (ClientProtocolException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				//Save question
+				try {
+					JSONObject question_obj = new JSONObject(HttpResponseBody(response));
+					app.setQuestion(question_obj.getString("QUESTION"));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+    		}
+    	}).start();
+    }
+   
+    /* Send login info along to the server, and receive UID */
+    public void userCreateRequest( final MingleApplication app,String name, String sex, int num)  {
+       	String baseURL = server_url.toString();
+    	baseURL += "create_user?";
+    	baseURL += "name=" + encodeString(name) + "&";
+    	baseURL += "sex=" + sex + "&";
+    	baseURL += "num=" + (Integer.valueOf(num).toString()) + "&";
+    	baseURL += "loc_long=" + (Float.valueOf(app.getLong())).toString() + "&";
+    	baseURL += "loc_lat=" + (Float.valueOf(app.getLat())).toString() + "&";
+    	baseURL += "photo_num=" + (Integer.valueOf(app.getPhotoPaths().size())).toString() + "&";
+    	baseURL += "rid=" + app.getRid();
+    	
+    	final String cpy = baseURL;	
+    	new Thread(new Runnable() {
+    		public void run() {
+    			try {
+					HttpResponse response = PhotoPoster.postPhoto(app, cpy);
+					JSONObject user_info = new JSONObject(HttpResponseBody(response));
+					
+					//join mingle
+					Intent dispatcher = new Intent(app, MainActivity.class);
+					dispatcher.putExtra(USER_CONF,user_info.toString());
+					dispatcher.setAction(JOIN_MINGLE);
+					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
+					
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		
+    		}
+    	}).start();
     }
     
-    public void requestUserList(String uid, final String sex, float latitude, float longitude, int dist_lim, int num_of_users, ArrayList<String> uid_list) {
+    /* Send update info to server */
+    public void userUpdateRequest( final MingleApplication app,String name, String sex, int num)  {  	
+    	String baseURL = server_url.toString();
+    	baseURL += "update_user?";
+    	baseURL += "uid=" + app.getMyUser().getUid() + "&";
+    	baseURL += "name=" + encodeString(name) + "&";
+    	baseURL += "sex=" + sex + "&";
+    	baseURL += "num=" + (Integer.valueOf(num).toString()) + "&";
+    	baseURL += "loc_long=" + (Float.valueOf(app.getLong())).toString() + "&";
+    	baseURL += "loc_lat=" + (Float.valueOf(app.getLat())).toString() + "&";
+    	baseURL += "photo_num=" + (Integer.valueOf(app.getPhotoPaths().size())).toString();
+    	
+    	final String cpy = baseURL;
+    	
+    	new Thread(new Runnable() {
+    		public void run() {
+    			try {
+					
+    				HttpResponse response = PhotoPoster.postPhoto(app, cpy);
+    				HttpResponseBody(response);
+    				
+					//notify user for complete
+					Intent dispatcher = new Intent(app, MainActivity.class);
+					dispatcher.setAction(UPDATE_USER);
+					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
+					
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		
+    		}
+    	}).start();
+    }
+    
+    /* Send vote request of uid to server */
+    public void voteUser(String uid)  {
+        String baseURL = server_url;
+    	baseURL += "vote?";
+    	baseURL += "uid=" + uid;
+    	
+    	final String voteURL = baseURL;
+    	new Thread(new Runnable() {
+    		public void run() {
+    			HttpClient client = new DefaultHttpClient();
+    	        HttpGet poster = new HttpGet(voteURL);
+    	        HttpResponse response = null;
+				try {
+					response = client.execute(poster);
+				} catch (ClientProtocolException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					//handle http error
+					Intent dispatcher = new Intent(app, ProfileActivity.class);
+					dispatcher.setAction(HANDLE_HTTP_ERROR);
+					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
+					e.printStackTrace();				
+				}
+				
+				try {
+					JSONObject success_obj = new JSONObject(HttpResponseBody(response));
+					//notify user of success
+					Intent dispatcher = new Intent(app, ProfileActivity.class);
+					dispatcher.putExtra(VOTE_RESULT,success_obj.getString("RESULT"));
+					dispatcher.setAction(HANDLE_VOTE_RESULT);
+					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		}
+    	}).start();
+    }
+    
+    /* Request list of Candidates from Server */
+	 public void requestUserList(String uid, final String sex, float latitude, float longitude, int dist_lim, int num_of_users, ArrayList<String> uid_list) {
         
         String baseURL = server_url;
     	baseURL += "get_list?";
@@ -288,8 +245,13 @@ public void getQuestionOfTheDay() {
     	baseURL += "dist_lim=" + (new Integer(dist_lim)).toString() + "&";
     	baseURL += "loc_long=" + (new Float(longitude)).toString() + "&";
     	baseURL += "loc_lat=" + (new Float(latitude)).toString() + "&";
-    	baseURL += "list_num=" + (new Integer(num_of_users)).toString();
-    	
+    	baseURL += "list_num=" + (new Integer(num_of_users)).toString() + "&";
+    	baseURL += "filter_2=" + (app.getGroupNumFilter()[0]? 1 : 0) + "&";
+    	baseURL += "filter_3=" + (app.getGroupNumFilter()[1]? 1 : 0) + "&";
+    	baseURL += "filter_4=" + (app.getGroupNumFilter()[2]? 1 : 0) + "&";
+    	baseURL += "filter_5=" + (app.getGroupNumFilter()[3]? 1 : 0) + "&";
+    	baseURL += "filter_6=" + (app.getGroupNumFilter()[4]? 1 : 0);
+
     	//Add list of MingleUsers' uids to URL as parameter
         int uid_list_size = uid_list.size();
         if(uid_list_size > 0) baseURL += "&";
@@ -315,6 +277,10 @@ public void getQuestionOfTheDay() {
 					e.printStackTrace();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
+					//handle http error
+					Intent dispatcher = new Intent(app, HuntActivity.class);
+					dispatcher.setAction(HANDLE_HTTP_ERROR);
+					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
 					e.printStackTrace();
 				}
 				
@@ -335,35 +301,36 @@ public void getQuestionOfTheDay() {
     	}).start();
     }
     
+    /* Request list of popular users from the server */
     public void requestVoteList() {
-        
 	 	String baseURL = server_url;
     	baseURL += "get_vote";
         
     	final String getVoteURL = baseURL;
        
-    	//Start Thread that receives HTTP Response
     	new Thread(new Runnable() {
     		public void run() {
-    			System.out.println(getVoteURL);
     			HttpClient client = new DefaultHttpClient();
     	        HttpGet poster = new HttpGet(getVoteURL);
     	        HttpResponse response = null;
 				try {
 					response = client.execute(poster);
-					System.out.println(response.toString());
 				} catch (ClientProtocolException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
+					//handle http error
+					Intent dispatcher = new Intent(app, HuntActivity.class);
+					dispatcher.setAction(HANDLE_HTTP_ERROR);
+					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
 					e.printStackTrace();
 				}
 				try {
-					JSONArray list_of_top = new JSONArray(HttpResponseBody(response));
+					JSONObject vote_result = new JSONObject(HttpResponseBody(response));
 		    		
 		    		Intent dispatcher = new Intent(app, HuntActivity.class);
-					dispatcher.putExtra(POP_LIST,list_of_top.toString());
+					dispatcher.putExtra(POP_LIST,vote_result.toString());
 					dispatcher.setAction(HANDLE_POP);
 					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher);
 				} catch (JSONException e) {
@@ -374,27 +341,29 @@ public void getQuestionOfTheDay() {
     	}).start();
     }
     
+    /* Request user's deactivation to the server */
     public void requestDeactivation(String uid){
     	String baseURL = server_url;
     	baseURL += "deactivate?";
     	baseURL += "uid=" + uid;
     	
     	final String deactURL = baseURL;
-    	
-    	//Start Thread that receives HTTP Response
     	new Thread(new Runnable() {
     		public void run() {
     			HttpClient client = new DefaultHttpClient();
     	        HttpGet poster = new HttpGet(deactURL);
-    	        HttpResponse response = null;
 				try {
-					response = client.execute(poster);
-					System.out.println(response.toString());
+					HttpResponse response = client.execute(poster);
+    				HttpResponseBody(response);
 				} catch (ClientProtocolException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
+					//handle http error
+					Intent dispatcher = new Intent(app, HuntActivity.class);
+					dispatcher.setAction(HANDLE_HTTP_ERROR);
+					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
 					e.printStackTrace();
 				}
     		}

@@ -931,22 +931,22 @@ import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
         if (posX > 0 && !swipingRight) {
             Log.d("SwipeListView", "change to right");
             swipingRight = !swipingRight;
-            swipeCurrentAction = swipeActionRight;
+            swipeCurrentAction = swipeActionRight;/*
             if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_CHOICE) {
                 backView.setVisibility(View.GONE);
             } else {
                 backView.setVisibility(View.VISIBLE);
-            }
+            }*/
         }
         if (posX < 0 && swipingRight) {
             Log.d("SwipeListView", "change to left");
             swipingRight = !swipingRight;
-            swipeCurrentAction = swipeActionLeft;
+            swipeCurrentAction = swipeActionLeft;/*
             if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_CHOICE) {
                 backView.setVisibility(View.GONE);
             } else {
                 backView.setVisibility(View.VISIBLE);
-            }
+            }*/
         }
         if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_DISMISS) {
             setTranslationX(parentView, deltaX);

@@ -60,7 +60,7 @@ public class MsgAdapter extends ArrayAdapter {
           holder.msg_view.setText(msg_data.getContent());
           //holder.timestamp_view.setText(msg_data.getTimestamp().toString());
           if(!msg_data.isMyMsg()){
-        	  holder.pic.setImageDrawable(user.getPic(0));
+        	  holder.pic.setImageDrawable(user.getPic(-1));
         	  final String profile_uid = user.getUid();
         	  holder.pic.setOnClickListener(new OnClickListener()
               {

@@ -27,6 +27,7 @@ public class TransparentActivity extends Activity {
     static final int MSG_DISMISS_DIALOG = 0;
 	private AlertDialog popupDialog;
 	private TimeoutHandler mHandler;
+	private Context context;
 	
 	static class TimeoutHandler extends Handler {
 		WeakReference<AlertDialog> dialog;
@@ -54,20 +55,33 @@ public class TransparentActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_transparent);		
+		setContentView(R.layout.activity_transparent);
+		context = this;
 	}
 	
 	@Override
 	protected void onResume(){
 		super.onResume();
 		Bundle data = getIntent().getBundleExtra(GcmIntentService.DATA_BUNDLE);
-		
+		final String uid = data.getString("send_uid");
 		AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
 												.setTitle("Mingle")
 												.setCancelable(false)
 												.setMessage(data.getString("msg"))
 												.setIcon(R.drawable.mingle_logo)
-												.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+												.setPositiveButton("View", new DialogInterface.OnClickListener() {
+													@Override
+													public void onClick(DialogInterface dialog, int id) {
+														Intent chat_intent = new Intent(context, ChatroomActivity.class);
+														chat_intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+														chat_intent.putExtra(ChatroomActivity.USER_UID, uid);
+														startActivity(chat_intent);
+														dialog.dismiss();
+														finish();
+														overridePendingTransition(0, 0);
+													}
+												})
+												.setNegativeButton("Close", new DialogInterface.OnClickListener() {
 													@Override
 													public void onClick(DialogInterface dialog, int id) {
 														dialog.dismiss();

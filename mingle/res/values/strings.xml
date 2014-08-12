@@ -40,5 +40,6 @@
      <string name="setting_option_profile">Profile</string>
       <string name="setting_option_search">Search Setting</string>
        <string name="setting_option_delete">Delete</string>
-
+    <string name="network_error">Network unstable. Check your network accessibility and Retry.</string>
+    
 </resources>

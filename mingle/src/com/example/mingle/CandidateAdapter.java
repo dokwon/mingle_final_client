@@ -6,8 +6,11 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+
+
+
+
 import android.graphics.Point;
-import android.graphics.Typeface;
 
 
 import android.graphics.drawable.Drawable;
@@ -17,7 +20,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
@@ -25,9 +27,9 @@ import android.widget.TextView;
 
 public class CandidateAdapter extends ArrayAdapter {
 
-    List data;
-    Context context;
-    int layoutResID;
+    List data;				// List of candidate mingle users' uid
+    Context context;		// Hunt Activity context
+    int layoutResID;		// Layout for row
     MingleApplication app;
 
     public CandidateAdapter(Context context, int layoutResourceId,List data, MingleApplication currApp) {
@@ -41,6 +43,8 @@ public class CandidateAdapter extends ArrayAdapter {
   	  // TODO Auto-generated constructor stub
     }
 
+    
+    /* Return drawable id of selected member num */
 
     
     private int memberNumRsId(int numOfMembers) {
@@ -82,13 +86,15 @@ public class CandidateAdapter extends ArrayAdapter {
       	  holder.user_num = (ImageView)row.findViewById(R.id.member_num);
       	  holder.user_name = (TextView)row.findViewById(R.id.user_name);
           holder.user_name.setTypeface(app.koreanTypeFace);
-
       	  holder.user_pic=(ImageView)row.findViewById(R.id.user_pic);
+      	  
 
       	  row.setTag(holder);
         } else {
       	  holder = (NewsHolder)row.getTag();
         }
+        
+        //Set values for this row
         String candidate_uid = ((ArrayList<String>)data).get(position);
         MingleUser candidate = app.getMingleUser(candidate_uid);
         
@@ -98,6 +104,7 @@ public class CandidateAdapter extends ArrayAdapter {
         Drawable main_drawable = candidate.getPic(0);
         holder.user_pic.setImageDrawable(main_drawable);
         
+        //If user's pic is clicked, show his profile
         final String profile_uid = candidate.getUid();
         holder.user_pic.setOnClickListener(new OnClickListener()
         {
@@ -119,8 +126,7 @@ public class CandidateAdapter extends ArrayAdapter {
     
     static class NewsHolder{
     	ImageView user_num;
-  	 
-  	  TextView user_name;
-  	  ImageView user_pic;
+    	TextView user_name;
+  	  	ImageView user_pic;
     }
 }
