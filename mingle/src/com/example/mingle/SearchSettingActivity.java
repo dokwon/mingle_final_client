@@ -1,10 +1,15 @@
 package com.example.mingle;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SeekBar;
@@ -17,7 +22,11 @@ public class SearchSettingActivity extends Activity {
 	private TextView distText;
 	private Button locButton;
 	private RadioGroup notiRadio;
+	private ArrayList<CheckBox> numFilter = new ArrayList<CheckBox>();
 	private MingleApplication app;
+	
+	private boolean locChanged = false;
+	private boolean filterChanged = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +37,7 @@ public class SearchSettingActivity extends Activity {
 		distanceSetting();
 		locationSetting();
 		notificationSetting();
+		numberFilterSetting();
 	}
 	
 	private void distanceSetting(){
@@ -35,7 +45,7 @@ public class SearchSettingActivity extends Activity {
 		distText = (TextView)findViewById(R.id.distText);
 		
 		distText.setText(String.valueOf(app.getDist()));
-		distBar.setProgress(app.getDist());
+		distBar.setProgress(app.getDist() - 1);
 		distBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
@@ -47,8 +57,8 @@ public class SearchSettingActivity extends Activity {
 			
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
-				app.setDist(progress);
-				distText.setText(String.valueOf(progress));
+				app.setDist(progress + 1);
+				distText.setText(String.valueOf(progress + 1));
 			}
 		});
 	}
@@ -58,6 +68,7 @@ public class SearchSettingActivity extends Activity {
 		locButton.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View view){
+				locChanged = true;
 				app.getCurrentLocation();
 			}
 		});
@@ -80,5 +91,53 @@ public class SearchSettingActivity extends Activity {
 					app.setNotiFlag(false);
 			}
 		});
+	}
+	
+	private void numberFilterSetting() {
+		CheckBox box_1 = (CheckBox)findViewById(R.id.numFilter1);
+		CheckBox box_2 = (CheckBox)findViewById(R.id.numFilter2);
+		CheckBox box_3 = (CheckBox)findViewById(R.id.numFilter3);
+		CheckBox box_4 = (CheckBox)findViewById(R.id.numFilter4);
+		CheckBox box_5 = (CheckBox)findViewById(R.id.numFilter5);
+		
+		numFilter.add(box_1);
+		numFilter.add(box_2);
+		numFilter.add(box_3);
+		numFilter.add(box_4);
+		numFilter.add(box_5);
+		
+		for(int i = 0; i < 5; i++) {
+			CheckBox box = numFilter.get(i);
+			if(app.getGroupNumFilter()[i])
+				box.setChecked(true);
+			else box.setChecked(false);
+			
+			final int index = i;
+			box.setOnClickListener(new OnClickListener(){
+				@Override
+				public void onClick(View v){
+					filterChanged = true;
+					if(((CheckBox)v).isChecked()) app.getGroupNumFilter()[index] = true;
+					else app.getGroupNumFilter()[index] = false;
+				}
+			});
+		}
+	}
+	
+	@Override
+	protected void onPause(){
+		if(locChanged)
+			app.connectHelper.userUpdateRequest(app, app.getMyUser().getName(), app.getMyUser().getSex(), app.getMyUser().getNum());
+		
+		if(filterChanged) {
+			for(int i = 0; i < app.getCandidateList().size(); i++) {
+				MingleUser user = app.getMingleUser(app.getCandidateList().get(i));
+				if(!app.getGroupNumFilter()[user.getNum()-2]) {
+					app.getCandidateList().remove(i);
+					i--;
+				}
+			}
+		}
+		super.onPause();
 	}
 }

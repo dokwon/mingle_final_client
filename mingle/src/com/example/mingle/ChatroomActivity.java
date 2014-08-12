@@ -1,14 +1,15 @@
 package com.example.mingle;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -73,7 +74,10 @@ public class ChatroomActivity extends ListActivity {
     
         LocalBroadcastManager.getInstance(this).registerReceiver(refListReceiver,
         		  new IntentFilter(MingleApplication.UPDATE_MSG_LIST));
-        
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(noUserReceiver,
+        		  new IntentFilter(Socket.NO_USER_NOTI));
+
 		setContentView(R.layout.activity_chatroom);
     }
     
@@ -155,6 +159,39 @@ public class ChatroomActivity extends ListActivity {
     	}
     };
     
+	 private BroadcastReceiver noUserReceiver = new BroadcastReceiver() {
+    	@Override
+    	public void onReceive(Context context, Intent intent) {
+    	   // Extract data included in the Intent
+    	   Log.d("chat receiver", "Got intent: ");
+    	   showNoUserPopup();
+    	}
+    };
+    
+    private void showNoUserPopup(){
+    	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
+												.setTitle("Mingle")
+												.setCancelable(false)
+												.setMessage("This user has been deactivated")
+												.setIcon(R.drawable.ic_launcher)
+												.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+													@Override
+													public void onClick(DialogInterface dialog, int id) {
+														dialog.dismiss();
+													}
+												});
+    	popupBuilder.show();
+    	
+    	/*
+ 	   	try {
+ 		   JSONObject obj = new JSONObject(intent.getExtras().getString(Socket.DEACT_USER));
+ 		   String uid = obj.getString("send_uid");
+ 	   	} catch (JSONException e) {
+			// TODO Auto-generated catch block
+ 		   e.printStackTrace();
+ 	   	}*/
+    }
+
     /* If current activity is called from GCM not Hunt, start Hunt */
     @Override
     public void onBackPressed(){
@@ -168,6 +205,7 @@ public class ChatroomActivity extends ListActivity {
     @Override
     public void onDestroy(){    	
     	LocalBroadcastManager.getInstance(this).unregisterReceiver(refListReceiver);
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(noUserReceiver);
     	super.onDestroy();
     }
 }

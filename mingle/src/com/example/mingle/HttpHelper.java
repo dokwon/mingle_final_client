@@ -232,16 +232,22 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     }
     
     /* Request list of Candidates from Server */
-    public void requestUserList(String uid, final String sex, float latitude, float longitude, int dist_lim, int num_of_users, ArrayList<String> uid_list) {
+	 public void requestUserList(String uid, final String sex, float latitude, float longitude, int dist_lim, int num_of_users, ArrayList<String> uid_list) {
+        
         String baseURL = server_url;
     	baseURL += "get_list?";
     	baseURL += "sex=" + sex + "&";
-    	baseURL += "dist_lim=" + (Integer.valueOf(dist_lim).toString()) + "&";
-    	baseURL += "loc_long=" + (Float.valueOf(longitude).toString()) + "&";
-    	baseURL += "loc_lat=" + (Float.valueOf(latitude).toString()) + "&";
-    	baseURL += "list_num=" + (Integer.valueOf(num_of_users).toString());
-    	
-    	//Add list of current candidates' uids to URL as parameter
+    	baseURL += "dist_lim=" + (new Integer(dist_lim)).toString() + "&";
+    	baseURL += "loc_long=" + (new Float(longitude)).toString() + "&";
+    	baseURL += "loc_lat=" + (new Float(latitude)).toString() + "&";
+    	baseURL += "list_num=" + (new Integer(num_of_users)).toString() + "&";
+    	baseURL += "filter_2=" + (app.getGroupNumFilter()[0]? 1 : 0) + "&";
+    	baseURL += "filter_3=" + (app.getGroupNumFilter()[1]? 1 : 0) + "&";
+    	baseURL += "filter_4=" + (app.getGroupNumFilter()[2]? 1 : 0) + "&";
+    	baseURL += "filter_5=" + (app.getGroupNumFilter()[3]? 1 : 0) + "&";
+    	baseURL += "filter_6=" + (app.getGroupNumFilter()[4]? 1 : 0);
+
+    	//Add list of MingleUsers' uids to URL as parameter
         int uid_list_size = uid_list.size();
         if(uid_list_size > 0) baseURL += "&";
     	for (int i = 0; i < uid_list_size - 1; i++){
@@ -250,13 +256,17 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
         if(uid_list_size > 0) baseURL += "my_list["+uid_list_size+"]="+uid_list.get(uid_list_size-1);
         
     	final String cps = baseURL;
+       
+    	//Start Thread that receives HTTP Response
     	new Thread(new Runnable() {
     		public void run() {
+    			System.out.println("request candidate list: " +cps);
     			HttpClient client = new DefaultHttpClient();
     	        HttpGet poster = new HttpGet(cps);
     	        HttpResponse response = null;
 				try {
 					response = client.execute(poster);
+					System.out.println(response.toString());
 				} catch (ClientProtocolException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -268,6 +278,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
 					e.printStackTrace();
 				}
+				
 				
 				try {
 					JSONArray list_of_users = new JSONArray(HttpResponseBody(response));

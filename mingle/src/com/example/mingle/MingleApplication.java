@@ -1,12 +1,9 @@
 package com.example.mingle;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.TimeZone;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +29,7 @@ import android.util.Log;
 import android.view.WindowManager;
 
 import com.example.mingle.HttpHelper;
+import com.example.mingle.MingleUser.MsgComparator;
 
 /**
  * Created by Tempnote on 2014-06-12.
@@ -59,6 +57,7 @@ public class MingleApplication extends Application {
     private int extra_match_num = 5;
     private boolean can_get_more_candidate = true;
     private boolean notification_on = true;
+    private boolean[] groupNumFilter = {true, true, true, true, true};
     
     private HashMap<String, MingleUser> user_map = new HashMap<String, MingleUser>();
     
@@ -143,7 +142,11 @@ public class MingleApplication extends Application {
    public void setNotiFlag(boolean bool){
 	   this.notification_on = bool;
    }
-    
+   
+   public boolean[] getGroupNumFilter(){
+	   return this.groupNumFilter;
+   }
+   
    public boolean getNotiFlag(){
 	   return this.notification_on;
    }
@@ -350,8 +353,7 @@ public class MingleApplication extends Application {
 			}
 			
 			String msg = get_msg_obj.getString("msg");
-			String msg_ts = getLocalTime(get_msg_obj.getString("ts"));
-
+			String msg_ts = get_msg_obj.getString("ts");
     		this.getMingleUser(chat_user_uid).recvMsg(msg, msg_ts);
     		// Save to local storage
 			//((MingleApplication)currContext.getApplicationContext()).dbHelper.insertMessages(chat_user_uid, chat_user_uid, msg, msg_ts);
@@ -373,8 +375,7 @@ public class MingleApplication extends Application {
     	try{
     		String msg_recv_uid = msg_conf_obj.getString("recv_uid");
     		int msg_recv_counter = Integer.parseInt(msg_conf_obj.getString("msg_counter"));
-    		String msg_ts = getLocalTime(msg_conf_obj.getString("ts"));
-
+    		String msg_ts = msg_conf_obj.getString("ts");
     		ArrayList<Message> msg_list = user_map.get(msg_recv_uid).getMsgList();
     		String msg="";
     		for(Message obj : msg_list){
@@ -395,26 +396,6 @@ public class MingleApplication extends Application {
     	} catch (JSONException e){
     		e.printStackTrace();
     	} 
-    }
-    
-    public String getLocalTime(String gmt_time){
-    	gmt_time = gmt_time.replaceAll("T", " ");
-    	gmt_time = gmt_time.replaceAll("\\..+", "");
-    	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-        Date value = null;
-            try {
-				value = formatter.parse(gmt_time);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        dateFormatter.setTimeZone(TimeZone.getDefault());
-        String dt = dateFormatter.format(value);
-
-        return dt;
     }
     
 

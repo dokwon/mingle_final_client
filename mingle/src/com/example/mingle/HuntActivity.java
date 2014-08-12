@@ -87,7 +87,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	   	for(int i=0; i<chatters.size(); i++){
 	   		ArrayList<Message> tempmsgs = mingleApp.dbHelper.getMsgList(chatters.get(i).getAsString("UID"));
 	   		String sex_var = "M";
-	   		if(((MingleApplication) this.getApplicationContext()).getMyUser().getSex() == "M") sex_var = "F";
+	   		if(((MingleApplication) this.getApplicationContext()).getMyUser().getSex().equals("M")) sex_var = "F";
 	   		
 	   		MingleUser newUser = new MingleUser(chatters.get(i).getAsString("UID"),
 	   				chatters.get(i).getAsString("COMM"),
