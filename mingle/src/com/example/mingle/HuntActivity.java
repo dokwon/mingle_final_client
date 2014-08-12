@@ -65,50 +65,12 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	public ListView setting_list_view;					//Listview for setting options
 	private SettingAdapter setting_adapter;			//Listview Adapter for setting_list_view
 		
-	MingleApplication app;
-	private static final String server_url = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080";
+	private MingleApplication app;
 	private ActionBar actionBar;
 	private ArrayList<Integer> tabOnIcons; 
 	private ArrayList<Integer> tabOffIcons;
 	 
 	private Context context;
-
-	//Check if current user is using the application for the first time, and if not bring data from local DB
-	private boolean AppOnFirstTime() {
-	   	DatabaseHelper db = ((MingleApplication) this.getApplication()).dbHelper;
-	   	MingleApplication mingleApp = (MingleApplication) this.getApplication();
-	   	if(db.isFirst()) {
-	   		System.out.println("Saving for the first time!!");
-	   		return true;
-	   	}
-	   	
-	   	mingleApp.createMyUser(mingleApp.dbHelper.getUserData());
-	   	ArrayList<ContentValues> chatters = mingleApp.dbHelper.getUserList();
-	   	for(int i=0; i<chatters.size(); i++){
-	   		ArrayList<Message> tempmsgs = mingleApp.dbHelper.getMsgList(chatters.get(i).getAsString("UID"));
-	   		String sex_var = "M";
-	   		if(((MingleApplication) this.getApplicationContext()).getMyUser().getSex().equals("M")) sex_var = "F";
-	   		
-	   		MingleUser newUser = new MingleUser(chatters.get(i).getAsString("UID"),
-	   				chatters.get(i).getAsString("COMM"),
-	   				(int) chatters.get(i).getAsInteger("NUM"),
-	   				1,
-	   				mingleApp.getResources().getDrawable(R.drawable.ic_launcher),
-	   				sex_var);
-	   		if(mingleApp.getChoicePos(newUser.getUid())==-1) {
-	   			mingleApp.addMingleUser(newUser);
-	   		
-	   			mingleApp.addChoice(newUser.getUid());
-	   			new ImageDownloader(this.getApplicationContext(), newUser.getUid(), 0).execute();
-	    		for(int j =0; j<tempmsgs.size(); j++){
-	    			newUser.addMsgObj(tempmsgs.get(j));
-	    		}
-	    	}
-	   	}
-	   	
-	   	// Populate other fields with UID
-	   	return false;
-	}
 	
 	//Set up Action bar
 	 private void customizeActionBar() {
@@ -141,32 +103,10 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
 		app = ((MingleApplication) this.getApplication());
-		
-		app.initializeApplication();
-        //Initialize HttpHelper that supports HTTP GET/POST requests and socket connection
-        app.connectHelper = new HttpHelper(server_url, (MingleApplication)this.getApplication());
-        app.connectHelper.getQuestionOfTheDay();
-	       
-	    // Initialize the database helper that manages local storage
-	    app.dbHelper = new DatabaseHelper(this);
-
-	    // If the app is not on for the first time, start HuntActivity
-	    // and populate it with data from local storage
-	    if(AppOnFirstTime()) {
-	    	//Create MyUser and add default values
-		    app.createDefaultMyUser();
-	        Intent i = new Intent(this, MainActivity.class);
-	        i.putExtra(MainActivity.MAIN_TYPE, "new");
-	        startActivity(i);
-	        finish();
-	    }
    
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hunt);
-	    initializeTabIconElems();
-
-        app.socketHelper = new Socket(server_url, app);
-        
+	    initializeTabIconElems();  
         customizeActionBar();
         
         LocalBroadcastManager.getInstance(this).registerReceiver(userListReceiver,
@@ -181,6 +121,8 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
         LocalBroadcastManager.getInstance(this).registerReceiver(httpErrorReceiver,
       		  new IntentFilter(HttpHelper.HANDLE_HTTP_ERROR));
         
+        app.socketHelper.connectSocket();
+        
         //GCM Setup here
         context = (Context)this;
         
@@ -189,11 +131,9 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
         if (checkPlayServices()) {
             gcm = GoogleCloudMessaging.getInstance(this);
             regid = getRegistrationId(context);
-    		app.setRid(regid);
 
-            if (regid.isEmpty()) {
-                registerForNewUser();
-            }           
+            if (regid.isEmpty()) registerForNewUser();
+            else app.setRid(regid);
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
@@ -222,17 +162,10 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	                profile_intent.putExtra(ProfileActivity.PROFILE_TYPE, "setting");
 	                curActivity.startActivity(profile_intent);
 	            } else if(position == 1){
-	            
-	            
-	    		} else if(position == 2){
-	            	//1. popup dialog to confirm deactivation
-	            	//2. send msg to server that the user deactivates, should get confirm msg
-	            	//	At server
-	            	//	1. clear all data except uid
-	            	//	2. handle other occasions and sync with client --> Must be shit. Hardest part maybe.
-	            	//3. clear data in the database
-	            	//4. cut socket and flush all data in mingleapplication
-	            	
+	            	Intent setting_intent = new Intent(curActivity, SearchSettingActivity.class);
+	            	setting_intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+	            	curActivity.startActivity(setting_intent);
+	    		} else if(position == 2){           	
 	            	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(curActivity)
 																.setTitle("Mingle")
 																.setCancelable(false)
@@ -243,7 +176,8 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 																	public void onClick(DialogInterface dialog, int id) {
 																		dialog.dismiss();
 																		((MingleApplication)curActivity.getApplication()).deactivateApp((Context)curActivity);
-																        Intent backToMain = new Intent(curActivity, HuntActivity.class);
+																        Intent backToMain = new Intent(curActivity, MainActivity.class);
+																        backToMain.putExtra(MainActivity.MAIN_TYPE, "new");
 																        backToMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 																        startActivity(backToMain);
 																	}
@@ -330,10 +264,6 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    public boolean onCreateOptionsMenu(Menu menu) {
 	        // Inflate the menu; this adds items to the action bar if it is present.
 	        super.onCreateOptionsMenu(menu);
-	        //menu.clear();
-	        //getMenuInflater().in
-	        //menu.
-	        //getMenuInflater().inflate(R.menu.chat, menu);
 	        return true;  
 	    }
 	  
@@ -560,8 +490,6 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	  @Override
 	  public void onResume(){
 	        super.onRestart();
-	        if(app.getMyUser().getUid() != null)
-	        	app.socketHelper.connectSocket();
 	        candidateListUpdate();
 	        choiceListUpdate();
 	  }

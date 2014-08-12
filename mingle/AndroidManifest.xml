@@ -33,25 +33,20 @@
 
     <application
         android:name=".MingleApplication"
-        android:label="@string/app_name"
         android:allowBackup="true"
         android:icon="@drawable/mingle_logo"
+        android:label="@string/app_name"
         android:logo="@drawable/mingle_logo"
         android:theme="@style/WhiteTheme" >
         <activity
             android:name=".HuntActivity"
             android:label="@string/title_activity_hunt"
-            android:theme="@style/Theme.AppCompat.Light" 
-            android:taskAffinity="com.example.mingle.main" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:taskAffinity="com.example.mingle.main"
+            android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
+            android:label="@string/title_activity_main"
             android:theme="@style/MainTheme" >
         </activity>
 
@@ -82,8 +77,8 @@
             android:name=".ChatroomActivity"
             android:label="@string/title_activity_chatroom"
             android:launchMode="singleTop"
-            android:theme="@style/ChatRoomTheme"
-            android:taskAffinity="com.example.mingle.main" >
+            android:taskAffinity="com.example.mingle.main"
+            android:theme="@style/ChatRoomTheme" >
         </activity>
         <activity
             android:name=".ProfileActivity"
@@ -99,6 +94,15 @@
         <activity
             android:name=".SearchSettingActivity"
             android:label="@string/title_activity_search_setting" >
+        </activity>
+        <activity
+            android:name=".SplashScreenActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

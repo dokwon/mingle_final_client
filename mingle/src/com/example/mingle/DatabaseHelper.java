@@ -35,7 +35,9 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 
 	  private static final String DATABASE_NAME = "minglelocal.db";
 	  private static final int DATABASE_VERSION = 1;
-	  private static ArrayList<String> uid_list = new ArrayList<String>();
+	  
+	  private MingleApplication app;
+	  private static DatabaseHelper sInstance = null;
 	  
 	  // Database creation sql statement
 	  private static final String DATABASE_CREATE = "create table "
@@ -57,9 +59,17 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 	      + " int not null);";
 	 
 	  
+	  public static DatabaseHelper getInstance(Context context, MingleApplication app) {
+		  if(sInstance == null)
+			  sInstance = new DatabaseHelper(context.getApplicationContext(), app);
+		  
+		  return sInstance;
+	  }
+	  
 	  /* Database constructor*/
-	  public DatabaseHelper(Context context) {
+	  public DatabaseHelper(Context context, MingleApplication app) {
 	    super(context, DATABASE_NAME, null, DATABASE_VERSION);
+	    this.app = app;
 	  }
 
 	  @Override
@@ -92,6 +102,8 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  values.put(DatabaseHelper.COLUMN_MSG, msg);
 		  values.put(DatabaseHelper.COLUMN_TIMESTAMP, msg_ts);
 		  db.insert("\""+uid+"\"",null,values);
+		  
+		  db.close();
 		  return true;
 	  }
 	  
@@ -112,7 +124,8 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 				  + COLUMN_TIMESTAMP + " text not null);";
 		  db.execSQL(createUIDTableQuery);
 		  
-		  uid_list.add(uid);
+		  db.close();
+		  //app.getMsgUidList().add(uid);
 		  return true;
 	  }
 	  
@@ -139,6 +152,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  db.delete(DatabaseHelper.TABLE_MYUID,null,null);
 		  db.insert(DatabaseHelper.TABLE_MYUID,null,values);
 		  System.out.println(isFirst());
+		  db.close();
 		  return true;
 	  }
 	  
@@ -181,6 +195,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 				  userList.add(tempContent);
 			  }
 		  }
+		  db.close();
 		  return userList;
 	  }
 	  
@@ -212,7 +227,10 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  String[] myuid_columns={DatabaseHelper.COLUMN_MYUID};
 		  Cursor cursor = db.query(DatabaseHelper.TABLE_MYUID,myuid_columns,null,null,null,null,null);
 		  cursor.moveToFirst();
-		  return getRidOfQuotes(cursor.getString(0));
+		  
+		  String return_val = cursor.getString(0);
+		  db.close();
+		  return return_val;
 	  }
 	  
 	  public String getMySex(){
@@ -220,7 +238,10 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  String[] myuid_columns={DatabaseHelper.COLUMN_SEX};
 		  Cursor cursor = db.query(DatabaseHelper.TABLE_MYUID,myuid_columns,null,null,null,null,null);
 		  cursor.moveToFirst();
-		  return cursor.getString(0);
+		  
+		  String return_val = cursor.getString(0);
+		  db.close();
+		  return return_val;
 	  }
 	  
 	  public int getMyNum(){
@@ -228,7 +249,10 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  String[] myuid_columns={DatabaseHelper.COLUMN_NUM};
 		  Cursor cursor = db.query(DatabaseHelper.TABLE_MYUID,myuid_columns,null,null,null,null,null);
 		  cursor.moveToFirst();
-		  return cursor.getInt(0);
+		  
+		  int return_val = cursor.getInt(0);
+		  db.close();
+		  return return_val;
 	  }
 	  
 	  public String getMyComm(){
@@ -236,7 +260,10 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  String[] myuid_columns={DatabaseHelper.COLUMN_COMM};
 		  Cursor cursor = db.query(DatabaseHelper.TABLE_MYUID,myuid_columns,null,null,null,null,null);
 		  cursor.moveToFirst();
-		  return cursor.getString(0);
+		  
+		  String return_val = cursor.getString(0);
+		  db.close();
+		  return return_val;
 	  }
 	  
 	  public float getMyLocLat(){
@@ -244,7 +271,10 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  String[] myuid_columns={DatabaseHelper.COLUMN_LOC_LAT};
 		  Cursor cursor = db.query(DatabaseHelper.TABLE_MYUID,myuid_columns,null,null,null,null,null);
 		  cursor.moveToFirst();
-		  return cursor.getFloat(0);
+		  
+		  float return_val = cursor.getFloat(0);
+		  db.close();
+		  return return_val;
 	  }
 	  
 	  public float getMyLocLong(){
@@ -252,7 +282,10 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  String[] myuid_columns={DatabaseHelper.COLUMN_LOC_LONG};
 		  Cursor cursor = db.query(DatabaseHelper.TABLE_MYUID,myuid_columns,null,null,null,null,null);
 		  cursor.moveToFirst();
-		  return cursor.getFloat(0);
+		  
+		  float return_val = cursor.getFloat(0);
+		  db.close();
+		  return return_val;
 	  }
 	  
 	  public int getMyDistLim(){
@@ -260,7 +293,10 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  String[] myuid_columns={DatabaseHelper.COLUMN_DIST_LIM};
 		  Cursor cursor = db.query(DatabaseHelper.TABLE_MYUID,myuid_columns,null,null,null,null,null);
 		  cursor.moveToFirst();
-		  return cursor.getInt(0);
+		  
+		  int return_val = cursor.getInt(0);
+		  db.close();
+		  return return_val;
 	  }
 	  // returns false if there is already a row inside MYUID table, true otherwise
 	  // i.e. using first time -> true, else -> false
@@ -269,7 +305,10 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  String[] myuid_columns={DatabaseHelper.COLUMN_MYUID};
 		  Cursor cursor = db.query(DatabaseHelper.TABLE_MYUID,myuid_columns,null,null,null,null,null);
 		  
-		  if(cursor.getCount() == 0) return true;
+		  int count = cursor.getCount();
+		  db.close();
+		  
+		  if(count == 0) return true;
 		  return false;
 	  }
 	  
@@ -296,13 +335,14 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  SQLiteDatabase db = this.getWritableDatabase();
 		  db.execSQL("DROP TABLE " + TABLE_UIDLIST);
 		  db.execSQL("DROP TABLE " + TABLE_MYUID);
-		  for(int i = 0; i < uid_list.size(); i++) {
-			  Log.i("sktag", "DROP TABLE IF EXISTS \"" + uid_list.get(i) + "\"");
-			  db.execSQL("DROP TABLE IF EXISTS \"" + uid_list.get(i) + "\"");
+		  for(int i = 0; i < app.getChoiceList().size(); i++) {
+			  Log.i("sktag", "DROP TABLE IF EXISTS \"" + app.getChoiceList().get(i) + "\"");
+			  db.execSQL("DROP TABLE IF EXISTS \"" + app.getChoiceList().get(i) + "\"");
 		  }
-		  uid_list.clear();
 		  
 		  db.execSQL(DATABASE_CREATE);
 		  db.execSQL(MYUID_CREATE);
+		  
+		  db.close();
 	  }
 }

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">mingle</string>
+    <string name="app_name">Mingle</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
     <string name="action_settings">Personal Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_hunt">HuntActivity</string>
     <string name="title_activity_chatroom">ChatroomActivity</string>
     <string name="title_activity_chat_room">ChatRoomActivity</string>
@@ -37,5 +38,6 @@
     <string name="off">OFF</string>
     <string name="select_number">Size of searching group</string>
     <string name="network_error">Network unstable. Check your network accessibility and Retry.</string>
-    
+    <string name="title_activity_splash_screen">SplashScreenActivity</string>
+
 </resources>
