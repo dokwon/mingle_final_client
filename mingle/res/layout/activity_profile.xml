@@ -1,0 +1,96 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:padding="@dimen/option_margin"
+    tools:context="${packageName}.${activityClass}" >
+	<LinearLayout
+            android:orientation="vertical"
+            android:tag="front"
+            android:layout_margin="@dimen/small_margin"
+          	android:id="@+id/profile_elems"
+            android:background="@drawable/candidate_cell_border"
+            style="@style/ProfileListContent">
+	
+			<FrameLayout 
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="center_horizontal"
+			        android:id="@+id/view_flipper_wrapper">
+				    <ViewFlipper
+				        android:id="@+id/view_flipper"
+				        android:layout_width="270dp"
+				        android:layout_height="290dp"
+				        android:layout_margin="20dip"
+				        android:layout_marginTop="38dp" >
+				    </ViewFlipper>
+		 			 <ImageView 
+					         android:src="@drawable/photo_corner_border"
+					         android:layout_margin="1dp"
+					         android:layout_width="match_parent"
+					         android:layout_height="match_parent" />
+			</FrameLayout>
+			<RelativeLayout
+			            android:layout_weight="1"
+			            android:orientation="horizontal"
+			            android:layout_width="match_parent"
+			            android:layout_height="30dp"
+			            android:layout_margin="@dimen/option_margin"
+			            android:gravity = "bottom">    
+			            
+			     			<ImageView
+				                android:layout_width="20dp"
+				                android:layout_height="30dp"
+				                android:layout_alignParentBottom="true"
+				                android:src="@drawable/numberpic"
+				                android:id="@+id/profile_member_num_icon"/>
+					         <ImageView
+					             android:contentDescription="@string/photo_description"
+				                android:layout_width="15dp"
+				                android:layout_height="20dp"
+				                android:layout_alignLeft="@+id/profile_member_num_icon"
+						        android:layout_alignBottom="@+id/profile_member_num_icon"
+						         android:layout_marginLeft="20dp"
+				                android:id="@+id/profile_member_num"/>
+					      
+					        <TextView
+					            android:id="@+id/profile_user_name"
+					            style="@style/MyListTitle"
+					            android:layout_width="wrap_content"
+					            android:layout_height="wrap_content"
+					           	android:layout_alignTop="@+id/profile_member_num_icon"
+					            android:layout_marginLeft="15dp"
+					            android:layout_toRightOf="@+id/profile_member_num" />
+					        
+			 </RelativeLayout>
+    	
+    </LinearLayout>
+    
+	<LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            
+            android:layout_margin="@dimen/small_margin">
+    
+	    <Button
+	        android:id="@+id/vote_button"
+	        android:layout_width="wrap_content"
+	        android:layout_weight="1"
+	        android:layout_height="50dp" 
+	        android:background="@drawable/vote"
+	        android:onClick="voteUser" />
+	    
+	    <Button 
+		    android:layout_height="50dp" 
+		    android:layout_width="wrap_content"
+		    android:id="@+id/chat_button" 
+		    android:layout_weight="1"
+		    
+	        android:layout_marginLeft="10dp"
+		    android:background="@drawable/chatbutton"
+		    android:onClick="startChat"/>
+    </LinearLayout>
+
+</LinearLayout>

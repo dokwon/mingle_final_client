@@ -1,0 +1,141 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="${relativePackage}.${activityClass}" >
+
+    <SeekBar
+        android:id="@+id/distBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="56dp"
+        android:max="4" />
+
+    <TextView
+        android:id="@+id/editText1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:text="@string/search_distance" />
+
+    <TextView
+        android:id="@+id/distText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/editText1"
+        android:layout_alignBottom="@+id/editText1"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/editText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/distBar"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:text="@string/refresh_loc" />
+
+    <Button
+        android:id="@+id/refreshLoc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editText2"
+        android:layout_centerHorizontal="true"
+        android:text="@string/refresh_loc" />
+
+    <TextView
+        android:id="@+id/editText3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/refreshLoc"
+        android:ems="10"
+        android:text="@string/push_notification" />
+
+    <RadioGroup
+        android:id="@+id/notification_setup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/refreshLoc"
+        android:layout_below="@+id/editText3"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/notification_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/on" />
+
+        <RadioButton
+            android:id="@+id/notification_off"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/off" />
+   		
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/notification_setup"
+        android:layout_marginTop="20dp"
+        android:text="@string/select_number" />
+
+    <CheckBox
+        android:id="@+id/numFilter1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@+id/textView1"
+        android:text="2" />
+
+    <CheckBox
+        android:id="@+id/numFilter2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/numFilter1"
+        android:layout_alignBottom="@+id/numFilter1"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/numFilter1"
+        android:text="3" />
+
+    <CheckBox
+        android:id="@+id/numFilter3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/numFilter2"
+        android:layout_alignBottom="@+id/numFilter2"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/numFilter2"
+        android:text="4" />
+
+    <CheckBox
+        android:id="@+id/numFilter4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/numFilter3"
+        android:layout_alignBottom="@+id/numFilter3"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/numFilter3"
+        android:text="5" />
+
+    <CheckBox
+        android:id="@+id/numFilter5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/numFilter4"
+        android:layout_alignBottom="@+id/numFilter4"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/numFilter4"
+        android:text="6" />
+
+</RelativeLayout>
