@@ -51,16 +51,6 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	public CandidateFragment candidateFragment;			//Fragment for list of candidates
 	public ChoiceFragment choiceFragment;				//Fragment for list of choices
 	public VoteFragment voteFragment;					//Fragment for list of popular users
-
-	//For GCM below
-	public static final String EXTRA_MESSAGE = "message";
-	public static final String PROPERTY_REG_ID = "registration_id";
-	private static final String PROPERTY_APP_VERSION = "appVersion";
-	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-	private String SENDER_ID = "5292889580";
-	private GoogleCloudMessaging gcm;
-	private String regid;
-	static final String TAG = "GCMDemo";
 	
 	public ListView setting_list_view;					//Listview for setting options
 	private SettingAdapter setting_adapter;			//Listview Adapter for setting_list_view
@@ -122,23 +112,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
       		  new IntentFilter(HttpHelper.HANDLE_HTTP_ERROR));
         
         app.socketHelper.connectSocket();
-        
-        //GCM Setup here
-        context = (Context)this;
-        
-        // Check device for Play Services APK. If check succeeds, proceed with
-        //  GCM registration.
-        if (checkPlayServices()) {
-            gcm = GoogleCloudMessaging.getInstance(this);
-            regid = getRegistrationId(context);
 
-            if (regid.isEmpty()) registerForNewUser();
-            else app.setRid(regid);
-        } else {
-            Log.i(TAG, "No valid Google Play Services APK found.");
-        }
-        
-       
         //Set items for setting list
         setting_list_view = (ListView) findViewById(R.id.setting_option_list);
         ArrayList<String> setting_list = new ArrayList<String>();
@@ -502,100 +476,6 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(httpErrorReceiver);  
 
 		  super.onDestroy();
-	  }
-	  
-	  //For GCM here
-	  private boolean checkPlayServices() {
-	      int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-	      if (resultCode != ConnectionResult.SUCCESS) {
-	          if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-	              GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-	                      PLAY_SERVICES_RESOLUTION_REQUEST).show();
-	          } else {
-	              Log.i(TAG, "This device is not supported.");
-	              finish();
-	          }
-	          return false;
-	      }
-	      return true;
-	  }
-
-	  
-	  private String getRegistrationId(Context context) {
-	      final SharedPreferences prefs = getGCMPreferences(context);
-	      String registrationId = prefs.getString(PROPERTY_REG_ID, "");
-	      if (registrationId.isEmpty()) {
-	          Log.i(TAG, "Registration not found.");
-	          return "";
-	      }
-	      // Check if app was updated; if so, it must clear the registration ID
-	      // since the existing regID is not guaranteed to work with the new
-	      // app version.
-	      int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
-	      int currentVersion = getAppVersion(context);
-	      if (registeredVersion != currentVersion) {
-	          Log.i(TAG, "App version changed.");
-	          return "";
-	      }
-	      return registrationId;
-	  }
-	  
-	 
-	  private SharedPreferences getGCMPreferences(Context context) {
-	      // This sample app persists the registration ID in shared preferences, but
-	      // how you store the regID in your app is up to you.
-	      return getSharedPreferences(HuntActivity.class.getSimpleName(), Context.MODE_PRIVATE);
-	  }
-
-	  
-	  private static int getAppVersion(Context context) {
-	      try {
-	          PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-	          return packageInfo.versionCode;
-	      } catch (NameNotFoundException e) {
-	          // should never happen
-	          throw new RuntimeException("Could not get package name: " + e);
-	      }
-	  }
-	  
-	  private void registerForNewUser() {
-		  new AsyncTask<MingleApplication, Void, String>() {	  
-			  @Override
-			  protected String doInBackground(MingleApplication... params) {
-				  try {
-					  if (gcm == null) {
-						  gcm = GoogleCloudMessaging.getInstance(context);
-					  }
-			  
-					  regid = gcm.register(SENDER_ID);
-					  // Persist the regID - no need to register again.
-					  storeRegistrationId(context, regid);
-					  params[0].setRid(regid);
-				  } catch (IOException ex) {
-					  ex.printStackTrace();
-					  // If there is an error, don't just keep trying to register.
-					  // Require the user to click a button again, or perform
-					  // exponential back-off.
-					  return "";
-				  }
-				  return "Registration done";
-			  }
-			  
-			  @Override
-			  protected void onPostExecute(String msg) {
-				  System.out.println(msg);
-			  }
-		  }.execute(((MingleApplication)this.getApplication()));
-	  }
-
-	  private void storeRegistrationId(Context context, String regId) {
-	      final SharedPreferences prefs = getGCMPreferences(context);
-	      int appVersion = getAppVersion(context);
-	      Log.i(TAG, "Saving regId on app version " + appVersion);
-	      SharedPreferences.Editor editor = prefs.edit();
-	      editor.putString(PROPERTY_REG_ID, regId);
-	      editor.putInt(PROPERTY_APP_VERSION, appVersion);
-	      editor.commit();
 	  }
 }
 

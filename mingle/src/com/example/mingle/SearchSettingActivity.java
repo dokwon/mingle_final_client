@@ -7,6 +7,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Menu;
@@ -99,11 +103,37 @@ public class SearchSettingActivity extends Activity {
                 	popupDialog.show();
                 } else {
                 	locChanged = true;
-                	app.getCurrentLocation();
+                	getCurrentLocation();
                 }
 			}
 		});
 	}
+	
+	// Get the users one-time location. Code available below to register for updates
+    private void getCurrentLocation() {
+    	
+    	// Acquire a reference to the system Location Manager
+    	final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+    	LocationListener locationListener = new LocationListener() {
+    	    public void onLocationChanged(Location location) {
+    	       app.setLat((float)location.getLatitude());
+    	       app.setLong((float)location.getLongitude());
+    	       locationManager.removeUpdates(this);
+    	    }
+    		
+    	    public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+    	    public void onProviderEnabled(String provider) {}
+
+    	    public void onProviderDisabled(String provider) {}
+    	};
+    	
+    	Criteria criteria = new Criteria();
+    	String provider = locationManager.getBestProvider(criteria, true);
+        locationManager.requestLocationUpdates(provider, 5*1000, 100, locationListener);
+        
+    }
 	
 	private void notificationSetting(){
 		notiRadio = (RadioGroup)findViewById(R.id.notification_setup);

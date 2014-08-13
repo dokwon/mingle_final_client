@@ -1,10 +1,10 @@
 package com.example.mingle;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
@@ -12,33 +12,23 @@ import java.util.TimeZone;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
-
-
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.location.Criteria;
-import android.location.Location;
 import android.location.LocationManager;
 import android.media.ExifInterface;
-import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.WindowManager;
 
 import com.example.mingle.HttpHelper;
-import com.example.mingle.MingleUser.MsgComparator;
 
 /**
  * Created by Tempnote on 2014-06-12.
@@ -114,19 +104,28 @@ public class MingleApplication extends Application {
    }
    
    public void setMyUser(String uid, String name, int num, String sex){
-	   if(uid != null) my_user.setUid(uid);
+	   if(uid != null) {
+		   Log.i("sktag", "uid with quitation mark...?");
+		   if(uid.startsWith("\"")) uid = uid.substring(1);
+		   if(uid.endsWith("\"")) uid = uid.substring(0, uid.length() - 2);
+		   my_user.setUid(uid);
+	   }
 	   if(name != null) my_user.setName(name);
 	   if(num != 0) my_user.setNum(num);
 	   if(sex != null) my_user.setSex(sex);
 	   
 	   my_user.clearPics();
 	   for(int i = 0; i < photoPaths.size(); i++){
-		   Bitmap bm;
-           BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-           btmapOptions.inSampleSize = 16;
-           bm = rotatedBitmap(BitmapFactory.decodeFile(photoPaths.get(i), btmapOptions), photoPaths.get(i));
-		   Drawable user_pic = new BitmapDrawable(getResources(),bm);
-		   my_user.addPic(user_pic);
+		   if(!(new File(photoPaths.get(i))).exists()) my_user.addPic(this.getResources().getDrawable(R.drawable.ic_launcher));
+		   else {
+			   Bitmap bm;
+			   BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
+			   btmapOptions.inSampleSize = 16;
+			   bm = rotatedBitmap(BitmapFactory.decodeFile(photoPaths.get(i), btmapOptions), photoPaths.get(i));
+			   Drawable user_pic;
+			   user_pic = new BitmapDrawable(getResources(),bm);
+			   my_user.addPic(user_pic);
+		   }
 	   }
    }
    
@@ -177,7 +176,7 @@ public class MingleApplication extends Application {
     	photoPaths.add(photoPath);
     }
     
-    public Bitmap getPic(int num) {
+    /*public Bitmap getPic(int num) {
     	if(photoPaths.size() >= num) {
     		Bitmap bm;
             BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
@@ -185,7 +184,7 @@ public class MingleApplication extends Application {
     		return bm;
     	} 
     	return null;
-    }
+    }*/
 
     public float getLat(){
         return latitude;
@@ -202,7 +201,15 @@ public class MingleApplication extends Application {
     public String getRid(){
     	return rid;
     }
-
+    
+    public void setLat(float loc_lat){
+    	this.latitude = loc_lat;
+    }
+    
+    public void setLong(float loc_long){
+    	this.longitude = loc_long;
+    }
+    
     public void setDist(int dist_lim_var){
         dist_lim = dist_lim_var;
     }
@@ -212,13 +219,13 @@ public class MingleApplication extends Application {
     }
     
      public boolean isValid(String my_name) {
-        if (photoPaths == null) {
-            photoPaths = new ArrayList<String>();
+        //check photo path validity
+        if (photoPaths == null || photoPaths.size() == 0) return false;
+        for(int i = 0; i < photoPaths.size(); i++){
+        	if(!(new File(photoPaths.get(i))).exists()) return false;
         }
         
-   
-        if (photoPaths.size() == 0 || my_name.length() < 5)
-            return false;
+        if (my_name.length() < 5) return false;
 
         return true;
     }
@@ -413,52 +420,11 @@ public class MingleApplication extends Application {
     	LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
     	// getting GPS status
         boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
         // getting network status
         boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
         if (!isGPSEnabled && !isNetworkEnabled) return false;
         else return true;
-    }
-    
-    // Get the users one-time location. Code available below to register for updates
-    public void getCurrentLocation() {
-    	
-    	// Acquire a reference to the system Location Manager
-    	LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-    	Criteria criteria = new Criteria();
-    	String provider = locationManager.getBestProvider(criteria, true);
-        Location location = locationManager.getLastKnownLocation(provider);
-        float lat = 0;
-        float lon = 0;
-        if(location != null){
-        	lat =(float) location.getLatitude();
-        	lon =(float) location.getLongitude();
-        } 
-        latitude = lat;
-    	longitude = lon;
-     
-    	
-    	// In case we want to register for location updates
-    	/*
-    	// Define a listener that responds to location updates
-    	LocationListener locationListener = new LocationListener() {
-    	    public void onLocationChanged(Location location) {
-    	      // Called when a new location is found by the network location provider.
-    	      //makeUseOfNewLocation(location);
-    	    }
-
-    	    public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-    	    public void onProviderEnabled(String provider) {}
-
-    	    public void onProviderDisabled(String provider) {}
-    	  };
-
-    	// Register the listener with the Location Manager to receive location updates
-    	locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);*/
-      
     }
     
     public void deactivateApp(Context context){

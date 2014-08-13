@@ -1,9 +1,15 @@
 package com.example.mingle;
 
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -13,19 +19,57 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Typeface;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 
 public class SplashScreenActivity extends Activity {
 	private MingleApplication app;
 	private static final String server_url = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080";
-	private boolean all_set = false;
+	
+	//For GCM below
+	public static final String EXTRA_MESSAGE = "message";
+	public static final String PROPERTY_REG_ID = "registration_id";
+	private static final String PROPERTY_APP_VERSION = "appVersion";
+	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+	private String SENDER_ID = "5292889580";
+	private GoogleCloudMessaging gcm;
+	private String regid;
+	static final String TAG = "GCMDemo";
+	
+	private Context context;
+	private Handler initHandler;
+	private LocationManager locationManager;
+	private boolean findCurLoc = false;
+	static final int MSG_CURRENT_LOC_FOUND = 0;
+	static final int MSG_TIME_OUT = 1;
+	
+	private LocationListener locationListener = new LocationListener() {
+	    public void onLocationChanged(Location location) {
+	        app.setLat((float)location.getLatitude());
+	        app.setLong((float)location.getLongitude());
+	        findCurLoc = true;
+	    }
+		
+	    public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+	    public void onProviderEnabled(String provider) {}
+
+	    public void onProviderDisabled(String provider) {}
+	};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,12 +80,13 @@ public class SplashScreenActivity extends Activity {
 		app = ((MingleApplication) this.getApplication());
 		app.koreanTypeFace = Typeface.createFromAsset(getAssets(), "fonts/UnGraphic.ttf");
 		
-        //Initialize HttpHelper that supports HTTP GET/POST requests and socket connection
+        //Initialize HttpHelper that supports HTTP GET/POST requests
         app.connectHelper = new HttpHelper(server_url, (MingleApplication)this.getApplication());
         
         // Initialize the database helper that manages local storage
 	    app.dbHelper = DatabaseHelper.getInstance(this, app);
 	    
+        // Initialize the socket helper that manages socket connection with the server
         app.socketHelper = new Socket(server_url, app);
         
         LocalBroadcastManager.getInstance(this).registerReceiver(initInfoReceiver,
@@ -49,12 +94,74 @@ public class SplashScreenActivity extends Activity {
         
         LocalBroadcastManager.getInstance(this).registerReceiver(httpErrorReceiver,
         		  new IntentFilter(HttpHelper.HANDLE_HTTP_ERROR));
+        
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        
+        //GCM Setup here
+        context = (Context)this;
+        
+        // Check device for Play Services APK. If check succeeds, proceed with
+        //  GCM registration.
+        if (checkPlayServices()) {
+            gcm = GoogleCloudMessaging.getInstance(this);
+            regid = getRegistrationId(context);
+
+            if (regid.isEmpty()) registerForNewUser();
+            else app.setRid(regid);
+        } else {
+            Log.i(TAG, "No valid Google Play Services APK found.");
+        }
+        
+        initHandler = new Handler() {
+        	@Override
+        	public void handleMessage(android.os.Message msg) {
+        		switch(msg.what) {		
+        			//After 3seconds, check whether the device finds current location.
+        			case MSG_TIME_OUT:
+        				//If not check if whether previous data exists
+        				if(!findCurLoc) {
+        					Criteria criteria = new Criteria();
+        			    	String provider = locationManager.getBestProvider(criteria, true);
+        			    	Location location = locationManager.getLastKnownLocation(provider);
+        			    	//If so, use previous data.
+        			    	if(location != null) {
+        			    		app.setLat((float)location.getLatitude());
+        			    		app.setLong((float)location.getLongitude());
+        			    		
+        			    	//If no, kill the app for now. should be modified.
+        			    	} else
+        			    		((Activity)context).finish();
+        				}
+        				locationManager.removeUpdates(locationListener);
+			    		this.sendEmptyMessage(MSG_CURRENT_LOC_FOUND);        					
+        				break;
+        				
+        			case MSG_CURRENT_LOC_FOUND:
+        				//Create default MyUser object. Will be modified later.
+        				app.createDefaultMyUser();
+                    	    
+        				// If the app is not on for the first time, start HuntActivity
+        				// and populate it with data from local storage
+        				if(AppOnFirstTime()) {
+        					app.connectHelper.getInitInfo();         	         
+        				} else {
+        					Intent i = new Intent(context, HuntActivity.class);
+        					i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        					startActivity(i);
+        					finish();
+        				} 
+        				break;
+        				
+        			default:
+        				break;
+        		}
+        	}
+        };
 	}
 	
 	@Override
 	protected void onResume(){
 		super.onResume();
-        final Context context = this;
         if(!app.isLocationEnabled()) {
         	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
 													.setTitle("Mingle")
@@ -78,37 +185,18 @@ public class SplashScreenActivity extends Activity {
         	AlertDialog popupDialog = popupBuilder.create();
         	popupDialog.show();
         } else {
-        	Thread background = new Thread() {
-        		public void run() {
-        			try {
-        				// Thread will sleep for 2 seconds
-        				sleep(2000);
-
-        				//Check whether location search is on and get location
-        				app.getCurrentLocation();
-                    
-        				//Create default MyUser object. Will be modified later.
-        				app.createDefaultMyUser();
-            	    
-        				// If the app is not on for the first time, start HuntActivity
-        				// and populate it with data from local storage
-        				if(AppOnFirstTime() && app.isLocationEnabled()) {
-        					app.connectHelper.getInitInfo();         	         
-        				} else if(app.isLocationEnabled()){
-        					Intent i = new Intent(context, HuntActivity.class);
-            	    		startActivity(i);
-            	    		finish();
-        				} else
-            	    		finish();
-        			} catch (Exception e) {
-        				e.printStackTrace();
-        			}
-        		}
-        	};
-            background.start();
+        	getCurrentLocation();
         }
 	}
 	
+	// Get the users one-time location. Code available below to register for updates
+    private void getCurrentLocation() {
+    	Criteria criteria = new Criteria();
+    	String provider = locationManager.getBestProvider(criteria, true);
+        locationManager.requestLocationUpdates(provider, 3*1000, 0, locationListener);
+        initHandler.sendEmptyMessageDelayed(MSG_TIME_OUT, 3*1000);
+    }
+    
 	private BroadcastReceiver initInfoReceiver = new BroadcastReceiver() {
     	@Override
     	public void onReceive(Context context, Intent intent) {
@@ -152,6 +240,9 @@ public class SplashScreenActivity extends Activity {
 	   	JSONObject user_data = app.dbHelper.getUserData();
 	   	
 	   	try {
+	   		app.addPhotoPath(user_data.getString("PIC_PATH_1"));
+	   		app.addPhotoPath(user_data.getString("PIC_PATH_2"));
+	   		app.addPhotoPath(user_data.getString("PIC_PATH_3"));
 	   		app.setMyUser(user_data.getString("UID"), user_data.getString("COMM"), 
 										user_data.getInt("NUM"), user_data.getString("SEX"));
 		} catch (JSONException e) {
@@ -189,5 +280,99 @@ public class SplashScreenActivity extends Activity {
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(initInfoReceiver);
 
 		  super.onDestroy();
+	  }
+	 
+	//For GCM here
+	  private boolean checkPlayServices() {
+	      int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+	      if (resultCode != ConnectionResult.SUCCESS) {
+	          if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+	              GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+	                      PLAY_SERVICES_RESOLUTION_REQUEST).show();
+	          } else {
+	              Log.i(TAG, "This device is not supported.");
+	              finish();
+	          }
+	          return false;
+	      }
+	      return true;
+	  }
+
+	  
+	  private String getRegistrationId(Context context) {
+	      final SharedPreferences prefs = getGCMPreferences(context);
+	      String registrationId = prefs.getString(PROPERTY_REG_ID, "");
+	      if (registrationId.isEmpty()) {
+	          Log.i(TAG, "Registration not found.");
+	          return "";
+	      }
+	      // Check if app was updated; if so, it must clear the registration ID
+	      // since the existing regID is not guaranteed to work with the new
+	      // app version.
+	      int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
+	      int currentVersion = getAppVersion(context);
+	      if (registeredVersion != currentVersion) {
+	          Log.i(TAG, "App version changed.");
+	          return "";
+	      }
+	      return registrationId;
+	  }
+	  
+	 
+	  private SharedPreferences getGCMPreferences(Context context) {
+	      // This sample app persists the registration ID in shared preferences, but
+	      // how you store the regID in your app is up to you.
+	      return getSharedPreferences(HuntActivity.class.getSimpleName(), Context.MODE_PRIVATE);
+	  }
+
+	  
+	  private static int getAppVersion(Context context) {
+	      try {
+	          PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+	          return packageInfo.versionCode;
+	      } catch (NameNotFoundException e) {
+	          // should never happen
+	          throw new RuntimeException("Could not get package name: " + e);
+	      }
+	  }
+	  
+	  private void registerForNewUser() {
+		  new AsyncTask<MingleApplication, Void, String>() {	  
+			  @Override
+			  protected String doInBackground(MingleApplication... params) {
+				  try {
+					  if (gcm == null) {
+						  gcm = GoogleCloudMessaging.getInstance(context);
+					  }
+			  
+					  regid = gcm.register(SENDER_ID);
+					  // Persist the regID - no need to register again.
+					  storeRegistrationId(context, regid);
+					  params[0].setRid(regid);
+				  } catch (IOException ex) {
+					  ex.printStackTrace();
+					  // If there is an error, don't just keep trying to register.
+					  // Require the user to click a button again, or perform
+					  // exponential back-off.
+					  return "";
+				  }
+				  return "Registration done";
+			  }
+			  
+			  @Override
+			  protected void onPostExecute(String msg) {
+				  System.out.println(msg);
+			  }
+		  }.execute(((MingleApplication)this.getApplication()));
+	  }
+
+	  private void storeRegistrationId(Context context, String regId) {
+	      final SharedPreferences prefs = getGCMPreferences(context);
+	      int appVersion = getAppVersion(context);
+	      Log.i(TAG, "Saving regId on app version " + appVersion);
+	      SharedPreferences.Editor editor = prefs.edit();
+	      editor.putString(PROPERTY_REG_ID, regId);
+	      editor.putInt(PROPERTY_APP_VERSION, appVersion);
+	      editor.commit();
 	  }
 }

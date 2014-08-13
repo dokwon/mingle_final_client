@@ -197,13 +197,16 @@ public class MainActivity extends Activity {
         	view.setOnClickListener(new MinglePhotoClickListener( this, photoViewArr));
         }
         if(type.equals("update")){
-        	ArrayList<String> photo_path_arr = app.getPhotoPaths();
+        	/*ArrayList<String> photo_path_arr = app.getPhotoPaths();
         	for(int i = 0; i < photo_path_arr.size(); i++){
         		Bitmap bm;
         		BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
         		btmapOptions.inSampleSize = 16;
         		bm = app.rotatedBitmap(BitmapFactory.decodeFile(photo_path_arr.get(i), btmapOptions), photo_path_arr.get(i));
         		((ImageView) photoViewArr.get(i)).setImageBitmap(bm);
+        	}*/
+        	for (int i = 0; i < app.getMyUser().getPhotoNum(); i++){
+        		((ImageView) photoViewArr.get(i)).setImageDrawable(app.getMyUser().getPic(i));
         	}
         }
     	
@@ -359,6 +362,8 @@ public class MainActivity extends Activity {
         //Check validity of user input and send user creation request to server
         if (app.isValid(name)) {
         	proDialog = new ProgressDialog(this);
+        	proDialog.setCancelable(false);
+        	proDialog.setCanceledOnTouchOutside(false);
             proDialog.setIndeterminate(true);
             proDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             proDialog.getWindow().getAttributes().dimAmount = (float)0.8;
@@ -372,7 +377,20 @@ public class MainActivity extends Activity {
     }
 
 
-    public void joinMingle(JSONObject userData) {       
+    public void joinMingle(JSONObject userData) {
+    		ArrayList<String> photo_array = app.getPhotoPaths();
+    		try {
+				if(photo_array.size() < 1) userData.put("PIC_PATH_1", "");
+				else userData.put("PIC_PATH_1", photo_array.get(0));
+				if(photo_array.size() < 2) userData.put("PIC_PATH_2", "");
+	    		else userData.put("PIC_PATH_2", photo_array.get(1));
+	    		if(photo_array.size() < 3) userData.put("PIC_PATH_3", "");
+	    		else userData.put("PIC_PATH_3", photo_array.get(2));
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+    		
             app.dbHelper.setMyInfo(userData);
 
             try {
