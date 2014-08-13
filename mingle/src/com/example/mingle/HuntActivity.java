@@ -89,6 +89,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	        View homeIcon = findViewById(android.R.id.home);
 	        
 	        homeIcon.setVisibility(View.GONE);
+	        ((ViewGroup) mCustomView).removeView((View) homeIcon.getParent());
 	        actionBar.setDisplayHomeAsUpEnabled(false);
 
 	        actionBar.setDisplayShowCustomEnabled(true);
