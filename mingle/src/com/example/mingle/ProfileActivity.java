@@ -149,11 +149,9 @@ public class ProfileActivity extends Activity {
     }
     
     public void getNewImage(int photo_index){
-    	System.out.println("photo index: " + photo_index);
     	if(photo_index < 0 || photo_index >= photo_num) return;
     	
 		if(!user.isPicAvail(photo_index)){
-			System.out.println("download image!");
 			new ImageDownloader(getApplication(), user.getUid(), photo_index).execute();
 		}
 	}
@@ -185,7 +183,6 @@ public class ProfileActivity extends Activity {
     }
     
     public void startChat(View v){
-    	System.out.println("start chat");
     	MingleApplication app = ((MingleApplication) this.getApplication());
     	int candidate_pos = app.getCandidatePos(user.getUid());
     	if(candidate_pos >= 0) {
@@ -212,9 +209,9 @@ public class ProfileActivity extends Activity {
 	    	public void onReceive(Context context, Intent intent) {
 	    		String result = intent.getExtras().getString(HttpHelper.VOTE_RESULT);
 	    		if(result.equals("success")){
-		    		Toast.makeText(getApplicationContext(), "Vote success!", Toast.LENGTH_SHORT).show();
+		    		Toast.makeText(getApplicationContext(), getResources().getString(R.string.vote_success), Toast.LENGTH_SHORT).show();
 	    		} else {
-		    		Toast.makeText(getApplicationContext(), "Can't vote yet!", Toast.LENGTH_SHORT).show();
+		    		Toast.makeText(getApplicationContext(), getResources().getString(R.string.vote_fail), Toast.LENGTH_SHORT).show();
 	    		}
 	    	}
 	  };

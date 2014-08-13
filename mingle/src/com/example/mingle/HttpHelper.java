@@ -269,7 +269,6 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	//Start Thread that receives HTTP Response
     	new Thread(new Runnable() {
     		public void run() {
-    			System.out.println("request candidate list: " +cps);
     			HttpClient client = new DefaultHttpClient();
     	        HttpGet poster = new HttpGet(cps);
     	        HttpResponse response = null;

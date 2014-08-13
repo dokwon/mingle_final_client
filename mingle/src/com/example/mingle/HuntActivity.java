@@ -54,7 +54,6 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	public VoteFragment voteFragment;					//Fragment for list of popular users
 	
 	public ListView setting_list_view;					//Listview for setting options
-	private SettingAdapter setting_adapter;			//Listview Adapter for setting_list_view
 		
 	private MingleApplication app;
 	private ActionBar actionBar;
@@ -189,7 +188,6 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	  public boolean onOptionsItemSelected(MenuItem item) {
 	      
 	      // Handle item selection
-		  System.out.println("Print a bunch of crap");
 	      switch (item.getItemId()) {
 	      	case R.id.setting_option_profile:
 	      		final String profile_uid = ((MingleApplication) this.getApplication()).getMyUser().getUid();
@@ -214,11 +212,11 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
             	//4. cut socket and flush all data in mingleapplication
 	      		final Activity curActivity = this;
             	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
-															.setTitle("Mingle")
+															.setTitle(getResources().getString(R.string.account_delete))
 															.setCancelable(false)
-															.setMessage("Your account will be deactivated.")
+															.setMessage(getResources().getString(R.string.account_delete_alert))
 															.setIcon(R.drawable.mingle_logo)
-															.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+															.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
 																@Override
 																public void onClick(DialogInterface dialog, int id) {
 																	dialog.dismiss();
@@ -229,7 +227,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 															        startActivity(backToMain);
 																}
 															})
-															.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+															.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
 																@Override
 																public void onClick(DialogInterface dialog, int id) {
 																	dialog.dismiss();
@@ -247,7 +245,6 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	  @Override
 	  public void onTabSelected(ActionBar.Tab tab,
 	      FragmentTransaction fragmentTransaction) {
-		  System.out.println("ontabsel called");
 		  // When the given tab is selected, show the tab contents in the
 		  // container view.
 		  if(tab.getTag().equals(R.string.tab1title)) {
@@ -312,7 +309,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    			   JSONArray pop_list_arr = new JSONArray(pop_result.getString("POP_LIST"));
 	    			   handlePopList(pop_list_arr);
 	    		   } else {
-	   	    			Toast.makeText(getApplicationContext(), "Event not available yet!", Toast.LENGTH_SHORT).show();
+	   	    			Toast.makeText(getApplicationContext(), getResources().getString(R.string.not_event_time), Toast.LENGTH_SHORT).show();
  	    		   }
 	    	   } catch (JSONException e) {
 	    		   // TODO Auto-generated catch block
@@ -392,18 +389,19 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    ArrayList<String> male_list = new ArrayList<String>();
 	    for(int i = 0 ; i < list_of_top.length(); i++) {
 	    	try {
-	    			JSONObject shownUser = list_of_top.getJSONObject(i);
+	    		JSONObject shownUser = list_of_top.getJSONObject(i);
 	    		MingleUser pop_user = app.getMingleUser(shownUser.getString("UID"));
 	    		if(pop_user == null){
-					MingleUser new_user = new MingleUser(shownUser.getString("UID"), 
+					pop_user = new MingleUser(shownUser.getString("UID"), 
 	    					shownUser.getString("COMM"), 
 	    					Integer.valueOf(shownUser.getString("NUM")), 
 	    					Integer.valueOf(shownUser.getString("PHOTO_NUM")), 
 	    					(Drawable) this.getResources().getDrawable(app.blankProfileImage),
-	    					shownUser.getString("SEX"));	    			app.addMingleUser(new_user);
-	    			new ImageDownloader(this.getApplicationContext(), new_user.getUid(), -1).execute();
+	    					shownUser.getString("SEX"));	    			
+					app.addMingleUser(pop_user);
 	    		}
-	    	
+	    		if(!pop_user.isPicAvail(-1)) new ImageDownloader(this.getApplicationContext(), pop_user.getUid(), -1).execute();
+	    		
 	    	   	if(shownUser.getString("SEX").equals("M")) male_list.add(shownUser.getString("UID"));
 	    	   	else female_list.add(shownUser.getString("UID"));
 	    	    

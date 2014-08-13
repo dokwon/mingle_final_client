@@ -81,11 +81,11 @@ public class SearchSettingActivity extends Activity {
 			public void onClick(View view){
 				if(!app.isLocationEnabled()) {
                 	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(context)
-															.setTitle("Mingle")
+															.setTitle(getResources().getString(R.string.gps_location_setting))
 															.setCancelable(false)
-															.setMessage("GPS is not enabled. Do you want to go to settings menu?.")
+															.setMessage(getResources().getString(R.string.gps_disabled_alert))
 															.setIcon(R.drawable.mingle_logo)
-															.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+															.setPositiveButton(getResources().getString(R.string.allow), new DialogInterface.OnClickListener() {
 																@Override
 																public void onClick(DialogInterface dialog, int id) {
 																	dialog.dismiss();
@@ -93,7 +93,7 @@ public class SearchSettingActivity extends Activity {
 																	context.startActivity(intent);
 																}
 															})
-															.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+															.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
 																@Override
 																public void onClick(DialogInterface dialog, int id) {
 																	dialog.dismiss();

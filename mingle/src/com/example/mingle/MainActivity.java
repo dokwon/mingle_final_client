@@ -96,11 +96,9 @@ public class MainActivity extends Activity {
 						.setBackgroundResource(R.drawable.photo_delete);
 						
 				}
-				System.out.println("1");
 				return photoView;
 			}
 		}
-		System.out.println("2");
 		return null; 
 	}
 	
@@ -164,7 +162,7 @@ public class MainActivity extends Activity {
     		}
     	}
     	
-    	if(num_selected == 1) Toast.makeText(getApplicationContext(), "need more than one member!", Toast.LENGTH_SHORT).show();
+    	if(num_selected == 1) Toast.makeText(getApplicationContext(), getResources().getString(R.string.member_num_small), Toast.LENGTH_SHORT).show();
     	else {
     		num = num_selected;
     		for(int i = 0; i < num_selected; i++){
@@ -211,23 +209,8 @@ public class MainActivity extends Activity {
         		((ImageView) photoViewArr.get(i)).setImageDrawable(app.getMyUser().getPic(i));
         	}
         }
-    	
-        //Set Name EditText
-        final EditText editText = (EditText) findViewById(R.id.nicknameTextView);
-        editText.setOnEditorActionListener(new OnEditorActionListener() {
-           
-			@Override
-			public boolean onEditorAction(TextView v, int actionId,
-					KeyEvent event) {
-                String name_str = editText.getText().toString();
-                if(name_str.length() < 5) Toast.makeText(getApplicationContext(), "nickname too short!", Toast.LENGTH_SHORT).show();
-                else {
-                	name = name_str;
-                	return false;
-                }
-	            return true;
-			}
-        });
+ 
+        EditText editText = (EditText) findViewById(R.id.nicknameTextView);
         if(type.equals("update")) editText.setText(name);
         
         //Set Sex Button
@@ -307,25 +290,26 @@ public class MainActivity extends Activity {
     
     public void showPreview(View view){
     	name = ((EditText)findViewById(R.id.nicknameTextView)).getText().toString();
-    	if(app.isValid(name)){
+    	String valid_message = app.isValid(name);
+    	if(valid_message == null){
     		app.setMyUser(null, name, num, sex);
 
     		Intent profile_intent = new Intent(context, ProfileActivity.class);
     		profile_intent.putExtra(ProfileActivity.PROFILE_TYPE, "preview");
     		context.startActivity(profile_intent);
     	} else {
-    		showInvalidUserAlert();
+    		showInvalidUserAlert(valid_message);
     	}
     }
     
     public void modifyUserData(View view){
     	//Check validity of user input and send user update request to server
-        if (app.isValid(name)) {
+    	String valid_message = app.isValid(name);
+    	if(valid_message == null){
     		app.setMyUser(null, name, num, sex);
         	app.connectHelper.userUpdateRequest(app, name, sex, num);
       } else {
-    	   showInvalidUserAlert();
-           System.out.println("The user is not valid.");
+    	   showInvalidUserAlert(valid_message);
        }
     }
     
@@ -355,14 +339,15 @@ public class MainActivity extends Activity {
     };
     
     public void updateUser(){
-    	Toast.makeText(getApplicationContext(), "update complete!", Toast.LENGTH_SHORT).show();
+    	Toast.makeText(getApplicationContext(), getResources().getString(R.string.update_complete), Toast.LENGTH_SHORT).show();
     }
     
     //On user creation request, get user's info and send request to server
     public void userCreateButtonPressed(View view) {
     	name = ((EditText)findViewById(R.id.nicknameTextView)).getText().toString();
         //Check validity of user input and send user creation request to server
-        if (app.isValid(name)) {
+    	String valid_message = app.isValid(name);
+    	if(valid_message == null){
         	proDialog = new ProgressDialog(this);
         	proDialog.setCancelable(false);
         	proDialog.setCanceledOnTouchOutside(false);
@@ -373,8 +358,7 @@ public class MainActivity extends Activity {
             
         	app.connectHelper.userCreateRequest(app, name, sex, num);
       } else {
-    	   showInvalidUserAlert();
-           System.out.println("The user is not valid.");
+    	   showInvalidUserAlert(valid_message);
        }
     }
 
@@ -442,10 +426,10 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void showInvalidUserAlert() {
+    private void showInvalidUserAlert(String error_msg) {
     	new AlertDialog.Builder(this)
-        .setTitle("Invalid User")
-        .setMessage("You need at least one photo and specify how many you are before mingling.")
+        .setTitle(getResources().getString(R.string.invalid_input))
+        .setMessage(error_msg)
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) { 
                 // continue with delete

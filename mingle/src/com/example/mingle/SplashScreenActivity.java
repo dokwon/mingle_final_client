@@ -164,10 +164,10 @@ public class SplashScreenActivity extends Activity {
 		super.onResume();
         if(!app.isLocationEnabled()) {
         	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
-													.setTitle("Mingle")
-													.setMessage("GPS is not enabled. Do you want to go to settings menu?.")
+													.setTitle(getResources().getString(R.string.gps_location_setting))
+													.setMessage(getResources().getString(R.string.gps_disabled_alert))
 													.setIcon(R.drawable.mingle_logo)
-													.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+													.setPositiveButton(getResources().getString(R.string.allow), new DialogInterface.OnClickListener() {
 														@Override
 														public void onClick(DialogInterface dialog, int id) {
 															dialog.dismiss();
@@ -175,7 +175,7 @@ public class SplashScreenActivity extends Activity {
 															startActivity(intent);
 														}
 													})
-													.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+													.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
 														@Override
 														public void onClick(DialogInterface dialog, int id) {
 															dialog.dismiss();
@@ -205,7 +205,7 @@ public class SplashScreenActivity extends Activity {
     			JSONObject init_info_obj = new JSONObject(data);
     			String update_required = init_info_obj.getString("UPDATE_REQUIRED");
     			if(update_required.equals("true")){
-    				Toast.makeText(getApplicationContext(), "Update REQUIRED!", Toast.LENGTH_SHORT).show();
+    				Toast.makeText(getApplicationContext(), getResources().getString(R.string.application_update_required), Toast.LENGTH_SHORT).show();
     			} else {
     				app.setQuestion(init_info_obj.getString("QUESTION"));
     				Intent i = new Intent(context, MainActivity.class);
@@ -259,17 +259,17 @@ public class SplashScreenActivity extends Activity {
 	   				chatters.get(i).getAsString("COMM"),
 	   				(int) chatters.get(i).getAsInteger("NUM"),
 	   				1,
-	   				app.getResources().getDrawable(R.drawable.ic_launcher),
+	   				app.getResources().getDrawable(app.blankProfileImage),
 	   				sex_var);
 	   		if(app.getChoicePos(newUser.getUid())==-1) {
 	   			app.addMingleUser(newUser);
-	   		
 	   			app.addChoice(newUser.getUid());
-	   			new ImageDownloader(this.getApplicationContext(), newUser.getUid(), 0).execute();
 	    		for(int j =0; j<tempmsgs.size(); j++){
 	    			newUser.addMsgObj(tempmsgs.get(j));
 	    		}
 	    	}
+	   		if(!newUser.isPicAvail(-1)) new ImageDownloader(this.getApplicationContext(), newUser.getUid(), -1).execute();
+
 	   	}	   	
 	   	// Populate other fields with UID
 	   	return false;

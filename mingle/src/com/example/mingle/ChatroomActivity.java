@@ -79,6 +79,7 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
         //Clear the notification from gcm.
         ((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancelAll();
         recv_user.setInChat(true);
+        System.out.println(recv_user.isInChat());
         
         
         ActionBar actionBar = getActionBar();
@@ -134,8 +135,6 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
 		} 
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
 		setContentView(R.layout.activity_chatroom);
-		
-		
     }
     
     /* Function to be called when message send button is clicked */
@@ -227,11 +226,11 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
     
     private void showNoUserPopup(){
     	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
-												.setTitle("Mingle")
+												.setTitle(getResources().getString(R.string.message_error))
 												.setCancelable(false)
-												.setMessage("This user has been deactivated")
+												.setMessage(getResources().getString(R.string.user_no_exist_alert))
 												.setIcon(R.drawable.mingle_logo)
-												.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+												.setNeutralButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
 													@Override
 													public void onClick(DialogInterface dialog, int id) {
 														dialog.dismiss();

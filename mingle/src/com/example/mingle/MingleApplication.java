@@ -138,7 +138,7 @@ public class MingleApplication extends Application {
 	   
 	   my_user.clearPics();
 	   for(int i = 0; i < photoPaths.size(); i++){
-		   if(!(new File(photoPaths.get(i))).exists()) my_user.addPic(this.getResources().getDrawable(R.drawable.ic_launcher));
+		   if(!(new File(photoPaths.get(i))).exists()) my_user.addPic(this.getResources().getDrawable(blankProfileImage));
 		   else {
 			   Bitmap bm;
 			   BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
@@ -241,16 +241,16 @@ public class MingleApplication extends Application {
     	rid = rid_var;
     }
     
-    public boolean isValid(String my_name) {
+    public String isValid(String my_name) {
         //check photo path validity
-        if (photoPaths == null || photoPaths.size() == 0) return false;
+        if (photoPaths == null || photoPaths.size() == 0) return getResources().getText(R.string.no_photo_input).toString();
         for(int i = 0; i < photoPaths.size(); i++){
-        	if(!(new File(photoPaths.get(i))).exists()) return false;
+        	if(!(new File(photoPaths.get(i))).exists()) return getResources().getText(R.string.photo_input_invalid).toString();
         }
         
-        if (my_name.length() < 5) return false;
-
-        return true;
+        if(my_name.length() < 5) return getResources().getText(R.string.name_input_short).toString();
+        if(my_name.contains(" ")) return getResources().getText(R.string.name_input_invalid).toString();
+        return null;
     }
 
     public ArrayList<String> getPhotoPaths(){
