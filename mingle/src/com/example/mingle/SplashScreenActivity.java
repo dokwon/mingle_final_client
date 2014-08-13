@@ -78,7 +78,7 @@ public class SplashScreenActivity extends Activity {
 		setContentView(R.layout.activity_splash_screen);
 				
 		app = ((MingleApplication) this.getApplication());
-		app.koreanTypeFace = Typeface.createFromAsset(getAssets(), "fonts/UnGraphic.ttf");
+		app.initializeApplication();
 		
         //Initialize HttpHelper that supports HTTP GET/POST requests
         app.connectHelper = new HttpHelper(server_url, (MingleApplication)this.getApplication());

@@ -68,7 +68,7 @@ public class SettingFragment extends Fragment{
 																.setTitle("Mingle")
 																.setCancelable(false)
 																.setMessage("Your account will be deactivated.")
-																.setIcon(R.drawable.ic_launcher)
+																.setIcon(R.drawable.mingle_logo)
 																.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 																	@Override
 																	public void onClick(DialogInterface dialog, int id) {

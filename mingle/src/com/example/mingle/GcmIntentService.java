@@ -103,7 +103,7 @@ public class GcmIntentService extends IntentService {
         CharSequence tickerTxt = (CharSequence)("Mingle: " + data.getString("msg"));
         
 		builder = new NotificationCompat.Builder(this)
-				       .setSmallIcon(R.drawable.ic_launcher)
+				       .setSmallIcon(((MingleApplication)this.getApplicationContext()).blankProfileImageSmall)
 				       .setContentTitle("Mingle")
 				       .setContentText(data.getString("msg"))
 				       .setTicker(tickerTxt)

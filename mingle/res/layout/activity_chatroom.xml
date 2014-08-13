@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/titlebackgroundcolor"
     tools:context="${packageName}.${activityClass}" >
 
 	<LinearLayout
@@ -37,6 +38,8 @@
 	    android:id="@android:id/list"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
+	    android:listSelector="@android:color/transparent" 
+		android:cacheColorHint="@android:color/transparent"
 	    android:divider="@null"
 		android:dividerHeight="0dp"
 	    android:layout_above="@+id/llout"

@@ -8,12 +8,13 @@
             android:orientation="vertical"
             android:id="@+id/front"
             android:tag="front"
+            android:background="@color/titlebackgroundcolor"
             style="@style/MyListFrontContent">
- 
-        <com.example.mingle.RoundedImageView
-                style="@style/ChatRoomImage"
-                android:id="@+id/sender_image"/>
-        
+ 		
+	    <com.example.mingle.RoundedImageView
+	            style="@style/ChatRoomImage"
+	            android:id="@+id/sender_image"/>
+      
         <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

@@ -108,16 +108,18 @@ public class MainActivity extends Activity {
 	
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	ImageView imageView = FindAppropriateImageView();
+    	
     	String photoPath = "";
     	if (resultCode == RESULT_OK) {
+    		if(requestCode != REQUEST_IMAGE_CAPTURE && requestCode != SELECT_FILE) return;
+    		ImageView imageView = FindAppropriateImageView();
     		if (requestCode == REQUEST_IMAGE_CAPTURE) {   // If the user requested taking a photo
                 getContentResolver().notifyChange(imageUri, null);
                 photoPath = imageUri.getPath();
             }  else if (requestCode == SELECT_FILE) { // If the user wants to select a file
                 imageUri = data.getData();
                 photoPath = getPath(imageUri, MainActivity.this);
-            }
+            } 
     		 app.addPhotoPath(photoPath);
              Bitmap bm;
              BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
@@ -129,7 +131,7 @@ public class MainActivity extends Activity {
     
     // Helper method to retrieve the filepath of selected image
     public String getPath(Uri uri, Activity activity) {
-        String[] projection = { MediaColumns.DATA };
+        String[] projection = { MediaColumns.DATA }; 
         Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
         int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
         cursor.moveToFirst(); 
@@ -197,15 +199,15 @@ public class MainActivity extends Activity {
         	view.setOnClickListener(new MinglePhotoClickListener( this, photoViewArr));
         }
         if(type.equals("update")){
-        	/*ArrayList<String> photo_path_arr = app.getPhotoPaths();
+        	ArrayList<String> photo_path_arr = app.getPhotoPaths();
         	for(int i = 0; i < photo_path_arr.size(); i++){
         		Bitmap bm;
         		BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
         		btmapOptions.inSampleSize = 16;
         		bm = app.rotatedBitmap(BitmapFactory.decodeFile(photo_path_arr.get(i), btmapOptions), photo_path_arr.get(i));
         		((ImageView) photoViewArr.get(i)).setImageBitmap(bm);
-        	}*/
-        	for (int i = 0; i < app.getMyUser().getPhotoNum(); i++){
+        	}
+			for (int i = 0; i < app.getMyUser().getPhotoNum(); i++){
         		((ImageView) photoViewArr.get(i)).setImageDrawable(app.getMyUser().getPic(i));
         	}
         }
@@ -377,8 +379,8 @@ public class MainActivity extends Activity {
     }
 
 
-    public void joinMingle(JSONObject userData) {
-    		ArrayList<String> photo_array = app.getPhotoPaths();
+    public void joinMingle(JSONObject userData) { 
+			ArrayList<String> photo_array = app.getPhotoPaths();
     		try {
 				if(photo_array.size() < 1) userData.put("PIC_PATH_1", "");
 				else userData.put("PIC_PATH_1", photo_array.get(0));
@@ -390,7 +392,7 @@ public class MainActivity extends Activity {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-    		
+      
             app.dbHelper.setMyInfo(userData);
 
             try {

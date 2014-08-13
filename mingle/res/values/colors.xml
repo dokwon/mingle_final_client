@@ -7,5 +7,7 @@
 	<color name="photobackgroundcolor">#B2B2B2</color>
 	
 	<color name="trans">#000000</color>
+	<color name="light_gray">#eee9e9</color>
+	
 
 </resources>

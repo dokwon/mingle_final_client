@@ -39,6 +39,7 @@ public class PhotoPoster {
 		for(int i = 0; i < photoPaths.size(); i++) { 
 			
 			BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
+			
             btmapOptions.inSampleSize = 8;
             String photoPath = photoPaths.get(i);
 			Bitmap bm = BitmapFactory.decodeFile(photoPath, btmapOptions);

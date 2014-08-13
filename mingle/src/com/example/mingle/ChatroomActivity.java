@@ -1,10 +1,15 @@
 package com.example.mingle;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.AlertDialog;
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.app.FragmentTransaction;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.app.NotificationManager;
@@ -12,16 +17,37 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout.LayoutParams;
+import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
-public class ChatroomActivity extends ListActivity {
+
+public class ChatroomActivity extends ListActivity implements ActionBar.TabListener{
+
+	
+	
+	//LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
+    ArrayList<String> listItems=new ArrayList<String>();
+    
     public final static String USER_UID = "com.example.mingle.USER_SEL";	//Intent data to pass on when new Chatroom Activity started
     public final static String FROM_GCM = "com.example.mingle.FROM_GCM";	//Intent data to pass on when Chatroom Activity is started by GCM notification
 
@@ -42,6 +68,7 @@ public class ChatroomActivity extends ListActivity {
     protected void onResume(){
         super.onResume();
         
+       
         Intent intent = getIntent();
         String recv_uid = intent.getExtras().getString(USER_UID);
         
@@ -52,14 +79,34 @@ public class ChatroomActivity extends ListActivity {
         //Clear the notification from gcm.
         ((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancelAll();
         recv_user.setInChat(true);
+        
+        
+        ActionBar actionBar = getActionBar();
+	    //actionBar.hide();
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM  | ActionBar.DISPLAY_SHOW_HOME);
+        //actionBar.setH
+        //actionBar.setHomeAsUpIndicator(R.drawable.back_button);
+        View titleView =  LayoutInflater.from(this).inflate(R.layout.chatactivity_title_custom_view, null);
+        LayoutParams layout = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        titleView.setLayoutParams(layout);
+        actionBar.setCustomView(titleView);
+	    actionBar.setDisplayHomeAsUpEnabled(true);
+	    TextView chatter_name = (TextView)findViewById(R.id.chatter_name_chat);
+	    
+	    chatter_name.setText(recv_user.getName());
+	    ImageView member_num = (ImageView)findViewById(R.id.member_num_chat);
+	    member_num.setImageResource(app.memberNumRsId(recv_user.getNum()));
+	    actionBar.setBackgroundDrawable(new ColorDrawable(0xFFFFFFFF));
+	    
+	   
 		
+ 
 		//Associate this chat room's message list to adapter
         msg_lv = (ListView) findViewById(android.R.id.list);
 		adapter=new MsgAdapter(this,
                 R.layout.msg_row, R.layout.my_msg_row,
                 recv_user.getMsgList(), recv_user);
         setListAdapter(adapter);
-        
     }
     
     @Override
@@ -68,17 +115,27 @@ public class ChatroomActivity extends ListActivity {
     	super.onPause();
     }
     
+    
+  
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    
+     
         LocalBroadcastManager.getInstance(this).registerReceiver(refListReceiver,
         		  new IntentFilter(MingleApplication.UPDATE_MSG_LIST));
+        
 
         LocalBroadcastManager.getInstance(this).registerReceiver(noUserReceiver,
         		  new IntentFilter(Socket.NO_USER_NOTI));
 
+        if(android.os.Build.VERSION.SDK_INT < 11) { 
+		    requestWindowFeature(Window.FEATURE_NO_TITLE); 
+		} 
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
 		setContentView(R.layout.activity_chatroom);
+		
+		
     }
     
     /* Function to be called when message send button is clicked */
@@ -173,7 +230,7 @@ public class ChatroomActivity extends ListActivity {
 												.setTitle("Mingle")
 												.setCancelable(false)
 												.setMessage("This user has been deactivated")
-												.setIcon(R.drawable.ic_launcher)
+												.setIcon(R.drawable.mingle_logo)
 												.setNeutralButton("OK", new DialogInterface.OnClickListener() {
 													@Override
 													public void onClick(DialogInterface dialog, int id) {
@@ -208,4 +265,35 @@ public class ChatroomActivity extends ListActivity {
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(noUserReceiver);
     	super.onDestroy();
     }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
+            onBackPressed();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+ 
+    
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
 }

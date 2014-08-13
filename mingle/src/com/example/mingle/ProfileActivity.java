@@ -75,8 +75,8 @@ public class ProfileActivity extends Activity {
          LocalBroadcastManager.getInstance(this).registerReceiver(httpErrorReceiver,
          		  new IntentFilter(HttpHelper.HANDLE_HTTP_ERROR));
          
-         TextView num_view = (TextView) findViewById(R.id.profile_user_num);
-         num_view.setText(String.valueOf(user.getNum()));
+         ImageView num_view = (ImageView) findViewById(R.id.profile_member_num);
+         num_view.setImageResource(app.memberNumRsId(user.getNum()));
          TextView name_view = (TextView) findViewById(R.id.profile_user_name);
          name_view.setTypeface(koreanTypeFace);
          name_view.setText(user.getName());
@@ -84,6 +84,7 @@ public class ProfileActivity extends Activity {
          Button vote_button = (Button) findViewById(R.id.vote_button);
          Button chat_button = (Button) findViewById(R.id.chat_button);
          Button edit_profile_button = (Button) findViewById(R.id.edit_profile_button);
+        
          
          if(type.equals("preview") || type.equals("setting")){
         	 vote_button.setVisibility(View.GONE);

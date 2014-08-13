@@ -47,17 +47,14 @@ public class MsgAdapter extends ArrayAdapter {
  
           holder = new NewsHolder();
           holder.msg_view = (TextView)row.findViewById(R.id.msg);
-          holder.timestamp_view =(TextView)row.findViewById(R.id.timestamp);
           if(!msg_data.isMyMsg()){
         	  holder.pic=(ImageView)row.findViewById(R.id.sender_image);
-        	  holder.name_view =(TextView)row.findViewById(R.id.name);
           }
         	  
           row.setTag(holder);
  
           RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) holder.msg_view.getLayoutParams();
           holder.msg_view.setText(msg_data.getContent());
-          holder.timestamp_view.setText(msg_data.getTimestamp().toString());
           if(!msg_data.isMyMsg()){
         	  holder.pic.setImageDrawable(user.getPic(-1));
         	  final String profile_uid = user.getUid();
@@ -72,7 +69,6 @@ public class MsgAdapter extends ArrayAdapter {
                     context.startActivity(profile_intent);
       			}
               });
-        	  holder.name_view.setText(user.getName());
           }
           holder.msg_view.setLayoutParams(lp);
           
@@ -82,8 +78,6 @@ public class MsgAdapter extends ArrayAdapter {
       
       static class NewsHolder{
     	  TextView msg_view;
-    	  TextView timestamp_view;
-    	  TextView name_view;
     	  ImageView pic;
       }
 }

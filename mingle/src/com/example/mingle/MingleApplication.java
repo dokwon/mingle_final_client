@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
@@ -12,23 +13,33 @@ import java.util.TimeZone;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
+
+
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Criteria;
+import android.location.Location;
 import android.location.LocationManager;
 import android.media.ExifInterface;
+import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.WindowManager;
 
 import com.example.mingle.HttpHelper;
+import com.example.mingle.MingleUser.MsgComparator;
 
 /**
  * Created by Tempnote on 2014-06-12.
@@ -37,7 +48,8 @@ import com.example.mingle.HttpHelper;
 public class MingleApplication extends Application {
     public final static String UPDATE_MSG_LIST = "com.example.mingle.UPDATE_MSG_LIST";
     public Typeface koreanTypeFace;
-
+    public int blankProfileImage;
+    public int blankProfileImageSmall;
     private String question_of_the_day;
 	
     public HttpHelper connectHelper;
@@ -63,6 +75,16 @@ public class MingleApplication extends Application {
     private ArrayList<String> candidates = new ArrayList<String>();
     private ArrayList<String> choices = new ArrayList<String>();
     private ArrayList<ArrayList<String>> pop_users = new ArrayList<ArrayList<String>>();
+    
+ 
+    
+    
+   public void initializeApplication(){
+    	koreanTypeFace = Typeface.createFromAsset(getAssets(), "fonts/UnGraphic.ttf");
+    	blankProfileImage = R.drawable.blankprofilelarge;
+    	blankProfileImageSmall = R.drawable.blankprofile;
+    }
+
    
    public void createDefaultMyUser(){
    		my_user = new MingleUser("", "", 0, 0, null, "");
@@ -176,7 +198,7 @@ public class MingleApplication extends Application {
     	photoPaths.add(photoPath);
     }
     
-    /*public Bitmap getPic(int num) {
+    public Bitmap getPic(int num) {
     	if(photoPaths.size() >= num) {
     		Bitmap bm;
             BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
@@ -184,7 +206,7 @@ public class MingleApplication extends Application {
     		return bm;
     	} 
     	return null;
-    }*/
+    }
 
     public float getLat(){
         return latitude;
@@ -201,24 +223,25 @@ public class MingleApplication extends Application {
     public String getRid(){
     	return rid;
     }
-    
-    public void setLat(float loc_lat){
-    	this.latitude = loc_lat;
-    }
-    
-    public void setLong(float loc_long){
-    	this.longitude = loc_long;
-    }
-    
+
+
     public void setDist(int dist_lim_var){
         dist_lim = dist_lim_var;
+    }
+    
+    public void setLat(float lat){
+    	latitude = lat;
+    }
+    
+    public void setLong(float lon){
+    	longitude = lon;
     }
 
     public void setRid(String rid_var){
     	rid = rid_var;
     }
     
-     public boolean isValid(String my_name) {
+    public boolean isValid(String my_name) {
         //check photo path validity
         if (photoPaths == null || photoPaths.size() == 0) return false;
         for(int i = 0; i < photoPaths.size(); i++){
@@ -310,7 +333,7 @@ public class MingleApplication extends Application {
 		MingleUser new_user = null;
 		try {
 			new_user = new MingleUser(uid, new_user_data.getString("COMM"), new_user_data.getInt("NUM"), 
-											new_user_data.getInt("PHOTO_NUM"), (Drawable) this.getResources().getDrawable(R.drawable.ic_launcher), sex);
+											new_user_data.getInt("PHOTO_NUM"), (Drawable) this.getResources().getDrawable(blankProfileImage), sex);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -351,8 +374,10 @@ public class MingleApplication extends Application {
 			String chat_user_uid = get_msg_obj.getString("send_uid");
 
 			MingleUser user = this.getMingleUser(chat_user_uid);
+			
 			if(user == null) {
 				connectHelper.getNewUser(chat_user_uid);				
+			
 			} else {
 				int candidate_pos = this.getCandidatePos(chat_user_uid);
 				if(candidate_pos >= 0){
@@ -420,11 +445,52 @@ public class MingleApplication extends Application {
     	LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
     	// getting GPS status
         boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
         // getting network status
         boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
         if (!isGPSEnabled && !isNetworkEnabled) return false;
         else return true;
+    }
+    
+    // Get the users one-time location. Code available below to register for updates
+    public void getCurrentLocation() {
+    	
+    	// Acquire a reference to the system Location Manager
+    	LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+    	Criteria criteria = new Criteria();
+    	String provider = locationManager.getBestProvider(criteria, true);
+        Location location = locationManager.getLastKnownLocation(provider);
+        float lat = 0;
+        float lon = 0;
+        if(location != null){
+        	lat =(float) location.getLatitude();
+        	lon =(float) location.getLongitude();
+        } 
+        latitude = lat;
+    	longitude = lon;
+     
+    	
+    	// In case we want to register for location updates
+    	/*
+    	// Define a listener that responds to location updates
+    	LocationListener locationListener = new LocationListener() {
+    	    public void onLocationChanged(Location location) {
+    	      // Called when a new location is found by the network location provider.
+    	      //makeUseOfNewLocation(location);
+    	    }
+
+    	    public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+    	    public void onProviderEnabled(String provider) {}
+
+    	    public void onProviderDisabled(String provider) {}
+    	  };
+
+    	// Register the listener with the Location Manager to receive location updates
+    	locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);*/
+      
     }
     
     public void deactivateApp(Context context){
@@ -449,6 +515,30 @@ public class MingleApplication extends Application {
         dist_lim = 3;
         
         proDialog.dismiss();
+    }
+    
+ public int memberNumRsId(int numOfMembers) {
+    	
+    	int rval = -1; 
+    	switch(numOfMembers) {
+	    	case 2:
+	    		rval = R.drawable.membercount2;
+	    		break;
+	    	case 3: 
+	    		rval = R.drawable.membercount3;
+	    		break;
+	    	case 4: 
+	    		rval = R.drawable.membercount4;
+	    		break;
+	    	case 5:
+	    		rval = R.drawable.membercount5;
+	    		break;
+	    	case 6:
+	    		rval = R.drawable.membercount6;
+	    		break;
+    		
+    	}
+    	return rval; 
     }
 }
 

@@ -68,7 +68,7 @@ public class TransparentActivity extends Activity {
 												.setTitle("Mingle")
 												.setCancelable(false)
 												.setMessage(data.getString("msg"))
-												.setIcon(R.drawable.ic_launcher)
+												.setIcon(R.drawable.mingle_logo)
 												.setPositiveButton("View", new DialogInterface.OnClickListener() {
 													@Override
 													public void onClick(DialogInterface dialog, int id) {
