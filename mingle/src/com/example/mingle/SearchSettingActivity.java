@@ -80,7 +80,7 @@ public class SearchSettingActivity extends Activity {
 															.setTitle("Mingle")
 															.setCancelable(false)
 															.setMessage("GPS is not enabled. Do you want to go to settings menu?.")
-															.setIcon(R.drawable.mingle_logo)
+															.setIcon(R.drawable.icon_tiny)
 															.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 																@Override
 																public void onClick(DialogInterface dialog, int id) {

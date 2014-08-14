@@ -8,6 +8,7 @@
 	
 	<color name="trans">#000000</color>
 	<color name="light_gray">#eee9e9</color>
+	<color name="white_gray">#FFF2F2F2</color>
+	<color name="black">#FF000000</color>
 	
-
 </resources>

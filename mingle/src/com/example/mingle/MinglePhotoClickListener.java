@@ -67,7 +67,7 @@ public class MinglePhotoClickListener implements OnClickListener{
 		final CharSequence[] items = { "Yes","Cancel" };
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-		builder.setTitle("Delete this Photo?");
+		builder.setTitle("Delete this Photo?").setIcon(R.drawable.icon_tiny);
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 		    @Override
 		    public void onClick(DialogInterface dialog, int item) {
@@ -87,7 +87,7 @@ public class MinglePhotoClickListener implements OnClickListener{
         "Cancel" };
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-		builder.setTitle("Add Photo!");
+		builder.setTitle("Add Photo!").setIcon(R.drawable.icon_tiny);
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 		    @Override
 		    public void onClick(DialogInterface dialog, int item) {

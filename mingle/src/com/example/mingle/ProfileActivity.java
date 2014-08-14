@@ -111,8 +111,12 @@ public class ProfileActivity extends Activity {
 		LinearLayout photoCounterWrapper = (LinearLayout) findViewById(R.id.photo_indicators);
 		for(int i = 0; i < photo_num; i++) {
             ImageView indicator = new ImageView(this);
-            indicator.setImageResource(R.drawable.profile_photo_notcurrent);
-            
+            indicator.setPadding(8, 0, 8, 15);
+            if(i == 0) {
+            	indicator.setImageResource(R.drawable.profile_photo_current);
+            } else {
+            	indicator.setImageResource(R.drawable.profile_photo_notcurrent);
+            }
             photoCounterWrapper.addView(indicator);
         }
 	}
@@ -120,9 +124,8 @@ public class ProfileActivity extends Activity {
 	private void updatePhotoIndicators(int changeInIndex) {
 		if(changeInIndex == 0) return; 
 		LinearLayout photoCounterWrapper = (LinearLayout) findViewById(R.id.photo_indicators);
-		int currentIndex = photo_num - current_viewing_pic_index - 1;
-		ImageView curIndicator = (ImageView) photoCounterWrapper.getChildAt(currentIndex);
-		ImageView newIndicator = (ImageView) photoCounterWrapper.getChildAt(currentIndex + changeInIndex);
+		ImageView curIndicator = (ImageView) photoCounterWrapper.getChildAt(current_viewing_pic_index);
+		ImageView newIndicator = (ImageView) photoCounterWrapper.getChildAt(current_viewing_pic_index + changeInIndex);
 		curIndicator.setImageResource(R.drawable.profile_photo_notcurrent);
 		newIndicator.setImageResource(R.drawable.profile_photo_current);
 		current_viewing_pic_index += changeInIndex;
@@ -149,7 +152,7 @@ public class ProfileActivity extends Activity {
                                  if (viewFlipper.getDisplayedChild() == 0)
                                      break;
                                 
-                                 updatePhotoIndicators(1);
+                                 updatePhotoIndicators(-1);
                                  // set the required Animation type to ViewFlipper
                                  // The Next screen will come in form Left and current Screen will go OUT from Right 
                                  viewFlipper.setInAnimation(this, R.anim.in_from_left);
@@ -164,7 +167,7 @@ public class ProfileActivity extends Activity {
                              {
                                  if (viewFlipper.getDisplayedChild() == photo_num-1)
                                      break;
-                                 updatePhotoIndicators(-1);
+                                 updatePhotoIndicators(1);
                                  // set the required Animation type to ViewFlipper
                                  // The Next screen will come in form Right and current Screen will go OUT from Left 
                                  viewFlipper.setInAnimation(this, R.anim.in_from_right);

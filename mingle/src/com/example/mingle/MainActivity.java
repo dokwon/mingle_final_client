@@ -22,6 +22,7 @@ import java.util.Date;
 
 
 
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -42,8 +43,10 @@ import com.example.mingle.HttpHelper;
 
 
 
+
 import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
+
 
 
 
@@ -256,11 +259,9 @@ public class MainActivity extends Activity {
         	Button modify_button = (Button) findViewById(R.id.modify_button);
         	modify_button.setVisibility(View.GONE);
         } else {
-        	//hide delete, enter, and preview button
-        	Button delete_button = (Button) findViewById(R.id.delete_button);
+        	
             Button enter_button = (Button) findViewById(R.id.enter_button);
             Button preview_button = (Button) findViewById(R.id.preview_button);
-            delete_button.setVisibility(View.GONE);
             enter_button.setVisibility(View.GONE);
             preview_button.setVisibility(View.GONE);
         }
@@ -426,6 +427,7 @@ public class MainActivity extends Activity {
 
     private void showInvalidUserAlert() {
     	new AlertDialog.Builder(this)
+    	.setIcon(R.drawable.icon_tiny)
         .setTitle("Invalid User")
         .setMessage("You need at least one photo and specify how many you are before mingling.")
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {

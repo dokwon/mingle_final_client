@@ -51,6 +51,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 public class HuntActivity extends FragmentActivity implements ActionBar.TabListener	 {
 	public CandidateFragment candidateFragment;			//Fragment for list of candidates
 	public ChoiceFragment choiceFragment;				//Fragment for list of choices
@@ -243,12 +244,11 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
             	//3. clear data in the database
             	//4. cut socket and flush all data in mingleapplication
 	      		final Activity curActivity = this;
-	      		
             	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
 															.setCancelable(false)
-															.setTitle("dsfadasf")
+															.setTitle("Deactivate account")
 															.setMessage("Your account will be deactivated.")
-															.setIcon(R.drawable.mingle_logo)
+															.setIcon(R.drawable.icon_tiny)
 															.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 																@Override
 																public void onClick(DialogInterface dialog, int id) {

@@ -230,7 +230,7 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
 												.setTitle("Mingle")
 												.setCancelable(false)
 												.setMessage("This user has been deactivated")
-												.setIcon(R.drawable.mingle_logo)
+												.setIcon(R.drawable.icon_tiny)
 												.setNeutralButton("OK", new DialogInterface.OnClickListener() {
 													@Override
 													public void onClick(DialogInterface dialog, int id) {

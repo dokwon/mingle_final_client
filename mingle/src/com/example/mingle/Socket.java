@@ -124,7 +124,7 @@ public class Socket extends AsyncTask<String, MingleApplication, Integer>  {
 																.setTitle("Mingle")
 																.setCancelable(false)
 																.setMessage("This user is not active anymore.")
-																.setIcon(R.drawable.mingle_logo)
+																.setIcon(R.drawable.icon_tiny)
 																.setNeutralButton("OK", new DialogInterface.OnClickListener() {
 																	@Override
 																	public void onClick(DialogInterface dialog, int id) {

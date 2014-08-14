@@ -287,26 +287,16 @@
 	    android:onClick="MemberNumberSelected"/>
 	
 
-	<Button 
-	    android:layout_height="50dp" 
-	    android:layout_width="match_parent" 
-	    android:id="@+id/delete_button" 
-	    android:layout_alignLeft="@+id/photoView1"
-		android:layout_alignRight="@+id/center_wrapper"
-	    android:layout_below="@+id/memberlabel"
-	    android:layout_marginTop="@dimen/option_margin"
-	    android:layout_marginRight="@dimen/small_margin"
-	    android:background="@drawable/deleteall"
-	    android:onClick="userCreateButtonPressed"/>
+	
 	
 	<Button 
 	    android:layout_height="50dp" 
-	    android:layout_width="wrap_content" 
+	    android:layout_width="fill_parent" 
 	    android:id="@+id/enter_button" 
 	    android:layout_alignRight="@+id/photoView3"
-	   	android:layout_toRightOf="@+id/center_wrapper"
-	    android:layout_alignTop="@+id/delete_button"
-	    android:layout_marginLeft="@dimen/small_margin"
+	    android:layout_alignLeft="@+id/photoView1"
+	    android:layout_below="@+id/memberlabel"
+	    android:layout_marginTop="@dimen/option_margin"
 	    android:background="@drawable/enter"
 	    android:onClick="userCreateButtonPressed"/>
 	

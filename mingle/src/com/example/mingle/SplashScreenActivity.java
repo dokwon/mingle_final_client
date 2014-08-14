@@ -59,7 +59,7 @@ public class SplashScreenActivity extends Activity {
         	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
 													.setTitle("Mingle")
 													.setMessage("GPS is not enabled. Do you want to go to settings menu?.")
-													.setIcon(R.drawable.mingle_logo)
+													.setIcon(R.drawable.icon_tiny)
 													.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 														@Override
 														public void onClick(DialogInterface dialog, int id) {
