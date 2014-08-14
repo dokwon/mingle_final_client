@@ -107,12 +107,12 @@ public class ProfileActivity extends Activity {
 	private int current_viewing_pic_index = 0;
 	
 	
-	
 	private void initializePhotoIndicators() { 
 		LinearLayout photoCounterWrapper = (LinearLayout) findViewById(R.id.photo_indicators);
 		for(int i = 0; i < photo_num; i++) {
             ImageView indicator = new ImageView(this);
             indicator.setImageResource(R.drawable.profile_photo_notcurrent);
+            
             photoCounterWrapper.addView(indicator);
         }
 	}
