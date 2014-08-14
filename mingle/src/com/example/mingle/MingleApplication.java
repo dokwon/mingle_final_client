@@ -126,12 +126,7 @@ public class MingleApplication extends Application {
    }
    
    public void setMyUser(String uid, String name, int num, String sex){
-	   if(uid != null) {
-		   Log.i("sktag", "uid with quitation mark...?");
-		   if(uid.startsWith("\"")) uid = uid.substring(1);
-		   if(uid.endsWith("\"")) uid = uid.substring(0, uid.length() - 2);
-		   my_user.setUid(uid);
-	   }
+	   if(uid != null) my_user.setUid(uid);
 	   if(name != null) my_user.setName(name);
 	   if(num != 0) my_user.setNum(num);
 	   if(sex != null) my_user.setSex(sex);
@@ -343,9 +338,7 @@ public class MingleApplication extends Application {
 		this.addChoice(uid);
 		
 		new ImageDownloader(this.getApplicationContext(), new_user.getUid(), -1).execute();
-		dbHelper.insertNewUID(uid, new_user.getNum(), new_user.getName(), 0, 0, 0);
-		
-		//download profile also
+		dbHelper.insertNewUID(uid, new_user.getNum(), new_user.getName(), 0, 0, 0);		
     }
     
     public String getLocalTime(String timestamp){

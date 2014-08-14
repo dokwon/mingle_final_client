@@ -94,10 +94,6 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  onCreate(db);
 	  }
 	  
-	  public String getRidOfQuotes(String quotedString){
-		  return quotedString.substring(1,quotedString.length()-1);
-	  }
-	  
 	  // Insert messages to database
 	  public boolean insertMessages(String uid, boolean is_me, String msg, String msg_ts) {
 		  SQLiteDatabase db = this.getWritableDatabase();
@@ -117,13 +113,13 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 	  public boolean insertNewUID(String uid, int num, String comm, float loc_lat, float loc_long, int dist_lim){
 		  SQLiteDatabase db = this.getWritableDatabase();
 		  ContentValues values = new ContentValues();
-		  values.put(DatabaseHelper.COLUMN_UID,"\""+uid+"\"");
-		  values.put(DatabaseHelper.COLUMN_NUM,num);
-		  values.put(DatabaseHelper.COLUMN_COMM,comm);
-		  values.put(DatabaseHelper.COLUMN_LOC_LAT,loc_lat);
-		  values.put(DatabaseHelper.COLUMN_LOC_LONG,loc_long);
-		  values.put(DatabaseHelper.COLUMN_DIST_LIM,dist_lim);
-		  db.insert(DatabaseHelper.TABLE_UIDLIST,null,values);
+		  values.put(DatabaseHelper.COLUMN_UID, uid);
+		  values.put(DatabaseHelper.COLUMN_NUM, num);
+		  values.put(DatabaseHelper.COLUMN_COMM, comm);
+		  values.put(DatabaseHelper.COLUMN_LOC_LAT, loc_lat);
+		  values.put(DatabaseHelper.COLUMN_LOC_LONG, loc_long);
+		  values.put(DatabaseHelper.COLUMN_DIST_LIM, dist_lim);
+		  db.insert(DatabaseHelper.TABLE_UIDLIST, null, values);
 		  
 		  String createUIDTableQuery = "create table " + "\"" + uid + "\""
 				  + "(" + COLUMN_IS_ME + " text not null, " + COLUMN_MSG + " text not null, " 
@@ -142,7 +138,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  
 		  ContentValues values = new ContentValues();
 		  try {
-		  values.put(DatabaseHelper.COLUMN_MYUID,"\""+userData.getString("UID")+"\"");
+		  values.put(DatabaseHelper.COLUMN_MYUID, userData.getString("UID"));
 		  values.put(DatabaseHelper.COLUMN_SEX, userData.getString("SEX"));
 		  values.put(DatabaseHelper.COLUMN_NUM, userData.getInt("NUM"));
 		  values.put(DatabaseHelper.COLUMN_COMM, userData.getString("COMM"));
@@ -173,7 +169,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 			    if  (c.moveToFirst()) {
 			        do {
 			            String frag = c.getString(c.getColumnIndex(key));
-			            datas.add(getRidOfQuotes(frag));
+			            datas.add(frag);
 			        }while (c.moveToNext());
 			    }
 			}
@@ -197,7 +193,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  if(cursor!=null){
 			  while(cursor.moveToNext()){
 				  ContentValues tempContent = new ContentValues();
-				  tempContent.put("UID",getRidOfQuotes(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_UID))));
+				  tempContent.put("UID", cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_UID)));
 				  tempContent.put("NUM", cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_NUM)));
 				  tempContent.put("COMM",cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_COMM)));
 				  userList.add(tempContent);

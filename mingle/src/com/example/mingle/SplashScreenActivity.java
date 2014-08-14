@@ -51,34 +51,18 @@ public class SplashScreenActivity extends Activity {
 	static final String TAG = "GCMDemo";
 	
 	private Context context;
-	private Handler initHandler;
 	private LocationManager locationManager;
 	private boolean findCurLoc = false;
-	static final int MSG_CURRENT_LOC_FOUND = 0;
-	static final int MSG_TIME_OUT = 1;
-	
-	private LocationListener locationListener = new LocationListener() {
-	    public void onLocationChanged(Location location) {
-	        app.setLat((float)location.getLatitude());
-	        app.setLong((float)location.getLongitude());
-	        findCurLoc = true;
-	    }
-		
-	    public void onStatusChanged(String provider, int status, Bundle extras) {}
+	static final int MSG_TIME_OUT = 0;
 
-	    public void onProviderEnabled(String provider) {}
-
-	    public void onProviderDisabled(String provider) {}
-	};
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_splash_screen);
-				
-		app = ((MingleApplication) this.getApplication());
-		app.initializeApplication();
+		
+        app = ((MingleApplication) this.getApplication());
+        app.initializeApplication();
 		
         //Initialize HttpHelper that supports HTTP GET/POST requests
         app.connectHelper = new HttpHelper(server_url, (MingleApplication)this.getApplication());
@@ -112,90 +96,113 @@ public class SplashScreenActivity extends Activity {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
         
-        initHandler = new Handler() {
-        	@Override
-        	public void handleMessage(android.os.Message msg) {
-        		switch(msg.what) {		
-        			//After 3seconds, check whether the device finds current location.
-        			case MSG_TIME_OUT:
-        				//If not check if whether previous data exists
-        				if(!findCurLoc) {
-        					Criteria criteria = new Criteria();
-        			    	String provider = locationManager.getBestProvider(criteria, true);
-        			    	Location location = locationManager.getLastKnownLocation(provider);
-        			    	//If so, use previous data.
-        			    	if(location != null) {
-        			    		app.setLat((float)location.getLatitude());
-        			    		app.setLong((float)location.getLongitude());
-        			    		
-        			    	//If no, kill the app for now. should be modified.
-        			    	} else
-        			    		((Activity)context).finish();
-        				}
-        				locationManager.removeUpdates(locationListener);
-			    		this.sendEmptyMessage(MSG_CURRENT_LOC_FOUND);        					
-        				break;
-        				
-        			case MSG_CURRENT_LOC_FOUND:
-        				//Create default MyUser object. Will be modified later.
-        				app.createDefaultMyUser();
-                    	    
-        				// If the app is not on for the first time, start HuntActivity
-        				// and populate it with data from local storage
-        				if(AppOnFirstTime()) {
-        					app.connectHelper.getInitInfo();         	         
-        				} else {
-        					Intent i = new Intent(context, HuntActivity.class);
-        					i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        					startActivity(i);
-        					finish();
-        				} 
-        				break;
-        				
-        			default:
-        				break;
-        		}
-        	}
-        };
+        //Now move on to next phase
+		//Create default MyUser object. Will be modified later.
+		app.createDefaultMyUser();
 	}
 	
 	@Override
 	protected void onResume(){
 		super.onResume();
-        if(!app.isLocationEnabled()) {
-        	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
-													.setTitle(getResources().getString(R.string.gps_location_setting))
-													.setMessage(getResources().getString(R.string.gps_disabled_alert))
-													.setIcon(R.drawable.mingle_logo)
-													.setPositiveButton(getResources().getString(R.string.allow), new DialogInterface.OnClickListener() {
-														@Override
-														public void onClick(DialogInterface dialog, int id) {
-															dialog.dismiss();
-															Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-															startActivity(intent);
-														}
-													})
-													.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-														@Override
-														public void onClick(DialogInterface dialog, int id) {
-															dialog.dismiss();
-															finish();
-														}
-													});
-        	AlertDialog popupDialog = popupBuilder.create();
-        	popupDialog.show();
-        } else {
-        	getCurrentLocation();
-        }
+		
+		if(AppOnFirstTime()) {
+			if(!app.isLocationEnabled()) {
+				AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
+														.setTitle(getResources().getString(R.string.gps_location_setting))
+														.setMessage(getResources().getString(R.string.gps_disabled_alert))
+														.setIcon(R.drawable.mingle_logo)
+														.setPositiveButton(getResources().getString(R.string.allow), new DialogInterface.OnClickListener() {
+															@Override
+															public void onClick(DialogInterface dialog, int id) {
+																dialog.dismiss();
+																Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+																startActivity(intent);
+															}
+														})
+														.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+															@Override
+															public void onClick(DialogInterface dialog, int id) {
+																dialog.dismiss();
+																finish();
+															}
+														});
+		       	AlertDialog popupDialog = popupBuilder.create();
+		        popupDialog.show();
+		    } else {
+		       	getCurrentLocation();
+		    }
+
+		} else {
+			Thread launcherThread = new Thread() {
+				@Override
+				public void run() {
+					try {
+						sleep(3*1000);
+						Intent i = new Intent(context, HuntActivity.class);
+						i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+						startActivity(i);
+						finish();
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			};
+			launcherThread.start();
+		} 
 	}
 	
 	// Get the users one-time location. Code available below to register for updates
     private void getCurrentLocation() {
     	Criteria criteria = new Criteria();
     	String provider = locationManager.getBestProvider(criteria, true);
-        locationManager.requestLocationUpdates(provider, 3*1000, 0, locationListener);
+        locationManager.requestLocationUpdates(provider, 1000, 0, locationListener);
         initHandler.sendEmptyMessageDelayed(MSG_TIME_OUT, 3*1000);
     }
+    
+	private LocationListener locationListener = new LocationListener() {
+	    public void onLocationChanged(Location location) {
+	        app.setLat((float)location.getLatitude());
+	        app.setLong((float)location.getLongitude());
+	        Log.i("loc", Float.toString(app.getLat()) + " " + Float.toString(app.getLong()));
+	        findCurLoc = true;
+	    }		
+	    public void onStatusChanged(String provider, int status, Bundle extras) {}
+	    public void onProviderEnabled(String provider) {}
+	    public void onProviderDisabled(String provider) {}
+	};
+	
+	private Handler initHandler = new Handler() {
+    	@Override
+    	public void handleMessage(android.os.Message msg) {
+    		switch(msg.what) {		
+    			//After 3seconds, check whether the device finds current location.
+    			case MSG_TIME_OUT:
+    				locationManager.removeUpdates(locationListener);
+
+    				//If not check if whether previous data exists
+    				if(!findCurLoc) {
+    					Log.i("loc", "use prev loc");
+    					Criteria criteria = new Criteria();
+    			    	String provider = locationManager.getBestProvider(criteria, true);
+    			    	Location location = locationManager.getLastKnownLocation(provider);
+    			    	//If so, use previous data.
+    			    	if(location != null) {
+    			    		app.setLat((float)location.getLatitude());
+    			    		app.setLong((float)location.getLongitude());
+    			    		
+    			    	//If no, kill the app for now. should be modified.
+    			    	} else
+    			    		((Activity)context).finish();
+    				}                	     
+    				app.connectHelper.getInitInfo();
+    				break;
+    				
+    			default:
+    				break;
+    		}
+    	}
+    };
     
 	private BroadcastReceiver initInfoReceiver = new BroadcastReceiver() {
     	@Override

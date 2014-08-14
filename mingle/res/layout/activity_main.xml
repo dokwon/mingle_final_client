@@ -319,6 +319,5 @@
 	    android:layout_marginTop="@dimen/option_margin"
 	    android:text="edit"
 	    android:onClick="modifyUserData"/>
-	
 
 </RelativeLayout>

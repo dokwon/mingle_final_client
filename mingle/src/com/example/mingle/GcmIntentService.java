@@ -119,7 +119,7 @@ public class GcmIntentService extends IntentService {
     	Intent dispatcher = new Intent(this, TransparentActivity.class);
     	dispatcher.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | 
     							Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-    	dispatcher.putExtra(DATA_BUNDLE, data);				
+    	dispatcher.putExtra(DATA_BUNDLE, data);
 		startActivity(dispatcher);
     }
 }

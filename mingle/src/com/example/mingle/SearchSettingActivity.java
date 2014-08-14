@@ -12,7 +12,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,7 +39,9 @@ public class SearchSettingActivity extends Activity {
 	private boolean locChanged = false;
 	private boolean filterChanged = false;
 	private Context context;
-	
+	private LocationManager locationManager;
+	static final int MSG_TIME_OUT = 0;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -45,6 +49,8 @@ public class SearchSettingActivity extends Activity {
 		
 		app = (MingleApplication)this.getApplication();
 		context = this;
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
 		distanceSetting();
 		locationSetting();
 		notificationSetting();
@@ -102,7 +108,6 @@ public class SearchSettingActivity extends Activity {
                 	AlertDialog popupDialog = popupBuilder.create();
                 	popupDialog.show();
                 } else {
-                	locChanged = true;
                 	getCurrentLocation();
                 }
 			}
@@ -111,29 +116,54 @@ public class SearchSettingActivity extends Activity {
 	
 	// Get the users one-time location. Code available below to register for updates
     private void getCurrentLocation() {
-    	
-    	// Acquire a reference to the system Location Manager
-    	final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-    	LocationListener locationListener = new LocationListener() {
-    	    public void onLocationChanged(Location location) {
-    	       app.setLat((float)location.getLatitude());
-    	       app.setLong((float)location.getLongitude());
-    	       locationManager.removeUpdates(this);
-    	    }
-    		
-    	    public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-    	    public void onProviderEnabled(String provider) {}
-
-    	    public void onProviderDisabled(String provider) {}
-    	};
-    	
     	Criteria criteria = new Criteria();
     	String provider = locationManager.getBestProvider(criteria, true);
-        locationManager.requestLocationUpdates(provider, 5*1000, 100, locationListener);
-        
+        locationManager.requestLocationUpdates(provider, 0, 0, locationListener);
+        locHandler.sendEmptyMessageDelayed(MSG_TIME_OUT, 3*1000);
     }
+    
+	private LocationListener locationListener = new LocationListener() {
+	    public void onLocationChanged(Location location) {
+	        app.setLat((float)location.getLatitude());
+	        app.setLong((float)location.getLongitude());
+	        locChanged = true;
+	    }		
+	    public void onStatusChanged(String provider, int status, Bundle extras) {}
+	    public void onProviderEnabled(String provider) {}
+	    public void onProviderDisabled(String provider) {}
+	};
+	
+	private Handler locHandler = new Handler() {
+    	@Override
+    	public void handleMessage(android.os.Message msg) {
+    		switch(msg.what) {		
+    			//After 3seconds, check whether the device finds current location.
+    			case MSG_TIME_OUT:
+    				locationManager.removeUpdates(locationListener);
+    				
+    				//If not notify the user the device cannot find current location
+    				if(!locChanged) {
+    					AlertDialog.Builder popupBuilder = new AlertDialog.Builder(context)
+																.setTitle(getResources().getString(R.string.gps_location_setting))
+																.setCancelable(false)
+																.setMessage(getResources().getString(R.string.gps_cannot_find_location))
+																.setIcon(R.drawable.mingle_logo)
+																.setNeutralButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+																	@Override
+																	public void onClick(DialogInterface dialog, int id) {
+																		dialog.dismiss();
+																	}
+																});
+						
+    					popupBuilder.show();
+    				}
+    				break;
+    				
+    			default:
+    				break;
+    		}
+    	}
+    };
 	
 	private void notificationSetting(){
 		notiRadio = (RadioGroup)findViewById(R.id.notification_setup);

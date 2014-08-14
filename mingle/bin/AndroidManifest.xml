@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
 
@@ -35,14 +35,14 @@
     <application
         android:name=".MingleApplication"
         android:allowBackup="true"
-        android:theme="@style/CustomActionBarTheme"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
-        android:logo="@drawable/icon">
+        android:logo="@drawable/icon"
+        android:theme="@style/CustomActionBarTheme" >
         <activity
             android:name=".HuntActivity"
             android:label="@string/title_activity_hunt"
-            android:taskAffinity="com.example.mingle.main">
+            android:taskAffinity="com.example.mingle.main" >
         </activity>
         <activity
             android:name=".MainActivity"
@@ -77,11 +77,9 @@
             android:name=".ChatroomActivity"
             android:label="@string/title_activity_chatroom"
             android:taskAffinity="com.example.mingle.main" >
-           
-            
-             <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value="com.example.mingle.HuntActivity" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.mingle.HuntActivity" />
         </activity>
         <activity
             android:name=".ProfileActivity"
@@ -103,8 +101,14 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".IntroActivity"
+            android:label="@string/title_activity_intro"
+            android:theme="@style/Theme.Intro" >
         </activity>
     </application>
 

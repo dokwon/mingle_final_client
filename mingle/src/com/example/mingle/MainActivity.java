@@ -9,6 +9,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -22,6 +23,11 @@ import java.util.Date;
 
 
 
+
+
+
+
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -30,9 +36,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Movie;
+import android.graphics.drawable.AnimationDrawable;
 import android.view.View;
 
 import com.example.mingle.HttpHelper;
@@ -42,13 +52,13 @@ import com.example.mingle.HttpHelper;
 
 
 
+
+
+
+
+
 import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
-
-
-
-
-
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,7 +80,8 @@ public class MainActivity extends Activity {
 
 	private static final int COMPRESS_PHOTO_FACTOR = 8;
 	public final int SELECT_FILE = 0;
- 	
+    private SharedPreferences prefs = null;
+
 	
 	private ImageView FindAppropriateImageView() {
 		
@@ -260,6 +271,13 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         app = ((MingleApplication) this.getApplication());
+        prefs = getSharedPreferences("com.example.mingle", MODE_PRIVATE);
+
+        if (prefs.getBoolean("firstrun", true)) {
+            Intent introIntent = new Intent(this, IntroActivity.class);
+            startActivity(introIntent);
+            prefs.edit().putBoolean("firstrun", false).commit();
+        }
         
         //check if custom title is supported BEFORE setting the content view!
         boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
@@ -342,6 +360,28 @@ public class MainActivity extends Activity {
     	Toast.makeText(getApplicationContext(), getResources().getString(R.string.update_complete), Toast.LENGTH_SHORT).show();
     }
     
+    static class GifView extends View {
+        private Movie movie;
+
+        public GifView(Context context) {
+            super(context);
+            movie = Movie.decodeStream(
+                    context.getResources().openRawResource(
+                            R.drawable.progress));
+        }
+        @Override
+        protected void onDraw(Canvas canvas) {   
+            if (movie != null) {
+                movie.setTime(
+                    (int) SystemClock.uptimeMillis() % movie.duration());
+                int xPos = (canvas.getWidth() - movie.width()) / 2;
+                int yPos = (canvas.getHeight() - movie.height()) / 2;
+                movie.draw(canvas, xPos , yPos);
+                invalidate();
+            }
+        }
+    }
+    
     //On user creation request, get user's info and send request to server
     public void userCreateButtonPressed(View view) {
     	name = ((EditText)findViewById(R.id.nicknameTextView)).getText().toString();
@@ -353,8 +393,9 @@ public class MainActivity extends Activity {
         	proDialog.setCanceledOnTouchOutside(false);
             proDialog.setIndeterminate(true);
             proDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-            proDialog.getWindow().getAttributes().dimAmount = (float)0.8;
+            proDialog.getWindow().getAttributes().dimAmount = (float)0.5;
             proDialog.show(); 
+            proDialog.setContentView(new GifView(this));
             
         	app.connectHelper.userCreateRequest(app, name, sex, num);
       } else {
