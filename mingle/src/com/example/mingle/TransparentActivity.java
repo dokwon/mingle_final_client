@@ -68,8 +68,8 @@ public class TransparentActivity extends Activity {
 												.setTitle("Mingle")
 												.setCancelable(false)
 												.setMessage(data.getString("msg"))
-												.setIcon(R.drawable.mingle_logo)
-												.setPositiveButton("View", new DialogInterface.OnClickListener() {
+												.setIcon(R.drawable.icon_tiny)
+												.setPositiveButton(getResources().getString(R.string.view), new DialogInterface.OnClickListener() {
 													@Override
 													public void onClick(DialogInterface dialog, int id) {
 														Intent chat_intent = new Intent(context, ChatroomActivity.class);
@@ -81,7 +81,7 @@ public class TransparentActivity extends Activity {
 														overridePendingTransition(0, 0);
 													}
 												})
-												.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+												.setNegativeButton(getResources().getString(R.string.close), new DialogInterface.OnClickListener() {
 													@Override
 													public void onClick(DialogInterface dialog, int id) {
 														dialog.dismiss();
@@ -106,3 +106,4 @@ public class TransparentActivity extends Activity {
 		super.onDestroy();
 	}
 }
+								

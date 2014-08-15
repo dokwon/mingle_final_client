@@ -1,9 +1,11 @@
 package com.example.mingle;
 
 import java.util.ArrayList;
+
 import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
 import com.fortysevendeg.swipelistview.SwipeListView;
 import com.fortysevendeg.swipelistview.SwipeListView.OnLoadMoreListener;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
@@ -13,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 /**
  * A dummy fragment representing a section of the app
@@ -118,16 +121,21 @@ public class CandidateFragment extends Fragment {
       candidatelistview.setAdapter(adapter);
       candidatelistview.setOnLoadMoreListener(new OnLoadMoreListener() {
           public void onLoadMore() {
-        	  loadNewMatches(((MingleApplication)parent.getApplication()).getExtraMatchNum());
+        	  if(((MingleApplication)parent.getApplication()).canGetMoreCandidate())
+            	  loadNewMatches(((MingleApplication)parent.getApplication()).getExtraMatchNum());
+        	  else {
+        		  Toast.makeText(parent.getApplicationContext(), getResources().getString(R.string.no_more_candidates), Toast.LENGTH_SHORT).show();
+        		  candidateLoadMoreComplete();
+        	  }
           }
       });
       
       //Load more matches if has only a few candidates in current list
       int match_num = candidate_list.size();
       if(match_num <  ((MingleApplication)parent.getApplication()).getFirstMatchNum()) {
-    	  loadNewMatches( ((MingleApplication)parent.getApplication()).getFirstMatchNum());
+    	  if(((MingleApplication)parent.getApplication()).canGetMoreCandidate())
+    		  loadNewMatches( ((MingleApplication)parent.getApplication()).getFirstMatchNum());
       }
-      
     return rootView;
   }
   
@@ -148,14 +156,11 @@ public class CandidateFragment extends Fragment {
   //Load num_of_matches more candidates to the list if there are more candidates available at server
   public void loadNewMatches(int num_of_matches) {
 	  MingleApplication app = (MingleApplication) parent.getApplication();
-	  if(app.canGetMoreCandidate()) {
-		  ArrayList<String> combined_list = new ArrayList<String>();
-		  combined_list.addAll(app.getCandidateList());
-		  combined_list.addAll(app.getChoiceList());
-		  app.connectHelper.requestUserList(app.getMyUser().getUid(), app.getMyUser().getSex(), 
+	  ArrayList<String> combined_list = new ArrayList<String>();
+	  combined_list.addAll(app.getCandidateList());
+	  combined_list.addAll(app.getChoiceList());
+	  app.connectHelper.requestUserList(app.getMyUser().getUid(), app.getMyUser().getSex(), 
 					app.getLat(), app.getLong(), app.getDist(), num_of_matches, combined_list);
-	  }
-	  else candidateLoadMoreComplete();
   }
   
   public int convertDpToPixel(float dp) {

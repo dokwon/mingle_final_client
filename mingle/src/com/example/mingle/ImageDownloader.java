@@ -47,7 +47,7 @@ public class ImageDownloader extends AsyncTask<Void, Integer, Void> {
 			if (isCancelled()) {
 				return null;
 			}
-			//Download image from URL
+			
 			bm = getBitmapFromURL(url);
 
 			return null;
@@ -58,7 +58,7 @@ public class ImageDownloader extends AsyncTask<Void, Integer, Void> {
 			MingleApplication app= (MingleApplication) context;
 			MingleUser user = app.getMingleUser(uid);
 
-			//Save image
+			//Save Image
 			user.setPic(pic_index, (Drawable) new BitmapDrawable(context.getResources(),bm));
 
 			//update lists on complete
@@ -79,7 +79,6 @@ public class ImageDownloader extends AsyncTask<Void, Integer, Void> {
 
 		@Override
 		protected void onCancelled() {
-			System.out.println("cancled");
 	    }
 		
 		//Download image from URL and return it as a Bitmap

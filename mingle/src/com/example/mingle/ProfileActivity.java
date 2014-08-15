@@ -108,6 +108,7 @@ public class ProfileActivity extends Activity {
 	
 	
 	private void initializePhotoIndicators() { 
+		if(photo_num == 1) return;
 		LinearLayout photoCounterWrapper = (LinearLayout) findViewById(R.id.photo_indicators);
 		for(int i = 0; i < photo_num; i++) {
             ImageView indicator = new ImageView(this);

@@ -16,12 +16,7 @@
             android:layout_margin="5dp"
             android:layout_toRightOf="@+id/sender_image"
             android:background="@drawable/message_bubble"
-            android:shadowColor="@color/black"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:text="msg"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
+            style="@style/MsgStyle"/>
 
         
  

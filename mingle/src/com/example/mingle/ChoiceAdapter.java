@@ -57,7 +57,7 @@ public class ChoiceAdapter extends ArrayAdapter {
         if(choice.getLastMsg() == null) holder.msg_view.setText("");
         else holder.msg_view.setText(choice.getLastMsg().getContent());
         holder.user_name.setText(choice.getName());
-        holder.user_pic.setImageDrawable(choice.getPic(0));
+        holder.user_pic.setImageDrawable(choice.getPic(-1));
         
         return row;
 

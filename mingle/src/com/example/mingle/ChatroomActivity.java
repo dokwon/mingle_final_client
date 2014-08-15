@@ -60,15 +60,12 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
 	
     @Override
     protected void onNewIntent(Intent intent){
-    	Log.i("sktag", "catch intent -> " + intent.getExtras().getString("USER_ID"));
     	setIntent(intent);
     }
     
     @Override
     protected void onResume(){
         super.onResume();
-        
-       
         Intent intent = getIntent();
         String recv_uid = intent.getExtras().getString(USER_UID);
         
@@ -80,12 +77,8 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
         ((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancelAll();
         recv_user.setInChat(true);
         
-        
         ActionBar actionBar = getActionBar();
-	    //actionBar.hide();
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM  | ActionBar.DISPLAY_SHOW_HOME);
-        //actionBar.setH
-        //actionBar.setHomeAsUpIndicator(R.drawable.back_button);
         View titleView =  LayoutInflater.from(this).inflate(R.layout.chatactivity_title_custom_view, null);
         LayoutParams layout = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         titleView.setLayoutParams(layout);
@@ -239,14 +232,6 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
 												});
     	popupBuilder.show();
     	
-    	/*
- 	   	try {
- 		   JSONObject obj = new JSONObject(intent.getExtras().getString(Socket.DEACT_USER));
- 		   String uid = obj.getString("send_uid");
- 	   	} catch (JSONException e) {
-			// TODO Auto-generated catch block
- 		   e.printStackTrace();
- 	   	}*/
     }
 
     /* If current activity is called from GCM not Hunt, start Hunt */

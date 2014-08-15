@@ -9,6 +9,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -23,6 +24,10 @@ import java.util.Date;
 
 
 
+
+
+
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -31,9 +36,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Movie;
+import android.graphics.drawable.AnimationDrawable;
 import android.view.View;
 
 import com.example.mingle.HttpHelper;
@@ -44,14 +53,12 @@ import com.example.mingle.HttpHelper;
 
 
 
+
+
+
+
 import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
-
-
-
-
-
-
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,7 +80,8 @@ public class MainActivity extends Activity {
 
 	private static final int COMPRESS_PHOTO_FACTOR = 8;
 	public final int SELECT_FILE = 0;
- 	
+    private SharedPreferences prefs = null;
+
 	
 	private ImageView FindAppropriateImageView() {
 		
@@ -99,11 +107,9 @@ public class MainActivity extends Activity {
 						.setBackgroundResource(R.drawable.photo_delete);
 						
 				}
-				System.out.println("1");
 				return photoView;
 			}
 		}
-		System.out.println("2");
 		return null; 
 	}
 	
@@ -167,7 +173,7 @@ public class MainActivity extends Activity {
     		}
     	}
     	
-    	if(num_selected == 1) Toast.makeText(getApplicationContext(), "need more than one member!", Toast.LENGTH_SHORT).show();
+    	if(num_selected == 1) Toast.makeText(getApplicationContext(), getResources().getString(R.string.member_num_small), Toast.LENGTH_SHORT).show();
     	else {
     		num = num_selected;
     		for(int i = 0; i < num_selected; i++){
@@ -210,24 +216,12 @@ public class MainActivity extends Activity {
         		bm = app.rotatedBitmap(BitmapFactory.decodeFile(photo_path_arr.get(i), btmapOptions), photo_path_arr.get(i));
         		((ImageView) photoViewArr.get(i)).setImageBitmap(bm);
         	}
+			for (int i = 0; i < app.getMyUser().getPhotoNum(); i++){
+        		((ImageView) photoViewArr.get(i)).setImageDrawable(app.getMyUser().getPic(i));
+        	}
         }
-    	
-        //Set Name EditText
-        final EditText editText = (EditText) findViewById(R.id.nicknameTextView);
-        editText.setOnEditorActionListener(new OnEditorActionListener() {
-           
-			@Override
-			public boolean onEditorAction(TextView v, int actionId,
-					KeyEvent event) {
-                String name_str = editText.getText().toString();
-                if(name_str.length() < 5) Toast.makeText(getApplicationContext(), "nickname too short!", Toast.LENGTH_SHORT).show();
-                else {
-                	name = name_str;
-                	return false;
-                }
-	            return true;
-			}
-        });
+ 
+        EditText editText = (EditText) findViewById(R.id.nicknameTextView);
         if(type.equals("update")) editText.setText(name);
         
         //Set Sex Button
@@ -259,7 +253,7 @@ public class MainActivity extends Activity {
         	Button modify_button = (Button) findViewById(R.id.modify_button);
         	modify_button.setVisibility(View.GONE);
         } else {
-        	
+        	//hide delete, enter, and preview button
             Button enter_button = (Button) findViewById(R.id.enter_button);
             Button preview_button = (Button) findViewById(R.id.preview_button);
             enter_button.setVisibility(View.GONE);
@@ -275,6 +269,13 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         app = ((MingleApplication) this.getApplication());
+        prefs = getSharedPreferences("com.example.mingle", MODE_PRIVATE);
+
+        if (prefs.getBoolean("firstrun", true)) {
+            Intent introIntent = new Intent(this, IntroActivity.class);
+            startActivity(introIntent);
+            prefs.edit().putBoolean("firstrun", false).commit();
+        }
         
         //check if custom title is supported BEFORE setting the content view!
         boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
@@ -305,25 +306,26 @@ public class MainActivity extends Activity {
     
     public void showPreview(View view){
     	name = ((EditText)findViewById(R.id.nicknameTextView)).getText().toString();
-    	if(app.isValid(name)){
+    	String valid_message = app.isValid(name);
+    	if(valid_message == null){
     		app.setMyUser(null, name, num, sex);
 
     		Intent profile_intent = new Intent(context, ProfileActivity.class);
     		profile_intent.putExtra(ProfileActivity.PROFILE_TYPE, "preview");
     		context.startActivity(profile_intent);
     	} else {
-    		showInvalidUserAlert();
+    		showInvalidUserAlert(valid_message);
     	}
     }
     
     public void modifyUserData(View view){
     	//Check validity of user input and send user update request to server
-        if (app.isValid(name)) {
+    	String valid_message = app.isValid(name);
+    	if(valid_message == null){
     		app.setMyUser(null, name, num, sex);
         	app.connectHelper.userUpdateRequest(app, name, sex, num);
       } else {
-    	   showInvalidUserAlert();
-           System.out.println("The user is not valid.");
+    	   showInvalidUserAlert(valid_message);
        }
     }
     
@@ -353,29 +355,67 @@ public class MainActivity extends Activity {
     };
     
     public void updateUser(){
-    	Toast.makeText(getApplicationContext(), "update complete!", Toast.LENGTH_SHORT).show();
+    	Toast.makeText(getApplicationContext(), getResources().getString(R.string.update_complete), Toast.LENGTH_SHORT).show();
+    }
+    
+    static class GifView extends View {
+        private Movie movie;
+
+        public GifView(Context context) {
+            super(context);
+            movie = Movie.decodeStream(
+                    context.getResources().openRawResource(
+                            R.drawable.progress));
+        }
+        @Override
+        protected void onDraw(Canvas canvas) {   
+            if (movie != null) {
+                movie.setTime(
+                    (int) SystemClock.uptimeMillis() % movie.duration());
+                int xPos = (canvas.getWidth() - movie.width()) / 2;
+                int yPos = (canvas.getHeight() - movie.height()) / 2;
+                movie.draw(canvas, xPos , yPos);
+                invalidate();
+            }
+        }
     }
     
     //On user creation request, get user's info and send request to server
     public void userCreateButtonPressed(View view) {
     	name = ((EditText)findViewById(R.id.nicknameTextView)).getText().toString();
         //Check validity of user input and send user creation request to server
-        if (app.isValid(name)) {
+    	String valid_message = app.isValid(name);
+    	if(valid_message == null){
         	proDialog = new ProgressDialog(this);
+        	proDialog.setCancelable(false);
+        	proDialog.setCanceledOnTouchOutside(false);
             proDialog.setIndeterminate(true);
             proDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-            proDialog.getWindow().getAttributes().dimAmount = (float)0.8;
+            proDialog.getWindow().getAttributes().dimAmount = (float)0.5;
             proDialog.show(); 
+            proDialog.setContentView(new GifView(this));
             
         	app.connectHelper.userCreateRequest(app, name, sex, num);
       } else {
-    	   showInvalidUserAlert();
-           System.out.println("The user is not valid.");
+    	   showInvalidUserAlert(valid_message);
        }
     }
 
 
-    public void joinMingle(JSONObject userData) {       
+    public void joinMingle(JSONObject userData) { 
+			ArrayList<String> photo_array = app.getPhotoPaths();
+    		try {
+				if(photo_array.size() < 1) userData.put("PIC_PATH_1", "");
+				else userData.put("PIC_PATH_1", photo_array.get(0));
+				if(photo_array.size() < 2) userData.put("PIC_PATH_2", "");
+	    		else userData.put("PIC_PATH_2", photo_array.get(1));
+	    		if(photo_array.size() < 3) userData.put("PIC_PATH_3", "");
+	    		else userData.put("PIC_PATH_3", photo_array.get(2));
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+      
             app.dbHelper.setMyInfo(userData);
 
             try {
@@ -425,17 +465,16 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void showInvalidUserAlert() {
+    private void showInvalidUserAlert(String error_msg) {
     	new AlertDialog.Builder(this)
-    	.setIcon(R.drawable.icon_tiny)
-        .setTitle("Invalid User")
-        .setMessage("You need at least one photo and specify how many you are before mingling.")
+        .setTitle(getResources().getString(R.string.invalid_input))
+        .setMessage(error_msg)
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) { 
                 // continue with delete
             }
          })
-        .setIcon(android.R.drawable.ic_dialog_alert)
+        .setIcon(R.drawable.icon_tiny)
          .show();	
     }
     
@@ -460,3 +499,4 @@ public class MainActivity extends Activity {
 		  super.onDestroy();
 	  }
 }
+

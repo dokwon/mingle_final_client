@@ -29,6 +29,9 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 	  public static final String COLUMN_LOC_LAT = "loc_lat";
 	  public static final String COLUMN_LOC_LONG = "loc_long";
 	  public static final String COLUMN_DIST_LIM = "dist_lim";
+	  public static final String COLUMN_PIC_PATH_1 = "path_1";
+	  public static final String COLUMN_PIC_PATH_2 = "path_3";
+	  public static final String COLUMN_PIC_PATH_3 = "path_2";
 	  public static final String COLUMN_TIMESTAMP = "ts";
 	  public static final String COLUMN_IS_ME = "is_me";
 	  public static final String COLUMN_MSG = "msg";
@@ -56,7 +59,10 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 	      + " text not null, " + COLUMN_LOC_LAT
 	      + " float not null, " + COLUMN_LOC_LONG
 	      + " float not null, " + COLUMN_DIST_LIM
-	      + " int not null);";
+	      + " int not null, " + COLUMN_PIC_PATH_1
+	      + " text not null, " + COLUMN_PIC_PATH_2
+	      + " text not null, " + COLUMN_PIC_PATH_3
+	      + " text not null);";
 	 
 	  
 	  public static DatabaseHelper getInstance(Context context, MingleApplication app) {
@@ -88,11 +94,6 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  onCreate(db);
 	  }
 	  
-	  public String getRidOfQuotes(String quotedString){
-		  if(quotedString.startsWith("\"")) return quotedString.substring(1,quotedString.length()-1);
-		  else return quotedString;
-	  }
-	  
 	  // Insert messages to database
 	  public boolean insertMessages(String uid, boolean is_me, String msg, String msg_ts) {
 		  SQLiteDatabase db = this.getWritableDatabase();
@@ -113,12 +114,12 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  SQLiteDatabase db = this.getWritableDatabase();
 		  ContentValues values = new ContentValues();
 		  values.put(DatabaseHelper.COLUMN_UID, uid);
-		  values.put(DatabaseHelper.COLUMN_NUM,num);
-		  values.put(DatabaseHelper.COLUMN_COMM,comm);
-		  values.put(DatabaseHelper.COLUMN_LOC_LAT,loc_lat);
-		  values.put(DatabaseHelper.COLUMN_LOC_LONG,loc_long);
-		  values.put(DatabaseHelper.COLUMN_DIST_LIM,dist_lim);
-		  db.insert(DatabaseHelper.TABLE_UIDLIST,null,values);
+		  values.put(DatabaseHelper.COLUMN_NUM, num);
+		  values.put(DatabaseHelper.COLUMN_COMM, comm);
+		  values.put(DatabaseHelper.COLUMN_LOC_LAT, loc_lat);
+		  values.put(DatabaseHelper.COLUMN_LOC_LONG, loc_long);
+		  values.put(DatabaseHelper.COLUMN_DIST_LIM, dist_lim);
+		  db.insert(DatabaseHelper.TABLE_UIDLIST, null, values);
 		  
 		  String createUIDTableQuery = "create table " + "\"" + uid + "\""
 				  + "(" + COLUMN_IS_ME + " text not null, " + COLUMN_MSG + " text not null, " 
@@ -143,8 +144,10 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  values.put(DatabaseHelper.COLUMN_COMM, userData.getString("COMM"));
 		  values.put(DatabaseHelper.COLUMN_LOC_LAT, userData.getDouble("LOC_LAT"));
 		  values.put(DatabaseHelper.COLUMN_LOC_LONG, userData.getDouble("LOC_LONG"));
-		 
-			values.put(DatabaseHelper.COLUMN_DIST_LIM, userData.getDouble("DIST_LIM"));
+		  values.put(DatabaseHelper.COLUMN_DIST_LIM, userData.getDouble("DIST_LIM"));
+		  values.put(DatabaseHelper.COLUMN_PIC_PATH_1, userData.getString("PIC_PATH_1"));
+		  values.put(DatabaseHelper.COLUMN_PIC_PATH_2, userData.getString("PIC_PATH_2"));
+		  values.put(DatabaseHelper.COLUMN_PIC_PATH_3, userData.getString("PIC_PATH_3"));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -166,7 +169,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 			    if  (c.moveToFirst()) {
 			        do {
 			            String frag = c.getString(c.getColumnIndex(key));
-			            datas.add(getRidOfQuotes(frag));
+			            datas.add(frag);
 			        }while (c.moveToNext());
 			    }
 			}
@@ -190,7 +193,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  if(cursor!=null){
 			  while(cursor.moveToNext()){
 				  ContentValues tempContent = new ContentValues();
-				  tempContent.put("UID",getRidOfQuotes(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_UID))));
+				  tempContent.put("UID", cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_UID)));
 				  tempContent.put("NUM", cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_NUM)));
 				  tempContent.put("COMM",cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_COMM)));
 				  userList.add(tempContent);
@@ -299,6 +302,22 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  db.close();
 		  return return_val;
 	  }
+	  
+	  public ArrayList<String> getPhotoPaths(){
+		  SQLiteDatabase db = this.getReadableDatabase();
+		  String[] myuid_columns={DatabaseHelper.COLUMN_PIC_PATH_1, DatabaseHelper.COLUMN_PIC_PATH_2, DatabaseHelper.COLUMN_PIC_PATH_3};
+		  Cursor cursor = db.query(DatabaseHelper.TABLE_MYUID,myuid_columns,null,null,null,null,null);
+		  cursor.moveToFirst();
+		  ArrayList<String> return_array = new ArrayList<String>();
+		  
+		  for(int i = 0 ; i < 3; i++) {
+			  return_array.add(cursor.getString(0));
+			  if(!cursor.isLast()) cursor.moveToNext();
+		  }
+		  
+		  db.close();
+		  return return_array;
+	  }
 	  // returns false if there is already a row inside MYUID table, true otherwise
 	  // i.e. using first time -> true, else -> false
 	  public boolean isFirst(){
@@ -325,6 +344,10 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 			  user_obj.put("LOC_LAT", getMyLocLat());
 			  user_obj.put("LOC_LONG", getMyLocLong());
 			  user_obj.put("DIST_LIM", getMyDistLim());
+			  ArrayList<String> photo_array = getPhotoPaths();
+			  user_obj.put("PIC_PATH_1", photo_array.get(0));
+			  user_obj.put("PIC_PATH_2", photo_array.get(1));
+			  user_obj.put("PIC_PATH_3", photo_array.get(2));
 		  } catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

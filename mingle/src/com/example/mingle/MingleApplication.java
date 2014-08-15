@@ -1,5 +1,6 @@
 package com.example.mingle;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -132,12 +133,16 @@ public class MingleApplication extends Application {
 	   
 	   my_user.clearPics();
 	   for(int i = 0; i < photoPaths.size(); i++){
-		   Bitmap bm;
-           BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-           btmapOptions.inSampleSize = 16;
-           bm = rotatedBitmap(BitmapFactory.decodeFile(photoPaths.get(i), btmapOptions), photoPaths.get(i));
-		   Drawable user_pic = new BitmapDrawable(getResources(),bm);
-		   my_user.addPic(user_pic);
+		   if(!(new File(photoPaths.get(i))).exists()) my_user.addPic(this.getResources().getDrawable(blankProfileImage));
+		   else {
+			   Bitmap bm;
+			   BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
+			   btmapOptions.inSampleSize = 16;
+			   bm = rotatedBitmap(BitmapFactory.decodeFile(photoPaths.get(i), btmapOptions), photoPaths.get(i));
+			   Drawable user_pic;
+			   user_pic = new BitmapDrawable(getResources(),bm);
+			   my_user.addPic(user_pic);
+		   }
 	   }
    }
    
@@ -218,21 +223,29 @@ public class MingleApplication extends Application {
     public void setDist(int dist_lim_var){
         dist_lim = dist_lim_var;
     }
+    
+    public void setLat(float lat){
+    	latitude = lat;
+    }
+    
+    public void setLong(float lon){
+    	longitude = lon;
+    }
 
     public void setRid(String rid_var){
     	rid = rid_var;
     }
     
-     public boolean isValid(String my_name) {
-        if (photoPaths == null) {
-            photoPaths = new ArrayList<String>();
+    public String isValid(String my_name) {
+        //check photo path validity
+        if (photoPaths == null || photoPaths.size() == 0) return getResources().getText(R.string.no_photo_input).toString();
+        for(int i = 0; i < photoPaths.size(); i++){
+        	if(!(new File(photoPaths.get(i))).exists()) return getResources().getText(R.string.photo_input_invalid).toString();
         }
         
-   
-        if (photoPaths.size() == 0 || my_name.length() < 5)
-            return false;
-
-        return true;
+        if(my_name.length() < 5) return getResources().getText(R.string.name_input_short).toString();
+        if(my_name.contains(" ")) return getResources().getText(R.string.name_input_invalid).toString();
+        return null;
     }
 
     public ArrayList<String> getPhotoPaths(){
@@ -325,9 +338,7 @@ public class MingleApplication extends Application {
 		this.addChoice(uid);
 		
 		new ImageDownloader(this.getApplicationContext(), new_user.getUid(), -1).execute();
-		dbHelper.insertNewUID(uid, new_user.getNum(), new_user.getName(), 0, 0, 0);
-		
-		//download profile also
+		dbHelper.insertNewUID(uid, new_user.getNum(), new_user.getName(), 0, 0, 0);		
     }
     
     public String getLocalTime(String timestamp){
