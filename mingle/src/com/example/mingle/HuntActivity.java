@@ -311,7 +311,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    			   JSONArray pop_list_arr = new JSONArray(pop_result.getString("POP_LIST"));
 	    			   handlePopList(pop_list_arr);
 	    		   } else {
-	   	    			Toast.makeText(getApplicationContext(), getResources().getString(R.string.not_event_time), Toast.LENGTH_SHORT).show();
+	   	    			//Toast.makeText(getApplicationContext(), getResources().getString(R.string.not_event_time), Toast.LENGTH_SHORT).show();
  	    		   }
 	    	   } catch (JSONException e) {
 	    		   // TODO Auto-generated catch block

@@ -1,14 +1,18 @@
 package com.example.mingle;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,6 +20,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +35,26 @@ public class ProfileActivity extends Activity {
     private int photo_num;
     private MingleUser user;
     private Typeface koreanTypeFace;
+    
+    @SuppressLint("NewApi")
+	private void resizeProfilePic() {
+    	final Display display = getWindowManager().getDefaultDisplay();
+    	
+    	
+    	@SuppressWarnings("deprecation")
+		int height = display.getHeight();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+        	final Point point = new Point();
+        	getWindowManager().getDefaultDisplay().getSize(point);
+            height = point.y;
+        } 
+    	RelativeLayout layout = (RelativeLayout) findViewById(R.id.profile_elems);
+    	
+    	RelativeLayout.LayoutParams params =(RelativeLayout.LayoutParams) layout.getLayoutParams();
+    	params.height = (int)(height * 0.6);
+    	layout.setLayoutParams(params);
+    }
+    
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +126,7 @@ public class ProfileActivity extends Activity {
         	 edit_profile_button.setVisibility(View.GONE);
          }
          initializePhotoIndicators();
+         //resizeProfilePic();
 	}
 	
 	

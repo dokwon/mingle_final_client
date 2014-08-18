@@ -159,7 +159,7 @@ public class CandidateFragment extends Fragment {
 	  ArrayList<String> combined_list = new ArrayList<String>();
 	  combined_list.addAll(app.getCandidateList());
 	  combined_list.addAll(app.getChoiceList());
-	  app.connectHelper.requestUserList(app.getMyUser().getUid(), app.getMyUser().getSex(), 
+	  app.connectHelper.requestUserList(app.getMyUser().getUid(), app.getMyUser().getSex(), app.getMyUser().getNum(),
 					app.getLat(), app.getLong(), app.getDist(), num_of_matches, combined_list);
   }
   

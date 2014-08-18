@@ -446,45 +446,6 @@ public class MingleApplication extends Application {
         else return true;
     }
     
-    // Get the users one-time location. Code available below to register for updates
-    public void getCurrentLocation() {
-    	
-    	// Acquire a reference to the system Location Manager
-    	LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-    	Criteria criteria = new Criteria();
-    	String provider = locationManager.getBestProvider(criteria, true);
-        Location location = locationManager.getLastKnownLocation(provider);
-        float lat = 0;
-        float lon = 0;
-        if(location != null){
-        	lat =(float) location.getLatitude();
-        	lon =(float) location.getLongitude();
-        } 
-        latitude = lat;
-    	longitude = lon;
-     
-    	
-    	// In case we want to register for location updates
-    	/*
-    	// Define a listener that responds to location updates
-    	LocationListener locationListener = new LocationListener() {
-    	    public void onLocationChanged(Location location) {
-    	      // Called when a new location is found by the network location provider.
-    	      //makeUseOfNewLocation(location);
-    	    }
-
-    	    public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-    	    public void onProviderEnabled(String provider) {}
-
-    	    public void onProviderDisabled(String provider) {}
-    	  };
-
-    	// Register the listener with the Location Manager to receive location updates
-    	locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);*/
-      
-    }
     
     public void deactivateApp(Context context){
     	ProgressDialog proDialog = new ProgressDialog(context);
