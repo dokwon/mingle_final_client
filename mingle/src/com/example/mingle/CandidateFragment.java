@@ -69,7 +69,7 @@ public class CandidateFragment extends Fragment {
               
               //Save selected user as candidate in local DB
               MingleUser targetMU = currentUser.getMingleUser(user_uid);
-              currentUser.dbHelper.insertNewUID(user_uid, targetMU.getNum(), targetMU.getName(), 0,0,0);
+              currentUser.dbHelper.insertNewUID(user_uid, targetMU.getNum(), targetMU.getName(), 0);
               
               //Switch selected user from candidate to choice
               currentUser.switchCandidateToChoice(position);
@@ -109,7 +109,7 @@ public class CandidateFragment extends Fragment {
           
       });
       
-      candidatelistview.setSwipeMode(SwipeListView.SWIPE_MODE_LEFT); // there are five swiping modes
+      candidatelistview.setSwipeMode(SwipeListView.SWIPE_MODE_RIGHT); // there are five swiping modes
       candidatelistview.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_REVEAL); //there are four swipe actions
       candidatelistview.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
       candidatelistview.setOffsetLeft(convertDpToPixel(0f)); // left side offset

@@ -23,6 +23,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -58,7 +59,6 @@ public class SplashScreenActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_splash_screen);
 		
         app = ((MingleApplication) this.getApplication());
@@ -110,7 +110,7 @@ public class SplashScreenActivity extends Activity {
 				AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
 														.setTitle(getResources().getString(R.string.gps_location_setting))
 														.setMessage(getResources().getString(R.string.gps_disabled_alert))
-														.setIcon(R.drawable.mingle_logo)
+														.setIcon(R.drawable.icon_tiny)
 														.setPositiveButton(getResources().getString(R.string.allow), new DialogInterface.OnClickListener() {
 															@Override
 															public void onClick(DialogInterface dialog, int id) {
@@ -127,7 +127,7 @@ public class SplashScreenActivity extends Activity {
 															}
 														});
 		       	AlertDialog popupDialog = popupBuilder.create();
-		        popupDialog.show();
+		       	popupDialog.show();
 		    } else {
 		       	getCurrentLocation();
 		    }
@@ -267,7 +267,7 @@ public class SplashScreenActivity extends Activity {
 	   				(int) chatters.get(i).getAsInteger("NUM"),
 	   				1,
 	   				app.getResources().getDrawable(app.blankProfileImage),
-	   				sex_var);
+	   				sex_var, (int) chatters.get(i).getAsInteger("DIST"));
 	   		if(app.getChoicePos(newUser.getUid())==-1) {
 	   			app.addMingleUser(newUser);
 	   			app.addChoice(newUser.getUid());

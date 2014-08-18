@@ -65,7 +65,7 @@ public class CandidateAdapter extends ArrayAdapter {
       	  holder.user_name = (TextView)row.findViewById(R.id.user_name);
           holder.user_name.setTypeface(app.koreanTypeFace);
       	  holder.user_pic=(ImageView)row.findViewById(R.id.user_pic);
-      	  
+      	  holder.user_dist=(TextView)row.findViewById(R.id.user_dist);      	  
 
       	  row.setTag(holder);
         } else {
@@ -79,6 +79,7 @@ public class CandidateAdapter extends ArrayAdapter {
         final int num_pic_id = app.memberNumRsId(candidate.getNum());
         holder.user_num.setImageResource(num_pic_id);
         holder.user_name.setText(candidate.getName());
+        holder.user_dist.setText(Float.toString(candidate.getDistance())+"km");
         Drawable main_drawable = candidate.getPic(0);
         holder.user_pic.setImageDrawable(main_drawable);
         
@@ -106,5 +107,6 @@ public class CandidateAdapter extends ArrayAdapter {
     	ImageView user_num;
     	TextView user_name;
   	  	ImageView user_pic;
+  	  	TextView user_dist;
     }
 }

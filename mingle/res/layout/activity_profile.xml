@@ -61,6 +61,15 @@
 						            android:layout_marginLeft="15dp"
 						            android:layout_toRightOf="@+id/profile_member_num" />
 						        
+						        <TextView
+						            android:id="@+id/profile_user_dist"
+						            style="@style/MyListTitle"
+						            android:layout_width="wrap_content"
+						            android:layout_height="wrap_content"
+						           	android:layout_alignTop="@+id/profile_member_num_icon"
+						            android:layout_marginRight="5dp"
+						            android:layout_alignParentRight="true" />
+						        
 				 </RelativeLayout>
     	
     </LinearLayout>

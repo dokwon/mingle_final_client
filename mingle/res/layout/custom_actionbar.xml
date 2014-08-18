@@ -13,7 +13,7 @@
          android:layout_alignParentTop="true"
          android:layout_centerHorizontal="true"
          android:contentDescription="@string/photo_description"
-         android:paddingRight="45dp"
+       
          android:paddingBottom="7dp"
          android:paddingTop="7dp"
          android:src="@drawable/mingle_logo" />

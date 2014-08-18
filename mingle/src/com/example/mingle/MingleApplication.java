@@ -46,7 +46,9 @@ import com.example.mingle.MingleUser.MsgComparator;
  */
 
 public class MingleApplication extends Application {
-    public final static String UPDATE_MSG_LIST = "com.example.mingle.UPDATE_MSG_LIST";
+	public static final int PHOTO_COMPRESS_FACTOR = 4;
+	
+	public final static String UPDATE_MSG_LIST = "com.example.mingle.UPDATE_MSG_LIST";
     public Typeface koreanTypeFace;
     public int blankProfileImage;
     public int blankProfileImageSmall;
@@ -87,7 +89,7 @@ public class MingleApplication extends Application {
 
    
    public void createDefaultMyUser(){
-   		my_user = new MingleUser("", "", 0, 0, null, "");
+   		my_user = new MingleUser("", "", 0, 0, null, "", 0);
    }
    
    public Bitmap rotatedBitmap(Bitmap source, String photoPath) {
@@ -327,8 +329,10 @@ public class MingleApplication extends Application {
 		if(my_user.getSex().equals("M")) sex = "F";
 		MingleUser new_user = null;
 		try {
+			float distance = this.getDistance(new_user_data.getDouble("LOC_LAT"), new_user_data.getDouble("LOC_LONG"));
 			new_user = new MingleUser(uid, new_user_data.getString("COMM"), new_user_data.getInt("NUM"), 
-											new_user_data.getInt("PHOTO_NUM"), (Drawable) this.getResources().getDrawable(blankProfileImage), sex);
+											new_user_data.getInt("PHOTO_NUM"), (Drawable) this.getResources().getDrawable(blankProfileImage),
+											sex, distance);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -338,7 +342,7 @@ public class MingleApplication extends Application {
 		this.addChoice(uid);
 		
 		new ImageDownloader(this.getApplicationContext(), new_user.getUid(), -1).execute();
-		dbHelper.insertNewUID(uid, new_user.getNum(), new_user.getName(), 0, 0, 0);		
+		dbHelper.insertNewUID(uid, new_user.getNum(), new_user.getName(), new_user.getDistance());		
     }
     
     public String getLocalTime(String timestamp){
@@ -376,13 +380,13 @@ public class MingleApplication extends Application {
 				if(candidate_pos >= 0){
 					this.switchCandidateToChoice(candidate_pos);
 					MingleUser currentMU = this.user_map.get(chat_user_uid);
-					dbHelper.insertNewUID(chat_user_uid, currentMU.getNum(), currentMU.getName(), 0, 0, 0);
+					dbHelper.insertNewUID(chat_user_uid, currentMU.getNum(), currentMU.getName(), currentMU.getDistance());
 				} else {
 					int choice_pos = this.getChoicePos(chat_user_uid);
 					if(choice_pos < 0){
 						this.addChoice(chat_user_uid);
 						MingleUser currentMU = this.user_map.get(chat_user_uid);
-						dbHelper.insertNewUID(chat_user_uid, currentMU.getNum(), currentMU.getName(), 0, 0, 0);
+						dbHelper.insertNewUID(chat_user_uid, currentMU.getNum(), currentMU.getName(),currentMU.getDistance());
 					}
 				}
 				
@@ -471,7 +475,7 @@ public class MingleApplication extends Application {
         proDialog.dismiss();
     }
     
- public int memberNumRsId(int numOfMembers) {
+    public int memberNumRsId(int numOfMembers) {
     	
     	int rval = -1; 
     	switch(numOfMembers) {
@@ -494,5 +498,32 @@ public class MingleApplication extends Application {
     	}
     	return rval; 
     }
+ 
+ 	public float getDistance(double double_lat, double double_long){
+ 		float latitude = (float)double_lat;
+ 		float longitude = (float)double_long;
+ 		
+ 		float theta = this.longitude - longitude;
+ 		float dist = (float) (Math.sin(deg2rad(this.latitude)) * Math.sin(deg2rad(latitude)) 
+ 				+ Math.cos(deg2rad(this.latitude)) * Math.cos(deg2rad(latitude) * Math.cos(deg2rad(theta))));
+ 		
+ 		dist = (float)Math.acos(dist);
+ 		dist = rad2deg(dist);
+ 		dist = dist * 60 * (float)1.1515;
+ 		dist = dist * (float)1.609344;
+ 	
+ 		Log.i("sktag", Float.toString(dist));
+ 		
+ 		if((dist*10 - (int)(dist*10)) > 0.5) return (int)(dist *10)/(float)10.0;
+ 		else return (int)(dist*10 + 1)/(float)10.0;
+ 	}
+ 	
+ 	private float deg2rad(float deg) {
+ 		return (float)(deg * Math.PI / 180.0);
+ 	}
+ 	
+ 	private float rad2deg(float rad) {
+ 		return (float)(rad * 180 / Math.PI);
+ 	}
 }
 

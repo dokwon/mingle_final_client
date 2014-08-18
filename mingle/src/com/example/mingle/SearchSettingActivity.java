@@ -2,11 +2,15 @@ package com.example.mingle;
 
 import java.util.ArrayList;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentTransaction;
+import android.app.ActionBar.Tab;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -15,19 +19,23 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-public class SearchSettingActivity extends Activity {
+public class SearchSettingActivity extends Activity implements ActionBar.TabListener{
 
 	private SeekBar distBar;
 	private TextView distText;
@@ -45,16 +53,29 @@ public class SearchSettingActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if(android.os.Build.VERSION.SDK_INT < 11) { 
+		    requestWindowFeature(Window.FEATURE_NO_TITLE); 
+		} 
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
 		setContentView(R.layout.activity_search_setting);
+		
+		ActionBar actionBar = getActionBar();
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM  | ActionBar.DISPLAY_SHOW_HOME);
+        View titleView =  LayoutInflater.from(this).inflate(R.layout.chatactivity_title_custom_view, null);
+        LayoutParams layout = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        titleView.setLayoutParams(layout);
+        actionBar.setCustomView(titleView);
+	    actionBar.setDisplayHomeAsUpEnabled(true);
+	    actionBar.setBackgroundDrawable(new ColorDrawable(0xFFFFFFFF));
 		
 		app = (MingleApplication)this.getApplication();
 		context = this;
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
 		distanceSetting();
-		locationSetting();
+		//locationSetting();
 		notificationSetting();
-		numberFilterSetting();
+		//numberFilterSetting();
 	}
 	
 	private void distanceSetting(){
@@ -80,7 +101,7 @@ public class SearchSettingActivity extends Activity {
 		});
 	}
 	
-	private void locationSetting(){
+	/*private void locationSetting(){
 		locButton = (Button)findViewById(R.id.refreshLoc);
 		locButton.setOnClickListener(new OnClickListener(){
 			@Override
@@ -163,28 +184,32 @@ public class SearchSettingActivity extends Activity {
     				break;
     		}
     	}
-    };
+    };*/
 	
-	private void notificationSetting(){
-		notiRadio = (RadioGroup)findViewById(R.id.notification_setup);
-		
-		if(app.getNotiFlag())
-			notiRadio.check(R.id.notification_on);
-		else
-			notiRadio.check(R.id.notification_off);
-		
-		notiRadio.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(RadioGroup group, int checkedId) {
-				if(checkedId == R.id.notification_on)	
-					app.setNotiFlag(true);
-				else
-					app.setNotiFlag(false);
-			}
-		});
+    
+    public void turnNotiOn(View v){
+    	app.setNotiFlag(true);
+    	((Button)findViewById(R.id.pushonbutton)).setBackground(getResources().getDrawable(R.drawable.selecton));
+		((Button)findViewById(R.id.pushoffbutton)).setBackground(getResources().getDrawable(R.drawable.unselectoff));
+    }
+    
+    public void turnNotiOff(View v){
+    	app.setNotiFlag(false);
+    	((Button)findViewById(R.id.pushonbutton)).setBackground(getResources().getDrawable(R.drawable.unselecton));
+		((Button)findViewById(R.id.pushoffbutton)).setBackground(getResources().getDrawable(R.drawable.selectoff));
+    }
+    
+	private void notificationSetting(){		
+		if(app.getNotiFlag()){
+			((Button)findViewById(R.id.pushonbutton)).setBackground(getResources().getDrawable(R.drawable.selecton));
+			((Button)findViewById(R.id.pushoffbutton)).setBackground(getResources().getDrawable(R.drawable.unselectoff));
+		} else {
+			((Button)findViewById(R.id.pushonbutton)).setBackground(getResources().getDrawable(R.drawable.unselecton));
+			((Button)findViewById(R.id.pushoffbutton)).setBackground(getResources().getDrawable(R.drawable.selectoff));
+		}
 	}
 	
-	private void numberFilterSetting() {
+	/*private void numberFilterSetting() {
 		CheckBox box_1 = (CheckBox)findViewById(R.id.numFilter1);
 		CheckBox box_2 = (CheckBox)findViewById(R.id.numFilter2);
 		CheckBox box_3 = (CheckBox)findViewById(R.id.numFilter3);
@@ -213,7 +238,7 @@ public class SearchSettingActivity extends Activity {
 				}
 			});
 		}
-	}
+	}*/
 	
 	@Override
 	protected void onPause(){
@@ -230,5 +255,36 @@ public class SearchSettingActivity extends Activity {
 			}
 		}
 		super.onPause();
+	}
+	
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
+            onBackPressed();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+ 
+    
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
 	}
 }

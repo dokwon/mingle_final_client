@@ -1,6 +1,5 @@
 package com.example.mingle;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -9,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar.LayoutParams;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
@@ -16,35 +16,26 @@ import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.app.ActionBar;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.example.mingle.MingleApplication;
 
 import android.view.MenuItem;
-import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -59,12 +50,12 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	private ActionBar actionBar;
 	private ArrayList<Integer> tabOnIcons; 
 	private ArrayList<Integer> tabOffIcons;
-	 
-	private Context context;
-	
+	 	
 	//Set up Action bar
-	 private void customizeActionBar() {
+	 @SuppressLint("NewApi")
+	private void customizeActionBar() {
 		// Set up the action bar to show tabs.
+		 
 	        actionBar = getActionBar();
 	        
 			View mCustomView = LayoutInflater.from(this).inflate(R.layout.custom_actionbar, null);
@@ -90,6 +81,14 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	            .setTabListener(this).setTag(R.string.tab2title));
 	        actionBar.addTab(actionBar.newTab().setCustomView(getViewForIcon(tabOffIcons.get(2)))
 	            .setTabListener(this).setTag(R.string.tab3title));
+	        ActionBar.LayoutParams params = (ActionBar.LayoutParams) actionBar.getCustomView().getLayoutParams();
+	        if(Integer.valueOf(android.os.Build.VERSION.SDK_INT) >= 14 && ViewConfiguration.get(this).hasPermanentMenuKey()) {
+	        	System.out.println("fdssadfdafsfasd");
+	        	params.setMargins(0, 0, 85, 0);
+	        } else { 
+	        	params.setMargins(95, 0, 0, 0);
+	        	actionBar.getCustomView().setLayoutParams(params);
+	        }
 	        
 	 }
 
@@ -362,12 +361,13 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 					if(candidate == null){
 						String sex_var = "M";
 						if(app.getMyUser().getSex().equals("M")) sex_var = "F";
+		    			float distance = app.getDistance(shownUser.getDouble("LOC_LAT"), shownUser.getDouble("LOC_LONG"));
 						candidate = new MingleUser(shownUser.getString("UID"), 
 								shownUser.getString("COMM"), 
 								Integer.valueOf(shownUser.getString("NUM")), 
 								Integer.valueOf(shownUser.getString("PHOTO_NUM")), 
 								(Drawable) this.getResources().getDrawable(app.blankProfileImage),
-								sex_var);
+								sex_var, distance);
 						app.addMingleUser(candidate);
 					}
 					if(!candidate.isPicAvail(0)) new ImageDownloader(this.getApplicationContext(), candidate.getUid(), 0).execute();
@@ -394,12 +394,13 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    		JSONObject shownUser = list_of_top.getJSONObject(i);
 	    		MingleUser pop_user = app.getMingleUser(shownUser.getString("UID"));
 	    		if(pop_user == null){
+	    			float distance = app.getDistance(shownUser.getDouble("LOC_LAT"), shownUser.getDouble("LOC_LONG"));
 					pop_user = new MingleUser(shownUser.getString("UID"), 
 	    					shownUser.getString("COMM"), 
 	    					Integer.valueOf(shownUser.getString("NUM")), 
 	    					Integer.valueOf(shownUser.getString("PHOTO_NUM")), 
 	    					(Drawable) this.getResources().getDrawable(app.blankProfileImage),
-	    					shownUser.getString("SEX"));	    			
+	    					shownUser.getString("SEX"), distance);	    			
 					app.addMingleUser(pop_user);
 	    		}
 	    		if(!pop_user.isPicAvail(-1)) new ImageDownloader(this.getApplicationContext(), pop_user.getUid(), -1).execute();

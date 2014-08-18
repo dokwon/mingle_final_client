@@ -60,6 +60,15 @@
 			           	android:layout_alignTop="@+id/member_num_icon"
 			            android:layout_marginLeft="15dp"
 			            android:layout_toRightOf="@+id/member_num" />
+			        
+			        <TextView
+			            android:id="@+id/user_dist"
+			            style="@style/MyListTitle"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			           	android:layout_alignTop="@+id/member_num_icon"
+			            android:layout_marginRight="5dp"
+			            android:layout_alignParentRight="true" />
 	 
 	        
 	    	</RelativeLayout>

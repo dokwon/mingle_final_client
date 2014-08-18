@@ -246,7 +246,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
         String baseURL = server_url;
     	baseURL += "get_list?";
     	baseURL += "sex=" + sex + "&";
-    	baseURL += "num=" + num + "&";
+    	baseURL += "num=" + (new Integer(num)).toString() + "&";
     	baseURL += "dist_lim=" + (new Integer(dist_lim)).toString() + "&";
     	baseURL += "loc_long=" + (new Float(longitude)).toString() + "&";
     	baseURL += "loc_lat=" + (new Float(latitude)).toString() + "&";

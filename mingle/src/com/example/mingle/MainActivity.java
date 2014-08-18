@@ -21,13 +21,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
-
-
-
-
-
-
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -46,16 +39,6 @@ import android.graphics.drawable.AnimationDrawable;
 import android.view.View;
 
 import com.example.mingle.HttpHelper;
-
-
-
-
-
-
-
-
-
-
 
 import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
@@ -78,7 +61,6 @@ public class MainActivity extends Activity {
 	
 	MingleApplication app;
 
-	private static final int COMPRESS_PHOTO_FACTOR = 8;
 	public final int SELECT_FILE = 0;
     private SharedPreferences prefs = null;
 
@@ -132,7 +114,7 @@ public class MainActivity extends Activity {
     		 app.addPhotoPath(photoPath);
              Bitmap bm;
              BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-             btmapOptions.inSampleSize = COMPRESS_PHOTO_FACTOR;
+             btmapOptions.inSampleSize = MingleApplication.PHOTO_COMPRESS_FACTOR;
              bm = app.rotatedBitmap(BitmapFactory.decodeFile(photoPath, btmapOptions), photoPath);
              imageView.setImageBitmap(bm);
     	}
@@ -173,16 +155,13 @@ public class MainActivity extends Activity {
     		}
     	}
     	
-    	if(num_selected == 1) Toast.makeText(getApplicationContext(), getResources().getString(R.string.member_num_small), Toast.LENGTH_SHORT).show();
-    	else {
-    		num = num_selected;
-    		for(int i = 0; i < num_selected; i++){
-    			memberViewArr.get(i).setBackgroundResource(R.drawable.peoplenumberpicon);
-    		}
-    		for(int i = num_selected; i < 6; i++){
-    			memberViewArr.get(i).setBackgroundResource(R.drawable.peoplenumberpicoff);
-    		}
-    	}
+    	num = num_selected;
+    	for(int i = 0; i < num_selected; i++)
+    		memberViewArr.get(i).setBackgroundResource(R.drawable.peoplenumberpicon);
+    	for(int i = num_selected; i < 6; i++)
+    		memberViewArr.get(i).setBackgroundResource(R.drawable.peoplenumberpicoff);
+    	
+    	
     }
     
     
@@ -368,7 +347,8 @@ public class MainActivity extends Activity {
                             R.drawable.progress));
         }
         @Override
-        protected void onDraw(Canvas canvas) {   
+        protected void onDraw(Canvas canvas) {
+        	
             if (movie != null) {
                 movie.setTime(
                     (int) SystemClock.uptimeMillis() % movie.duration());

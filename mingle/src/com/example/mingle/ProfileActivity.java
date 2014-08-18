@@ -106,6 +106,8 @@ public class ProfileActivity extends Activity {
          TextView name_view = (TextView) findViewById(R.id.profile_user_name);
          name_view.setTypeface(koreanTypeFace);
          name_view.setText(user.getName());
+         TextView dist_view = (TextView) findViewById(R.id.profile_user_dist);
+         dist_view.setText(Float.toString(user.getDistance())+"km");
 
          Button vote_button = (Button) findViewById(R.id.vote_button);
          Button chat_button = (Button) findViewById(R.id.chat_button);
@@ -119,7 +121,7 @@ public class ProfileActivity extends Activity {
          if (type.equals("popular")) {
         	 vote_button.setVisibility(View.GONE);
          }
-         if(!type.equals("candidate")){
+         if(!type.equals("candidate") || type.equals("choice")){
         	 chat_button.setVisibility(View.GONE);
          }
          if(!type.equals("setting")){
@@ -252,7 +254,7 @@ public class ProfileActivity extends Activity {
     	if(candidate_pos >= 0) {
     		app.switchCandidateToChoice(candidate_pos);
     	}
-    	app.dbHelper.insertNewUID(user.getUid(), user.getNum(), user.getName(), 0, 0, 0);
+    	app.dbHelper.insertNewUID(user.getUid(), user.getNum(), user.getName(), user.getDistance());
          // Create chatroom in local sqlite
          //((MingleApplication) parent.getApplication()).dbHelper.insertNewUID(chat_user_uid);
                  

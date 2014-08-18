@@ -51,7 +51,7 @@
     <string name="application_update_required">업데이트가 필요합니다.</string>
     <string name="account_delete_alert">계정을 삭제하시겠습니까?</string>
     <string name="user_no_exist_alert">사용자가 존재하지 않습니다.</string>
-    <string name="gps_disabled_alert">GPS 위치 탐색기가 해제되었있습니다. 허용하시겠습니까?</string>
+    <string name="gps_disabled_alert">GPS 위치 탐색기가 해제되어있습니다. 허용하시겠습니까?</string>
     <string name="gps_cannot_find_location">현재 위치를 탐색할 수 없습니다. 잠시 후 다시 시도해주세요.</string>
     <string name="vote_success">투표가 완료되었습니다.</string>
     <string name="vote_fail">투표 시간이 아닙니다.</string>
