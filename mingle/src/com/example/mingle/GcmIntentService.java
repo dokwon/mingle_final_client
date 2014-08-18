@@ -11,6 +11,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -93,18 +94,20 @@ public class GcmIntentService extends IntentService {
     // a GCM message.
     private void sendNotification(Bundle data) {
         mNotificationManager = (NotificationManager)this.getSystemService(NOTIFICATION_SERVICE);
-       
+        MingleUser send_user = ((MingleApplication)this.getApplication()).getMingleUser(data.getString("send_uid"));
+        
 		Intent chat_intent = new Intent((MingleApplication)this.getApplicationContext(), ChatroomActivity.class);
  		chat_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		chat_intent.putExtra(ChatroomActivity.USER_UID, data.getString("send_uid"));
 		chat_intent.putExtra(ChatroomActivity.FROM_GCM, true);
 		
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, chat_intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        CharSequence tickerTxt = (CharSequence)("Mingle: " + data.getString("msg"));
+        CharSequence tickerTxt = (CharSequence)(send_user.getName() + ": " + data.getString("msg"));
         
 		builder = new NotificationCompat.Builder(this)
-				       .setSmallIcon(((MingleApplication)this.getApplicationContext()).blankProfileImageSmall)
-				       .setContentTitle("Mingle")
+				       .setSmallIcon(R.drawable.icon_tiny)
+				       .setLargeIcon(((BitmapDrawable)send_user.getPic(-1)).getBitmap())
+				       .setContentTitle(send_user.getName())
 				       .setContentText(data.getString("msg"))
 				       .setTicker(tickerTxt)
 				       .setDefaults(Notification.DEFAULT_ALL)

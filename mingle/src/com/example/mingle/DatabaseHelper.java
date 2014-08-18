@@ -35,6 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 	  public static final String COLUMN_TIMESTAMP = "ts";
 	  public static final String COLUMN_IS_ME = "is_me";
 	  public static final String COLUMN_MSG = "msg";
+	  public static final String COLUMN_DIST = "dist";
 
 	  private static final String DATABASE_NAME = "minglelocal.db";
 	  private static final int DATABASE_VERSION = 1;
@@ -47,9 +48,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 	      + TABLE_UIDLIST + "(" + COLUMN_UID
 	      + " text not null, " + COLUMN_NUM
 	      + " int not null, " + COLUMN_COMM
-	      + " text not null, " + COLUMN_LOC_LAT
-	      + " float not null, " + COLUMN_LOC_LONG
-	      + " float not null, " + COLUMN_DIST_LIM
+	      + " text not null, " + COLUMN_DIST
 	      + " int not null);";
 	  private static final String MYUID_CREATE = "create table "
 	      + TABLE_MYUID + "(" + COLUMN_MYUID
@@ -110,15 +109,13 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 	  }
 	  
 	  // Insert UID of other users in database
-	  public boolean insertNewUID(String uid, int num, String comm, float loc_lat, float loc_long, int dist_lim){
+	  public boolean insertNewUID(String uid, int num, String comm, int dist){
 		  SQLiteDatabase db = this.getWritableDatabase();
 		  ContentValues values = new ContentValues();
 		  values.put(DatabaseHelper.COLUMN_UID, uid);
 		  values.put(DatabaseHelper.COLUMN_NUM, num);
 		  values.put(DatabaseHelper.COLUMN_COMM, comm);
-		  values.put(DatabaseHelper.COLUMN_LOC_LAT, loc_lat);
-		  values.put(DatabaseHelper.COLUMN_LOC_LONG, loc_long);
-		  values.put(DatabaseHelper.COLUMN_DIST_LIM, dist_lim);
+		  values.put(DatabaseHelper.COLUMN_DIST, dist);
 		  db.insert(DatabaseHelper.TABLE_UIDLIST, null, values);
 		  
 		  String createUIDTableQuery = "create table " + "\"" + uid + "\""
@@ -196,6 +193,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 				  tempContent.put("UID", cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_UID)));
 				  tempContent.put("NUM", cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_NUM)));
 				  tempContent.put("COMM",cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_COMM)));
+				  tempContent.put("DIST", cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_DIST)));
 				  userList.add(tempContent);
 			  }
 		  }

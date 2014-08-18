@@ -185,5 +185,9 @@
 	<item name="android:backgroundDimAmount">0.5</item>
   </style>
  
+ <style name="Theme.SplashScreen" parent="android:Theme">
+    <item name="android:windowNoTitle">true</item>
+    <item name="android:background">@color/titlebackgroundcolor</item>
+ </style>
 
 </resources>

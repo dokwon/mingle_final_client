@@ -21,13 +21,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
-
-
-
-
-
-
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -46,16 +39,6 @@ import android.graphics.drawable.AnimationDrawable;
 import android.view.View;
 
 import com.example.mingle.HttpHelper;
-
-
-
-
-
-
-
-
-
-
 
 import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
@@ -368,7 +351,8 @@ public class MainActivity extends Activity {
                             R.drawable.progress));
         }
         @Override
-        protected void onDraw(Canvas canvas) {   
+        protected void onDraw(Canvas canvas) {
+        	
             if (movie != null) {
                 movie.setTime(
                     (int) SystemClock.uptimeMillis() % movie.duration());

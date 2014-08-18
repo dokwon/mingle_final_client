@@ -58,7 +58,6 @@ public class SplashScreenActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_splash_screen);
 		
         app = ((MingleApplication) this.getApplication());
@@ -267,7 +266,7 @@ public class SplashScreenActivity extends Activity {
 	   				(int) chatters.get(i).getAsInteger("NUM"),
 	   				1,
 	   				app.getResources().getDrawable(app.blankProfileImage),
-	   				sex_var);
+	   				sex_var, (int) chatters.get(i).getAsInteger("DIST"));
 	   		if(app.getChoicePos(newUser.getUid())==-1) {
 	   			app.addMingleUser(newUser);
 	   			app.addChoice(newUser.getUid());

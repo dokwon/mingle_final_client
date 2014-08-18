@@ -241,11 +241,12 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     }
     
     /* Request list of Candidates from Server */
-	 public void requestUserList(String uid, final String sex, float latitude, float longitude, int dist_lim, int num_of_users, ArrayList<String> uid_list) {
+	 public void requestUserList(String uid, final String sex, int num, float latitude, float longitude, int dist_lim, int num_of_users, ArrayList<String> uid_list) {
         
         String baseURL = server_url;
     	baseURL += "get_list?";
     	baseURL += "sex=" + sex + "&";
+    	baseURL += "num=" + (new Integer(num)).toString() + "&";
     	baseURL += "dist_lim=" + (new Integer(dist_lim)).toString() + "&";
     	baseURL += "loc_long=" + (new Float(longitude)).toString() + "&";
     	baseURL += "loc_lat=" + (new Float(latitude)).toString() + "&";

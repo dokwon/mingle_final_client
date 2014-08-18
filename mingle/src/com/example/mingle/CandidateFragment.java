@@ -69,7 +69,7 @@ public class CandidateFragment extends Fragment {
               
               //Save selected user as candidate in local DB
               MingleUser targetMU = currentUser.getMingleUser(user_uid);
-              currentUser.dbHelper.insertNewUID(user_uid, targetMU.getNum(), targetMU.getName(), 0,0,0);
+              currentUser.dbHelper.insertNewUID(user_uid, targetMU.getNum(), targetMU.getName(), 0);
               
               //Switch selected user from candidate to choice
               currentUser.switchCandidateToChoice(position);
@@ -159,7 +159,7 @@ public class CandidateFragment extends Fragment {
 	  ArrayList<String> combined_list = new ArrayList<String>();
 	  combined_list.addAll(app.getCandidateList());
 	  combined_list.addAll(app.getChoiceList());
-	  app.connectHelper.requestUserList(app.getMyUser().getUid(), app.getMyUser().getSex(), 
+	  app.connectHelper.requestUserList(app.getMyUser().getUid(), app.getMyUser().getSex(), app.getMyUser().getNum(),
 					app.getLat(), app.getLong(), app.getDist(), num_of_matches, combined_list);
   }
   

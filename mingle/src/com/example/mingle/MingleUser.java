@@ -21,8 +21,9 @@ public class MingleUser {
 	ArrayList<Message> msg_list;
 	int my_msg_counter;
     boolean inChat;
+    int distance;
 
-    public MingleUser(String uid, String name, int num, int photo_num, Drawable drawable, String sex) {
+    public MingleUser(String uid, String name, int num, int photo_num, Drawable drawable, String sex, int distance) {
           super();
           this.uid = uid;
           this.name = name;
@@ -40,10 +41,13 @@ public class MingleUser {
         	  pics.add(drawable);
         	  pics_bool.add(false);
           }
+          this.distance = distance;
           
     }
 
-
+    public int getDistance(){
+    	return this.distance;
+    }
 
 	public void setInChat(boolean inChat){
     	this.inChat = inChat;

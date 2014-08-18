@@ -28,6 +28,7 @@ public class TransparentActivity extends Activity {
 	private AlertDialog popupDialog;
 	private TimeoutHandler mHandler;
 	private Context context;
+	private MingleApplication app;
 	
 	static class TimeoutHandler extends Handler {
 		WeakReference<AlertDialog> dialog;
@@ -57,6 +58,7 @@ public class TransparentActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_transparent);
 		context = this;
+		app = (MingleApplication)(this.getApplication());
 	}
 	
 	@Override
@@ -64,8 +66,9 @@ public class TransparentActivity extends Activity {
 		super.onResume();
 		Bundle data = getIntent().getBundleExtra(GcmIntentService.DATA_BUNDLE);
 		final String uid = data.getString("send_uid");
+		MingleUser send_user = app.getMingleUser(uid);
 		AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
-												.setTitle("Mingle")
+												.setTitle(send_user.getName())
 												.setCancelable(false)
 												.setMessage(data.getString("msg"))
 												.setIcon(R.drawable.icon_tiny)
