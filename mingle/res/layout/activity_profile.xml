@@ -27,7 +27,7 @@
 			 		android:orientation="horizontal"
 			 		android:layout_width="wrap_content"
 			 		android:layout_gravity="center"
-			 		android:layout_height="20dp"
+			 		android:layout_height="10dp"
 					android:layout_margin="@dimen/small_margin"/>    
 			
 				<RelativeLayout
@@ -38,18 +38,18 @@
 				            >    
 				            
 				     			<ImageView
-					                android:layout_width="20dp"
-					                android:layout_height="30dp"
+					                android:layout_width="@dimen/member_icon_width"
+							android:layout_height="@dimen/member_icon_height"
 					                android:layout_alignParentBottom="true"
 					                android:src="@drawable/numberpic"
 					                android:id="@+id/profile_member_num_icon"/>
 						         <ImageView
 						             android:contentDescription="@string/photo_description"
-					                android:layout_width="15dp"
-					                android:layout_height="20dp"
+					                android:layout_width="@dimen/member_num_width"
+		android:layout_height="@dimen/member_num_height"
+		android:layout_marginLeft="@dimen/member_num_and_icon_margin"
 					                android:layout_alignLeft="@+id/profile_member_num_icon"
 							        android:layout_alignBottom="@+id/profile_member_num_icon"
-							         android:layout_marginLeft="20dp"
 					                android:id="@+id/profile_member_num"/>
 						      
 						        <TextView
