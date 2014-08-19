@@ -8,10 +8,10 @@
 	android:id="@+id/customTitleLayout">
 
 	<ImageView 
-	    android:layout_height="wrap_content" 
-	    android:layout_width="wrap_content" 
+	    android:layout_height="@dimen/main_logo_width" 
+	    android:layout_width="@dimen/main_logo_height"  
 	    android:id="@+id/titleLogo" 
-	    android:src="@drawable/setting" 
+	    android:src="@drawable/mingle_logo" 
 	    android:paddingTop="7dp"
 	    android:paddingBottom="7dp"
 	    android:contentDescription="@string/photo_description"
@@ -20,11 +20,11 @@
 	
 
 	<Button 
-	    android:layout_height="18dp" 
-	    android:layout_width="70dp" 
+	    android:layout_height="52px" 
+	    android:layout_width="52px" 
 	    android:id="@+id/preview_button" 
-	    android:background="@drawable/preview"
-	    android:layout_margin="15dp"
+	    android:background="@drawable/setting"
+	    android:layout_margin="27px"
 	    android:layout_alignParentBottom="true"
 	    android:layout_alignParentRight="true"
 	    android:onClick="showPreview"/>

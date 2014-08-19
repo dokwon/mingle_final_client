@@ -135,8 +135,8 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
         ImageView image = new ImageView(this);
         
         ActionBar.LayoutParams params = 
-        		new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, 
-        				ActionBar.LayoutParams.MATCH_PARENT, 0x10|0x01);
+        		new ActionBar.LayoutParams(R.dimen.tab1_icon_width, 
+        				R.dimen.tab1_icon_height, 0x10|0x01);
         
         params.setMargins(15, 15, 15, 15);
         
