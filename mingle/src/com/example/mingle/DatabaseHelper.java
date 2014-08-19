@@ -103,7 +103,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  values.put(DatabaseHelper.COLUMN_MSG, msg);
 		  values.put(DatabaseHelper.COLUMN_TIMESTAMP, msg_ts);
 		  db.insert("\""+uid+"\"",null,values);
-		  
+		  values = null;
 		  db.close();
 		  return true;
 	  }
@@ -122,7 +122,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 				  + "(" + COLUMN_IS_ME + " text not null, " + COLUMN_MSG + " text not null, " 
 				  + COLUMN_TIMESTAMP + " text not null);";
 		  db.execSQL(createUIDTableQuery);
-		  
+		  values = null;
 		  db.close();
 		  //app.getMsgUidList().add(uid);
 		  return true;
@@ -139,8 +139,8 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  values.put(DatabaseHelper.COLUMN_SEX, userData.getString("SEX"));
 		  values.put(DatabaseHelper.COLUMN_NUM, userData.getInt("NUM"));
 		  values.put(DatabaseHelper.COLUMN_COMM, userData.getString("COMM"));
-		  values.put(DatabaseHelper.COLUMN_LOC_LAT, userData.getDouble("LOC_LAT"));
-		  values.put(DatabaseHelper.COLUMN_LOC_LONG, userData.getDouble("LOC_LONG"));
+		  values.put(DatabaseHelper.COLUMN_LOC_LAT, (float)(userData.getDouble("LOC_LAT")));
+		  values.put(DatabaseHelper.COLUMN_LOC_LONG, (float)(userData.getDouble("LOC_LONG")));
 		  values.put(DatabaseHelper.COLUMN_DIST_LIM, userData.getDouble("DIST_LIM"));
 		  values.put(DatabaseHelper.COLUMN_PIC_PATH_1, userData.getString("PIC_PATH_1"));
 		  values.put(DatabaseHelper.COLUMN_PIC_PATH_2, userData.getString("PIC_PATH_2"));
@@ -153,13 +153,14 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  db.delete(DatabaseHelper.TABLE_MYUID,null,null);
 		  db.insert(DatabaseHelper.TABLE_MYUID,null,values);
 		  System.out.println(isFirst());
+		  values=null;
 		  db.close();
 		  return true;
 	  }
 	  
 	
 	  
-	  private ArrayList<String> getData(Cursor c, String key) {
+	  private ArrayList<String> getData(Cursor c, String key,SQLiteDatabase db) {
 		  ArrayList<String> datas = new ArrayList<String>();
 		  
 		  if (c != null ) {
@@ -171,6 +172,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 			    }
 			}
 			c.close();
+			db.close();
 		  return datas;
 	  }
 	  
@@ -178,8 +180,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  SQLiteDatabase db = this.getReadableDatabase();
 		  String[] uid_columns={DatabaseHelper.COLUMN_UID};
 		  Cursor cursor = db.query(DatabaseHelper.TABLE_UIDLIST,uid_columns,null,null,null,null,null);
-		  
-		  return getData(cursor, COLUMN_UID);
+		  return getData(cursor, COLUMN_UID,db);
 	  }
 	  
 	  public ArrayList<ContentValues> getUserList(){
@@ -197,6 +198,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 				  userList.add(tempContent);
 			  }
 		  }
+		  cursor.close();
 		  db.close();
 		  return userList;
 	  }
@@ -219,6 +221,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 			  }
 		  }
 		  cursor.close();
+		  db.close();
 		  return msgList;
 	  }
 	  
@@ -231,6 +234,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  cursor.moveToFirst();
 		  
 		  String return_val = cursor.getString(0);
+		  cursor.close();
 		  db.close();
 		  return return_val;
 	  }
@@ -242,6 +246,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  cursor.moveToFirst();
 		  
 		  String return_val = cursor.getString(0);
+		  cursor.close();
 		  db.close();
 		  return return_val;
 	  }
@@ -253,6 +258,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  cursor.moveToFirst();
 		  
 		  int return_val = cursor.getInt(0);
+		  cursor.close();
 		  db.close();
 		  return return_val;
 	  }
@@ -264,6 +270,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  cursor.moveToFirst();
 		  
 		  String return_val = cursor.getString(0);
+		  cursor.close();
 		  db.close();
 		  return return_val;
 	  }
@@ -275,6 +282,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  cursor.moveToFirst();
 		  
 		  float return_val = cursor.getFloat(0);
+		  cursor.close();
 		  db.close();
 		  return return_val;
 	  }
@@ -286,6 +294,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  cursor.moveToFirst();
 		  
 		  float return_val = cursor.getFloat(0);
+		  cursor.close();
 		  db.close();
 		  return return_val;
 	  }
@@ -297,6 +306,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  cursor.moveToFirst();
 		  
 		  int return_val = cursor.getInt(0);
+		  cursor.close();
 		  db.close();
 		  return return_val;
 	  }
@@ -312,7 +322,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 			  return_array.add(cursor.getString(0));
 			  if(!cursor.isLast()) cursor.moveToNext();
 		  }
-		  
+		  cursor.close();
 		  db.close();
 		  return return_array;
 	  }
@@ -324,6 +334,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  Cursor cursor = db.query(DatabaseHelper.TABLE_MYUID,myuid_columns,null,null,null,null,null);
 		  
 		  int count = cursor.getCount();
+		  cursor.close();
 		  db.close();
 		  
 		  if(count == 0) return true;

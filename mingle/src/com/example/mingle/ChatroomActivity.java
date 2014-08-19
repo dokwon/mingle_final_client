@@ -100,6 +100,7 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
                 R.layout.msg_row, R.layout.my_msg_row,
                 recv_user.getMsgList(), recv_user);
         setListAdapter(adapter);
+        msg_lv.setSelection(msg_lv.getAdapter().getCount()-1);
     }
     
     @Override
@@ -149,7 +150,7 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
 			response_msg = false;
 			DatabaseHelper db = ((MingleApplication) this.getApplication()).dbHelper;
 			// Stores messages in DB
-			db.insertMessages(recv_user.getUid(), false, SMS , new Timestamp(System.currentTimeMillis()).toString());
+			db.insertMessages(recv_user.getUid(), true, SMS , new Timestamp(System.currentTimeMillis()).toString());
 		}
 		
 		//Send MSG to Server

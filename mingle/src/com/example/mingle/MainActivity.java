@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
 	private Context context;
 	private ProgressDialog proDialog;
 	
-	MingleApplication app;
+	private MingleApplication app;
 
 	public final int SELECT_FILE = 0;
     private SharedPreferences prefs = null;

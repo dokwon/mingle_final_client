@@ -413,7 +413,7 @@ public class MingleApplication extends Application {
     public void handleMsgConf(JSONObject msg_conf_obj){
     	try{
     		String msg_recv_uid = msg_conf_obj.getString("recv_uid");
-    		int msg_recv_counter = Integer.parseInt(msg_conf_obj.getString("msg_counter"));
+    		int msg_recv_counter = msg_conf_obj.getInt("msg_counter");
     		String msg_ts = getLocalTime(msg_conf_obj.getString("ts"));
     		ArrayList<Message> msg_list = user_map.get(msg_recv_uid).getMsgList();
     		String msg="";
@@ -430,7 +430,7 @@ public class MingleApplication extends Application {
     			Intent dispatcher = new Intent(this, ChatroomActivity.class);
     			dispatcher.setAction(UPDATE_MSG_LIST);
     			LocalBroadcastManager.getInstance(this).sendBroadcast(dispatcher);
-    		}   
+    		}
     	   	
     	} catch (JSONException e){
     		e.printStackTrace();
@@ -512,9 +512,10 @@ public class MingleApplication extends Application {
  		dist = dist * 60 * (float)1.1515;
  		dist = dist * (float)1.609344;
  	
+ 		Log.i("sktag", Float.toString(this.latitude) + " " + Float.toString(this.longitude) + " " + Float.toString(latitude) + " " + Float.toString(longitude));
  		Log.i("sktag", Float.toString(dist));
  		
- 		if((dist*10 - (int)(dist*10)) > 0.5) return (int)(dist *10)/(float)10.0;
+ 		if((dist*10 - (int)(dist*10)) < 0.5) return (int)(dist *10)/(float)10.0;
  		else return (int)(dist*10 + 1)/(float)10.0;
  	}
  	
