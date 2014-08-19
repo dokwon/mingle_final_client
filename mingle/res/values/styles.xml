@@ -23,7 +23,7 @@
     <style name="MyActionBarTabs"
            parent="@style/Widget.AppCompat.ActionBar.TabView">
         <!-- tab indicator -->
-        <item name="android:background">@color/titlebar_gray</item>
+        <item name="android:background">@color/actionbar_gray</item>
 		<item name="android:gravity">center</item>
 		<item name="android:layout_margin">15dp</item>
 		<item name="android:padding">11dp</item>
@@ -58,7 +58,6 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
         <item name="android:background">@color/titlebackgroundcolor</item>
 	<item name="actionBarDivider">@null</item>
-    <item name="android:actionBarDivider">@null</item>
         
     </style>
     

@@ -148,9 +148,6 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
 		boolean response_msg = true;
 		if(!recv_user.isMsgListEmpty() && recv_user.getLastMsg().isMyMsg()){
 			response_msg = false;
-			DatabaseHelper db = ((MingleApplication) this.getApplication()).dbHelper;
-			// Stores messages in DB
-			db.insertMessages(recv_user.getUid(), true, SMS , new Timestamp(System.currentTimeMillis()).toString());
 		}
 		
 		//Send MSG to Server

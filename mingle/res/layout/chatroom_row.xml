@@ -28,7 +28,7 @@
 					                android:layout_width="@dimen/member_icon_width"
 							android:layout_height="@dimen/member_icon_height"
 							android:layout_toRightOf="@+id/sender_name"
-							android:layout_aligntLeft="@+id/sender_name"
+							android:layout_alignLeft="@+id/sender_name"
 							android:layout_alignBottom="@+id/sender_name"
 							android:layout_marginLeft="16px"
 					                android:src="@drawable/numberpic"
