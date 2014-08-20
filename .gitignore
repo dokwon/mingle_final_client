@@ -27,7 +27,6 @@ $RECYCLE.BIN/
 .metadata*
 *.class
 *.apk
-*R.java
 
 # Icon must ends with two \r.
 Icon 
