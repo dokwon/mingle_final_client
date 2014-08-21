@@ -16,6 +16,7 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -39,8 +40,7 @@ public class ProfileActivity extends Activity {
     @SuppressLint("NewApi")
 	private void resizeProfilePic() {
     	final Display display = getWindowManager().getDefaultDisplay();
-    	
-    	
+    
     	@SuppressWarnings("deprecation")
 		int height = display.getHeight();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
@@ -115,6 +115,7 @@ public class ProfileActivity extends Activity {
         
          if(type.equals("preview") || type.equals("setting")){
         	 vote_button.setVisibility(View.GONE);
+        	 dist_view.setVisibility(View.GONE);
          } else {
         	 getNewImage(0);
          }
@@ -140,6 +141,8 @@ public class ProfileActivity extends Activity {
 		LinearLayout photoCounterWrapper = (LinearLayout) findViewById(R.id.photo_indicators);
 		for(int i = 0; i < photo_num; i++) {
             ImageView indicator = new ImageView(this);
+            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(R.dimen.indicator_size,R.dimen.indicator_size);
+            indicator.setLayoutParams(params);
             indicator.setPadding(8, 0, 8, 15);
             if(i == 0) {
             	indicator.setImageResource(R.drawable.profile_photo_current);

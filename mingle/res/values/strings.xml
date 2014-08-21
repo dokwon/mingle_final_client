@@ -67,4 +67,10 @@
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="title_activity_intro">IntroActivity</string>
 
+    <string name="photo_option_title">사진 추가</string>
+    <string name="photo_option_camera">새로 사진 찍기</string>
+    <string name="photo_option_library">사진첩에서 불러오기</string>
+    <string name="photo_delete">이 사진을 삭제할까요?</string>
+    <string name="select_file">파일 선택해주세요.</string>
+    
 </resources>

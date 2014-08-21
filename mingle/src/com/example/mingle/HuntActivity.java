@@ -36,9 +36,11 @@ import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 public class HuntActivity extends FragmentActivity implements ActionBar.TabListener	 {
 	public CandidateFragment candidateFragment;			//Fragment for list of candidates
 	public ChoiceFragment choiceFragment;				//Fragment for list of choices
@@ -63,7 +65,10 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 			mCustomView.setLayoutParams(layout);
 	        actionBar.setCustomView(mCustomView);
 	        
-	        actionBar.setBackgroundDrawable(new ColorDrawable(0xFFFFFFFF));
+	        mCustomView.findViewById(R.id.preview_button).setVisibility(View.GONE);
+	        
+	        //actionBar.setBackgroundDrawable(new ColorDrawable(0xFFFFFFFF));
+	        actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_border));
 	        actionBar.setDisplayShowTitleEnabled(false);
 	        actionBar.setDisplayShowHomeEnabled(true);
 	        View homeIcon = findViewById(android.R.id.home);
@@ -82,6 +87,9 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	        actionBar.addTab(actionBar.newTab().setCustomView(getViewForIcon(tabOffIcons.get(2)))
 	            .setTabListener(this).setTag(R.string.tab3title));
 	        ActionBar.LayoutParams params = (ActionBar.LayoutParams) actionBar.getCustomView().getLayoutParams();
+	        
+	        actionBar.setSelectedNavigationItem(1); 
+	        
 	        if(Integer.valueOf(android.os.Build.VERSION.SDK_INT) >= 14 && ViewConfiguration.get(this).hasPermanentMenuKey()) {
 	        	System.out.println("fdssadfdafsfasd");
 	        	params.setMargins(0, 0, 85, 0);
@@ -129,19 +137,18 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
         tabOffIcons.add(R.drawable.choice_tab_off);
         
 	}
-    
-		private ImageView getViewForIcon(int id) {
-		BitmapDrawable icon = (BitmapDrawable)getResources().getDrawable(id);
+	
+	
+	private ImageView getViewForIcon(int id) {
         ImageView image = new ImageView(this);
-        
+        image.setImageResource(id);
         ActionBar.LayoutParams params = 
-        		new ActionBar.LayoutParams(R.dimen.tab1_icon_width, 
-        				R.dimen.tab1_icon_height, 0x10|0x01);
-        
+        		new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, 
+        				ActionBar.LayoutParams.WRAP_CONTENT, 0x10|0x01);
         params.setMargins(15, 15, 15, 15);
         
         image.setLayoutParams(params);
-        image.setImageDrawable(icon);
+        
         image.requestLayout();
         return image; 
 	}
@@ -309,9 +316,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    		   if(pop_result.getString("RESULT").equals("success")){
 	    			   JSONArray pop_list_arr = new JSONArray(pop_result.getString("POP_LIST"));
 	    			   handlePopList(pop_list_arr);
-	    		   } else {
-	   	    			//Toast.makeText(getApplicationContext(), getResources().getString(R.string.not_event_time), Toast.LENGTH_SHORT).show();
- 	    		   }
+	    		   }
 	    	   } catch (JSONException e) {
 	    		   // TODO Auto-generated catch block
 	    		   e.printStackTrace();
@@ -352,7 +357,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 			CandidateTimerTask ctt = new CandidateTimerTask(app);
 			new Timer().schedule(ctt, 30000);
 		} else {
-		  
+			if(candidateFragment != null) candidateFragment.removeNoCandidateError();
 			//update candidate list and dispatch image downloader
 			for(int i = 0 ; i < list_of_users.length(); i++) {
 				try {
@@ -481,7 +486,6 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(popListReceiver);  
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(listUpdateReceiver);  
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(httpErrorReceiver);  
-
 		  super.onDestroy();
 	  }
 }

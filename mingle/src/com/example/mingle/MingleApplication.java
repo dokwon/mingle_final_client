@@ -13,10 +13,13 @@ import java.util.TimeZone;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
 import android.app.ProgressDialog;
+import android.app.ActionBar.LayoutParams;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,6 +39,9 @@ import android.media.ExifInterface;
 import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.WindowManager;
 
 import com.example.mingle.HttpHelper;
@@ -46,7 +52,7 @@ import com.example.mingle.MingleUser.MsgComparator;
  */
 
 public class MingleApplication extends Application {
-	public static final int PHOTO_COMPRESS_FACTOR = 4;
+	public static final int PHOTO_COMPRESS_FACTOR = 2;
 	
 	public final static String UPDATE_MSG_LIST = "com.example.mingle.UPDATE_MSG_LIST";
     public Typeface koreanTypeFace;
@@ -79,7 +85,7 @@ public class MingleApplication extends Application {
     private ArrayList<ArrayList<String>> pop_users = new ArrayList<ArrayList<String>>();
     
  
-    
+   
     
    public void initializeApplication(){
     	koreanTypeFace = Typeface.createFromAsset(getAssets(), "fonts/UnGraphic.ttf");

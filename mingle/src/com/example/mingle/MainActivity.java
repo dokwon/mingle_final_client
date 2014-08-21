@@ -12,24 +12,36 @@ import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
+import android.app.ActionBar.LayoutParams;
+import android.app.ActionBar.Tab;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -41,12 +53,13 @@ import android.view.View;
 import com.example.mingle.HttpHelper;
 
 import android.widget.*;
+import android.widget.ImageView.ScaleType;
 import android.widget.TextView.OnEditorActionListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements ActionBar.TabListener {
 	public final static String MAIN_TYPE = "com.example.mingle.MAIN_TYPE";	//Intent data to pass on when new Profile Activity started
 	
 	private String name;
@@ -61,8 +74,12 @@ public class MainActivity extends Activity {
 	
 	private MingleApplication app;
 
-	public final int SELECT_FILE = 0;
+	public final static int SELECT_FILE = 0;
+	static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int PICTURE_CROP = 3;
     private SharedPreferences prefs = null;
+   
+    private Uri imageUri;
 
 	
 	private ImageView FindAppropriateImageView() {
@@ -95,31 +112,65 @@ public class MainActivity extends Activity {
 		return null; 
 	}
 	
-	
-	
+	private String photoPath = "";
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	
-    	String photoPath = "";
     	if (resultCode == RESULT_OK) {
-    		if(requestCode != REQUEST_IMAGE_CAPTURE && requestCode != SELECT_FILE) return;
-    		ImageView imageView = FindAppropriateImageView();
-    		if (requestCode == REQUEST_IMAGE_CAPTURE) {   // If the user requested taking a photo
-                getContentResolver().notifyChange(imageUri, null);
-                photoPath = imageUri.getPath();
-            }  else if (requestCode == SELECT_FILE) { // If the user wants to select a file
-                imageUri = data.getData();
-                photoPath = getPath(imageUri, MainActivity.this);
-            } 
-    		 app.addPhotoPath(photoPath);
-             Bitmap bm;
-             BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-             btmapOptions.inSampleSize = MingleApplication.PHOTO_COMPRESS_FACTOR;
-             bm = app.rotatedBitmap(BitmapFactory.decodeFile(photoPath, btmapOptions), photoPath);
-             imageView.setImageBitmap(bm);
+    		
+    		switch(requestCode) {
+    			case REQUEST_IMAGE_CAPTURE :
+    				getContentResolver().notifyChange(imageUri, null);
+    				performCrop(imageUri);
+    				break;
+    			case SELECT_FILE :
+    				imageUri = data.getData();
+    				performCrop(imageUri);
+    				break;
+    			case PICTURE_CROP :
+    				addPhotoAndDisplay();
+    				break;
+    		}
+    		
     	}
     }
     
+    private Bitmap rescaledBitmap(ImageView view) {
+		    Bitmap bm = BitmapFactory.decodeFile(photoPath, null);
+    		// Raw height and width of image
+		    final int height = bm.getHeight();
+		    final int width = bm.getWidth();
+		    int inSampleSize = 1;
+		    int reqHeight = view.getHeight();
+		    int reqWidth = view.getWidth();
+		    if (height > reqHeight || width > reqWidth) {
+		
+		        final int halfHeight = height / 2;
+		        final int halfWidth = width / 2;
+		
+		        // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+		        // height and width larger than the requested height and width.
+		        while ((halfHeight / inSampleSize) > reqHeight
+		                && (halfWidth / inSampleSize) > reqWidth) {
+		            inSampleSize *= 2;
+		        }
+		    }
+		    BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
+	     	btmapOptions.inSampleSize = inSampleSize;
+	     	return app.rotatedBitmap(BitmapFactory.decodeFile(photoPath, btmapOptions), photoPath);
+		    
+    }
+    private void addPhotoAndDisplay() {
+    	ImageView imageView = FindAppropriateImageView();
+		imageView.setScaleType(ScaleType.FIT_XY);
+    	app.addPhotoPath(photoPath);
+     	//Bitmap bm;
+     	//BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
+     	//btmapOptions.inSampleSize = MingleApplication.PHOTO_COMPRESS_FACTOR;
+     	//bm = app.rotatedBitmap(BitmapFactory.decodeFile(photoPath, null), photoPath);
+     	imageView.setImageBitmap(rescaledBitmap(imageView));
+    }
+    	
     // Helper method to retrieve the filepath of selected image
     public String getPath(Uri uri, Activity activity) {
         String[] projection = { MediaColumns.DATA }; 
@@ -160,8 +211,7 @@ public class MainActivity extends Activity {
     		memberViewArr.get(i).setBackgroundResource(R.drawable.peoplenumberpicon);
     	for(int i = num_selected; i < 6; i++)
     		memberViewArr.get(i).setBackgroundResource(R.drawable.peoplenumberpicoff);
-    	
-    	
+
     }
     
     
@@ -242,7 +292,42 @@ public class MainActivity extends Activity {
     }
     
     
-    
+  //Set up Action bar
+  	 @SuppressLint("NewApi")
+  	private void customizeActionBar() {
+  		// Set up the action bar to show tabs.
+  		 
+  	        ActionBar actionBar = getActionBar();
+  	        
+  			View mCustomView = LayoutInflater.from(this).inflate(R.layout.custom_actionbar, null);
+  			LayoutParams layout = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+  			mCustomView.setLayoutParams(layout);
+  	        actionBar.setCustomView(mCustomView);
+  	        
+  	        //actionBar.setBackgroundDrawable(new ColorDrawable(0xFFFFFFFF));
+  	        actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_border));
+  	        actionBar.setDisplayShowTitleEnabled(false);
+  	        actionBar.setDisplayShowHomeEnabled(true);
+  	        View homeIcon = findViewById(android.R.id.home);
+  	        
+  	        homeIcon.setVisibility(View.GONE);
+  	        actionBar.setDisplayHomeAsUpEnabled(false);
+
+  	        actionBar.setDisplayShowCustomEnabled(true);
+  	        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+  	        
+  	        ActionBar.LayoutParams params = (ActionBar.LayoutParams) actionBar.getCustomView().getLayoutParams();
+  	        
+  	        
+  	        if(Integer.valueOf(android.os.Build.VERSION.SDK_INT) >= 14 && ViewConfiguration.get(this).hasPermanentMenuKey()) {
+  	        	params.setMargins(0, 0, 85, 0);
+  	        } else { 
+  	        	params.setMargins(95, 0, 0, 0);
+  	        	actionBar.getCustomView().setLayoutParams(params);
+  	        }
+  	        
+  	 }
+
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -257,11 +342,11 @@ public class MainActivity extends Activity {
         }
         
         //check if custom title is supported BEFORE setting the content view!
-        boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-        
+        //boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+       
         setContentView(R.layout.activity_main);
-        
-        if(customTitleSupported) getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title_bar);
+        customizeActionBar();
+        //if(customTitleSupported) getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title_bar);
 
         context = (Context)this;
 
@@ -414,11 +499,7 @@ public class MainActivity extends Activity {
             finish();
     }
 
-    
-    
    
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    private Uri imageUri;
     
     
     public void takePicture() {
@@ -433,6 +514,68 @@ public class MainActivity extends Activity {
     	 startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
     }
 
+    
+    
+    
+    private boolean deviceHasCropUtility(int size) { 
+    	
+    	return size > 0;
+    }
+    
+    private void performCrop(Uri picUri) {
+        
+    	// Initialize intent
+    	Intent intent = new Intent("com.android.camera.action.CROP");
+    	// set data type to be sent
+    	intent.setType("image/*");
+
+    	// get croppers available in the phone
+    	List<ResolveInfo> list = getPackageManager().queryIntentActivities( intent, 0 );
+    	int size = list.size();
+    	// handle the case if there's no cropper in the phone
+    	if (!deviceHasCropUtility(size)) {
+    		addPhotoAndDisplay();
+    	    return;
+    	} else {
+
+    	
+    	    // Send the Uri path to the cropper intent
+    	    intent.setData(picUri); 
+    	    intent.putExtra("crop", "true");
+    	    intent.putExtra("outputX", 200);
+    	    intent.putExtra("outputY", 200);
+    	    intent.putExtra("aspectX", 1);
+    	    intent.putExtra("aspectY", 1);         
+    	    intent.putExtra("scale", true);
+    	    // Here's my attempt to ask the intent to save output data as file
+    	    File file = null;
+    	    // This returns the file created
+ 	       file = new File(Environment.getExternalStorageDirectory(), 
+				  (new Timestamp(new Date().getTime())).toString() + "cropped.jpg");
+	        photoPath = file.getAbsolutePath();
+	        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));            
+	        intent.putExtra("output", Uri.fromFile(file));
+    	    // --------------------------------------------------------------------
+    	    // -----------> When changing this to false it worked <----------------
+    	    // --------------------------------------------------------------------        
+    	    intent.putExtra("return-data", false);
+    	    // --------------------------------------------------------------------
+    	    // --------------------------------------------------------------------
+    	    //startActivityForResult(intent, PICTURE_CROP);
+    	    // If there's only 1 Cropper in the phone (e.g. Gallery )
+    	    //if (size == 1) {
+    	            // get the cropper intent found
+    	            Intent i        = new Intent(intent);
+    	            ResolveInfo res = list.get(0);
+
+    	            i.setComponent( new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+
+    	            startActivityForResult(i, PICTURE_CROP);
+    	    //}
+    	}
+    }
+    
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -478,5 +621,23 @@ public class MainActivity extends Activity {
 
 		  super.onDestroy();
 	  }
+
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 

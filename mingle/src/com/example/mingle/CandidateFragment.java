@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 /**
@@ -28,6 +29,8 @@ public class CandidateFragment extends Fragment {
   private CandidateAdapter adapter;			//Listview Adapter for candidatelistview 
   private Activity parent;					//Parent Activity: HuntActivity
   
+  private ImageView no_candidate_error_page;
+  private ArrayList<String> candidate_list;
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
@@ -37,9 +40,12 @@ public class CandidateFragment extends Fragment {
 	  //Initialize list view and adapter
 	  candidatelistview=  (SwipeListView)(rootView.findViewById(R.id.All));
 	  candidatelistview.setDivider(null);
-      ArrayList<String> candidate_list = ((MingleApplication) parent.getApplication()).getCandidateList();
+      candidate_list = ((MingleApplication) parent.getApplication()).getCandidateList();
+      
       adapter=new CandidateAdapter(parent, R.layout.candidate_row,candidate_list, (MingleApplication)parent.getApplicationContext());
 	    
+      no_candidate_error_page = (ImageView) rootView.findViewById(R.id.no_more_candidate_error);
+      
       //Initialize candidatelistview as swipelistview
       final Activity curActivity = parent;
       candidatelistview.setSwipeListViewListener(new BaseSwipeListViewListener() {
@@ -133,14 +139,22 @@ public class CandidateFragment extends Fragment {
       //Load more matches if has only a few candidates in current list
       int match_num = candidate_list.size();
       if(match_num <  ((MingleApplication)parent.getApplication()).getFirstMatchNum()) {
+    	  if(match_num > 0) removeNoCandidateError();
     	  if(((MingleApplication)parent.getApplication()).canGetMoreCandidate())
     		  loadNewMatches( ((MingleApplication)parent.getApplication()).getFirstMatchNum());
       }
     return rootView;
   }
   
+  public void removeNoCandidateError(){
+		if(no_candidate_error_page!= null) {
+				no_candidate_error_page.setVisibility(View.GONE);
+		}
+  }
+  
   //Update candidate list
   public void listDataChanged(){
+	 
 	  parent.runOnUiThread(new Runnable() {
 	  		public void run() {
 	  			adapter.notifyDataSetChanged();

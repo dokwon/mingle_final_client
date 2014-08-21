@@ -64,16 +64,17 @@ public class MinglePhotoClickListener implements OnClickListener{
 	}
 	
 	private void ShowDeleteOption(final ImageView targetView) {
-		final CharSequence[] items = { "Yes","Cancel" };
+		final CharSequence[] items = {(String) mainActivity.getResources().getText(R.string.ok),
+				(String) mainActivity.getResources().getText(R.string.cancel) };
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-		builder.setTitle("Delete this Photo?").setIcon(R.drawable.icon_tiny);
+		builder.setTitle((String) mainActivity.getResources().getText(R.string.photo_delete)).setIcon(R.drawable.icon_tiny);
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 		    @Override
 		    public void onClick(DialogInterface dialog, int item) {
-		        if (items[item].equals("Yes")) {
+		        if (items[item].equals(items[0])) {
 		        	RemovePhoto(targetView);
-		        }  else if (items[item].equals("Cancel")) {
+		        }  else if (items[item].equals(items[1])) {
 		            dialog.dismiss();
 		        }
 		    }
@@ -83,25 +84,26 @@ public class MinglePhotoClickListener implements OnClickListener{
 	
 	
 	private void getUserPhoto() {
-        final CharSequence[] items = { "Take Photo", "Choose from Library",
-        "Cancel" };
+        final CharSequence[] items = {(String) mainActivity.getResources().getText(R.string.photo_option_camera),
+        		(String) mainActivity.getResources().getText(R.string.photo_option_library),
+        		(String) mainActivity.getResources().getText(R.string.cancel)};
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-		builder.setTitle("Add Photo!").setIcon(R.drawable.icon_tiny);
+		builder.setTitle(R.string.photo_option_title).setIcon(R.drawable.icon_tiny);
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 		    @Override
 		    public void onClick(DialogInterface dialog, int item) {
-		        if (items[item].equals("Take Photo")) {
+		        if (items[item].equals(items[0])) {
 		            mainActivity.takePicture();
-		        } else if (items[item].equals("Choose from Library")) {
+		        } else if (items[item].equals(items[1])) {
 		            Intent intent = new Intent(
 		                    Intent.ACTION_PICK,
 		                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		            intent.setType("image/*");
 		            mainActivity.startActivityForResult(
-		                    Intent.createChooser(intent, "Select File"),
-		                    mainActivity.SELECT_FILE);
-		        } else if (items[item].equals("Cancel")) {
+		                    Intent.createChooser(intent, (String) mainActivity.getResources().getText(R.string.select_file)),
+		                    MainActivity.SELECT_FILE);
+		        } else if (items[item].equals(items[2])) {
 		            dialog.dismiss();
 		        }
 		    }

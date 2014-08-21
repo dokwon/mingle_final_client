@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -20,6 +21,8 @@ public class ChoiceFragment extends Fragment {
 	
 	private Activity parent; 
 	
+	
+	private ImageView no_choices_error_page;
 	@Override
 	  public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 		parent = getActivity();
@@ -28,8 +31,11 @@ public class ChoiceFragment extends Fragment {
 		//Initialize list view and adapter
 		currentlychattinglistview= (ListView)(rootView.findViewById(R.id.mingling)) ;
 		choice_list = ((MingleApplication) parent.getApplication()).getChoiceList();
+		
         adapter = new ChoiceAdapter(parent, R.layout.chatroom_row, choice_list, (MingleApplication)parent.getApplicationContext());
         adapter.notifyDataSetChanged();
+        
+        no_choices_error_page = (ImageView) rootView.findViewById(R.id.no_choices_error);
         
         //On click, open chat room
         final Activity curActivity = parent;
@@ -59,6 +65,9 @@ public class ChoiceFragment extends Fragment {
 
 	//Update candidate list	
 	public void listDataChanged(){
+		if(no_choices_error_page != null && !choice_list.isEmpty()) {
+			no_choices_error_page.setVisibility(View.GONE);
+		}
 		parent.runOnUiThread(new Runnable() {
 	  		public void run() {
 	  			adapter.notifyDataSetChanged();

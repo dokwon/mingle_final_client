@@ -19,6 +19,13 @@
 							android:dividerHeight="0dp"
 					        swipe:swipeMode="left"/>
 		
-         
+     <ImageView
+		android:id="@+id/no_more_candidate_error"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:padding="50dp"
+		android:layout_gravity="center"
+		android:src="@drawable/errormassagemember" >
+	</ImageView>      
 
 </LinearLayout>
