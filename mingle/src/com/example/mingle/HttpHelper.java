@@ -1,6 +1,7 @@
 package com.example.mingle;
 //package com.hmkcode.android;
 
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,7 +9,10 @@ import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 
 import java.net.*;
+
 import java.util.ArrayList;
+
+
 import com.example.mingle.MingleUser;        
 
 import org.apache.http.HttpEntity;
@@ -20,7 +24,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -51,6 +54,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	app = curApp; 
     	server_url = url+"/"; 
     }
+
     
     /* encode given string in utf-8 */
     private String encodeString(String str){
@@ -182,6 +186,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	new Thread(new Runnable() {
     		public void run() {
     			try {
+					
     				HttpResponse response = PhotoPoster.postPhoto(app, cpy);
     				HttpResponseBody(response);
     				
@@ -311,6 +316,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	baseURL += "get_vote";
         
     	final String getVoteURL = baseURL;
+       
     	new Thread(new Runnable() {
     		public void run() {
     			HttpClient client = new DefaultHttpClient();

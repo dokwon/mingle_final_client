@@ -2,103 +2,62 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/option_margin"
     tools:context="${packageName}.${activityClass}" >
-	<LinearLayout
-            android:orientation="vertical"
-            android:tag="front"
-            android:layout_margin="@dimen/small_margin"
-          	android:id="@+id/profile_elems"
-            android:background="@drawable/candidate_cell_border"
-            style="@style/ProfileListContent">
-			
-				<ViewFlipper
-				       android:id="@+id/view_flipper"
-				      android:layout_width="match_parent"
-				      android:layout_height="290dp"
-				     android:layout_marginTop="10dip"
-				      android:layout_marginLeft="10dip"
-				       android:layout_marginRight="10dip">
-				</ViewFlipper>
-			 			 
-						        
-			 	<LinearLayout
-			 		android:id="@+id/photo_indicators"
-			 		android:orientation="horizontal"
-			 		android:layout_width="wrap_content"
-			 		android:layout_gravity="center"
-			 		android:layout_height="10dp"
-					android:layout_margin="@dimen/small_margin"/>    
-			
-				<RelativeLayout
-				            android:layout_weight="1"
-				            android:layout_width="match_parent"
-				            android:layout_height="30dp"
-				            android:layout_margin="@dimen/option_margin"
-				            >    
-				            
-				     			<ImageView
-					                android:layout_width="@dimen/member_icon_width"
-							android:layout_height="@dimen/member_icon_height"
-					                android:layout_alignParentBottom="true"
-					                android:src="@drawable/numberpic"
-					                android:id="@+id/profile_member_num_icon"/>
-						         <ImageView
-						             android:contentDescription="@string/photo_description"
-					                android:layout_width="@dimen/member_num_width"
-		android:layout_height="@dimen/member_num_height"
-		android:layout_marginLeft="@dimen/member_num_and_icon_margin"
-					                android:layout_alignLeft="@+id/profile_member_num_icon"
-							        android:layout_alignBottom="@+id/profile_member_num_icon"
-					                android:id="@+id/profile_member_num"/>
-						      
-						        <TextView
-						            android:id="@+id/profile_user_name"
-						            style="@style/MyListTitle"
-						            android:layout_width="wrap_content"
-						            android:layout_height="wrap_content"
-						           	android:layout_alignTop="@+id/profile_member_num_icon"
-						            android:layout_marginLeft="15dp"
-						            android:layout_toRightOf="@+id/profile_member_num" />
-						        
-						        <TextView
-						            android:id="@+id/profile_user_dist"
-						            style="@style/MyListTitle"
-						            android:layout_width="wrap_content"
-						            android:layout_height="wrap_content"
-						           	android:layout_alignTop="@+id/profile_member_num_icon"
-						            android:layout_marginRight="5dp"
-						            android:layout_alignParentRight="true" />
-						        
-				 </RelativeLayout>
-    	
-    </LinearLayout>
+	<FrameLayout 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:id="@+id/view_flipper_wrapper">"
+		    <ViewFlipper
+		        android:id="@+id/view_flipper"
+		        android:layout_width="270dp"
+		        android:layout_height="290dp"
+		        android:layout_alignParentTop="true"
+		        android:layout_centerHorizontal="true"
+		        android:layout_margin="20dip"
+		        android:layout_marginTop="38dp" >
+		    </ViewFlipper>
+ 			 <ImageView 
+			         android:src="@drawable/photo_corner_border"
+			         android:layout_margin="1dp"
+			         android:layout_width="match_parent"
+			         android:layout_height="match_parent" />
+	     </FrameLayout>
+    <TextView
+        android:id="@+id/profile_user_num"
+        style="@style/MyListTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/view_flipper_wrapper"
+        android:layout_below="@+id/view_flipper_wrapper"/>
+
+    <TextView
+        android:id="@+id/profile_user_name"
+        style="@style/MyListTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/profile_user_num"
+        android:layout_alignBottom="@+id/profile_user_num"
+        android:layout_marginLeft="22dp"
+        android:layout_toRightOf="@+id/profile_user_num"/>
     
-	<LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/profile_elems"
-            android:layout_alignLeft="@+id/profile_elems"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="@dimen/small_margin">
+    <Button
+        android:id="@+id/vote_button"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/view_flipper_wrapper"
+        android:layout_below="@+id/profile_user_num"
+        android:onClick="voteUser"
+        android:text="Vote" />
     
-	    <Button
-	        android:id="@+id/vote_button"
-	        android:layout_width="fill_parent"
-	        android:layout_weight="1"
-	        android:layout_height="50dp" 
-	        android:background="@drawable/vote"
-	        android:onClick="voteUser" />
-	    
-	    <Button 
-		    android:layout_height="50dp" 
-		    android:layout_width="fill_parent"
-		    android:id="@+id/chat_button" 
-		    android:layout_weight="1"
-	        android:layout_marginLeft="10dp"
-		    android:background="@drawable/chatbutton"
-		    android:onClick="startChat"/>
-    </LinearLayout>
+    <Button 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="130dp" 
+	    android:id="@+id/chat_button" 
+	    android:layout_alignBaseline="@+id/vote_button"
+        android:layout_alignBottom="@+id/vote_button"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/vote_button"
+	    android:text="Chat" 
+	    android:onClick="startChat"/>
 
 </RelativeLayout>
