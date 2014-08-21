@@ -60,6 +60,8 @@ public class ImageDownloader extends AsyncTask<Void, Integer, Void> {
 
 			//Save Image
 			user.setPic(pic_index, (Drawable) new BitmapDrawable(context.getResources(),bm));
+			bm.recycle();
+			bm = null;
 
 			//update lists on complete
 			Intent dispatcher = new Intent(app, HuntActivity.class);
