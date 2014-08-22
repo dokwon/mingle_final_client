@@ -164,10 +164,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     	ImageView imageView = FindAppropriateImageView();
 		imageView.setScaleType(ScaleType.FIT_XY);
     	app.addPhotoPath(photoPath);
-     	//Bitmap bm;
-     	//BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-     	//btmapOptions.inSampleSize = MingleApplication.PHOTO_COMPRESS_FACTOR;
-     	//bm = app.rotatedBitmap(BitmapFactory.decodeFile(photoPath, null), photoPath);
      	imageView.setImageBitmap(rescaledBitmap(imageView));
     }
     	
@@ -216,6 +212,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     
     
     private void initializeUIViews() {
+    	ActionbarController.customizeActionBar(R.layout.custom_actionbar, this, -30, 0);
+    	
     	//Set Default Values
     	if(type.equals("new")){
     		name = "";
@@ -237,18 +235,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         	view.setOnClickListener(new MinglePhotoClickListener( this, photoViewArr));
         }
         if(type.equals("update")){
-        	ArrayList<String> photo_path_arr = app.getPhotoPaths();
-        	for(int i = 0; i < photo_path_arr.size(); i++){
-        		Bitmap bm;
-        		BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-        		btmapOptions.inSampleSize = 16;
-        		bm = app.rotatedBitmap(BitmapFactory.decodeFile(photo_path_arr.get(i), btmapOptions), photo_path_arr.get(i));
-        		((ImageView) photoViewArr.get(i)).setImageBitmap(bm);
-        	}
 			for (int i = 0; i < app.getMyUser().getPhotoNum(); i++){
-        		((ImageView) photoViewArr.get(i)).setImageDrawable(app.getMyUser().getPic(i));
+        		FindAppropriateImageView().setImageDrawable(app.getMyUser().getPic(i));
         	}
-        }
+        } 
  
         EditText editText = (EditText) findViewById(R.id.nicknameTextView);
         if(type.equals("update")) editText.setText(name);
@@ -272,6 +262,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     	memberViewArr.add(findViewById(R.id.member_4));
     	memberViewArr.add(findViewById(R.id.member_5));
     	memberViewArr.add(findViewById(R.id.member_6));
+    	
         for(int i = num; i < 6; i++){
         	memberViewArr.get(i).setBackgroundResource(R.drawable.peoplenumberpicoff);
         }        
@@ -279,55 +270,17 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         //Hide unnecessary buttons
         if(type.equals("new")){
         	//hide modify button
-        	Button modify_button = (Button) findViewById(R.id.modify_button);
+        	RelativeLayout modify_button = (RelativeLayout) findViewById(R.id.modify_button);
         	modify_button.setVisibility(View.GONE);
         } else {
         	//hide delete, enter, and preview button
-            Button enter_button = (Button) findViewById(R.id.enter_button);
+        	RelativeLayout enter_button = (RelativeLayout) findViewById(R.id.enter_button);
             Button preview_button = (Button) findViewById(R.id.preview_button);
             enter_button.setVisibility(View.GONE);
             preview_button.setVisibility(View.GONE);
         }
-       
+       KeyboardDismisser.setupKeyboardDismiss(findViewById(R.id.main_parent), this);
     }
-    
-    
-  //Set up Action bar
-  	 @SuppressLint("NewApi")
-  	private void customizeActionBar() {
-  		// Set up the action bar to show tabs.
-  		 
-  	        ActionBar actionBar = getActionBar();
-  	        
-  			View mCustomView = LayoutInflater.from(this).inflate(R.layout.custom_actionbar, null);
-  			LayoutParams layout = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-  			mCustomView.setLayoutParams(layout);
-  	        actionBar.setCustomView(mCustomView);
-  	        
-  	        //actionBar.setBackgroundDrawable(new ColorDrawable(0xFFFFFFFF));
-  	        actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_border));
-  	        actionBar.setDisplayShowTitleEnabled(false);
-  	        actionBar.setDisplayShowHomeEnabled(true);
-  	        View homeIcon = findViewById(android.R.id.home);
-  	        
-  	        homeIcon.setVisibility(View.GONE);
-  	        actionBar.setDisplayHomeAsUpEnabled(false);
-
-  	        actionBar.setDisplayShowCustomEnabled(true);
-  	        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-  	        
-  	        ActionBar.LayoutParams params = (ActionBar.LayoutParams) actionBar.getCustomView().getLayoutParams();
-  	        
-  	        
-  	        if(Integer.valueOf(android.os.Build.VERSION.SDK_INT) >= 14 && ViewConfiguration.get(this).hasPermanentMenuKey()) {
-  	        	params.setMargins(0, 0, 85, 0);
-  	        } else { 
-  	        	params.setMargins(95, 0, 0, 0);
-  	        	actionBar.getCustomView().setLayoutParams(params);
-  	        }
-  	        
-  	 }
-
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -345,7 +298,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         //boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
        
         setContentView(R.layout.activity_main);
-        customizeActionBar();
+        
         //if(customTitleSupported) getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title_bar);
 
         context = (Context)this;
@@ -383,10 +336,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     }
     
     public void modifyUserData(View view){
+    	name =((EditText) findViewById(R.id.nicknameTextView)).getText().toString();
     	//Check validity of user input and send user update request to server
     	String valid_message = app.isValid(name);
     	if(valid_message == null){
-    		app.setMyUser(null, name, num, sex);
         	app.connectHelper.userUpdateRequest(app, name, sex, num);
       } else {
     	   showInvalidUserAlert(valid_message);
@@ -414,11 +367,34 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     private BroadcastReceiver userUpdateReceiver = new BroadcastReceiver() {
     	@Override
     	public void onReceive(Context context, Intent intent) {
-    	   updateUser();
+     	   // Extract data included in the Intent
+     	   String data = intent.getStringExtra(HttpHelper.USER_CONF);
+ 		   try {
+ 			   JSONObject user_conf_obj = new JSONObject(data);
+ 	    	   updateUser(user_conf_obj);
+ 		   } catch (JSONException e) {
+ 			   // TODO Auto-generated catch block
+ 			   e.printStackTrace();
+ 		   }
     	}
     };
     
-    public void updateUser(){
+    public void updateUser(JSONObject userData){
+		app.setMyUser(null, name, num, sex);
+		ArrayList<String> photo_array = app.getPhotoPaths();
+		try {
+			if(photo_array.size() < 1) userData.put("PIC_PATH_1", "");
+			else userData.put("PIC_PATH_1", photo_array.get(0));
+			if(photo_array.size() < 2) userData.put("PIC_PATH_2", "");
+    		else userData.put("PIC_PATH_2", photo_array.get(1));
+    		if(photo_array.size() < 3) userData.put("PIC_PATH_3", "");
+    		else userData.put("PIC_PATH_3", photo_array.get(2));
+    		userData.put("DIST_LIM", app.getDist());
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    	app.dbHelper.setMyInfo(userData);
     	Toast.makeText(getApplicationContext(), getResources().getString(R.string.update_complete), Toast.LENGTH_SHORT).show();
     }
     
@@ -523,12 +499,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     }
     
     private void performCrop(Uri picUri) {
-        
     	// Initialize intent
     	Intent intent = new Intent("com.android.camera.action.CROP");
     	// set data type to be sent
     	intent.setType("image/*");
-
     	// get croppers available in the phone
     	List<ResolveInfo> list = getPackageManager().queryIntentActivities( intent, 0 );
     	int size = list.size();
@@ -542,8 +516,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     	    // Send the Uri path to the cropper intent
     	    intent.setData(picUri); 
     	    intent.putExtra("crop", "true");
-    	    intent.putExtra("outputX", 200);
-    	    intent.putExtra("outputY", 200);
+    	    intent.putExtra("outputX", 400);
+    	    intent.putExtra("outputY", 400);
     	    intent.putExtra("aspectX", 1);
     	    intent.putExtra("aspectY", 1);         
     	    intent.putExtra("scale", true);

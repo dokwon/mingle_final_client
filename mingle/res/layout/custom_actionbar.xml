@@ -13,7 +13,6 @@
          android:layout_alignParentTop="true"
          android:layout_centerHorizontal="true"
          android:contentDescription="@string/photo_description"
-       
          android:paddingBottom="7dp"
          android:paddingTop="7dp"
          android:src="@drawable/mingle_logo" />
@@ -22,8 +21,8 @@
 	    android:layout_width="26dp" 
 	    android:id="@+id/preview_button" 
 	    android:paddingRight="-10dp"
-	    android:background="@drawable/setting"
-	    android:layout_margin="2dp"
+	    android:background="@drawable/proicon"
+	    android:layout_marginRight="12dp"
 	    android:layout_centerVertical="true"
 	    android:layout_alignParentRight="true"
 	    android:onClick="showPreview"/>

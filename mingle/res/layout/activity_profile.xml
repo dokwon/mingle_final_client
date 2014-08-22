@@ -4,6 +4,14 @@
     android:layout_height="match_parent"
     android:padding="@dimen/option_margin"
     tools:context="${packageName}.${activityClass}" >
+    
+    <RelativeLayout
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:id="@+id/shadow_wrapper"
+		        android:padding="10dp"
+		        android:background="@drawable/toast_frame"
+		        />
 	<LinearLayout
             android:orientation="vertical"
             android:tag="front"
@@ -13,13 +21,10 @@
             style="@style/ProfileListContent">
 			
 				<ViewFlipper
+				    
 				       android:id="@+id/view_flipper"
 				      android:layout_width="match_parent"
-				      android:layout_height="290dp"
-				     android:layout_marginTop="10dip"
-				      android:layout_marginLeft="10dip"
-				       android:layout_marginRight="10dip">
-				</ViewFlipper>
+				      android:layout_height="350dp"/>
 			 			 
 						        
 			 	<LinearLayout
@@ -28,7 +33,7 @@
 			 		android:layout_width="wrap_content"
 			 		android:layout_gravity="center"
 			 		android:layout_height="wrap_content"
-					android:layout_margin="@dimen/small_margin"/> 
+					android:layout_marginTop="@dimen/small_margin"/> 
 					
 			
 				<RelativeLayout
@@ -38,38 +43,45 @@
 				            android:layout_margin="@dimen/option_margin"
 				            >    
 				            
-				     			<ImageView
-					                android:layout_width="@dimen/member_icon_width"
-									android:layout_height="@dimen/member_icon_height"
-					                android:layout_alignParentBottom="true"
-					                android:src="@drawable/numberpic"
-					                android:id="@+id/profile_member_num_icon"/>
-						         <ImageView
-						             android:contentDescription="@string/photo_description"
-					                android:layout_width="@dimen/member_num_width"
-									android:layout_height="@dimen/member_num_height"
-									android:layout_marginLeft="@dimen/member_num_and_icon_margin"
-					                android:layout_toRightOf="@+id/profile_member_num_icon"
-							        android:layout_alignBottom="@+id/profile_member_num_icon"
-					                android:id="@+id/profile_member_num"/>
-						      
-						        <TextView
-						            android:id="@+id/profile_user_name"
-						            style="@style/MyListTitle"
-						            android:layout_width="wrap_content"
-						            android:layout_height="wrap_content"
-						           	android:layout_alignTop="@+id/profile_member_num_icon"
-						            android:layout_marginLeft="15dp"
-						            android:layout_toRightOf="@+id/profile_member_num" />
-						        
-						        <TextView
-						            android:id="@+id/profile_user_dist"
-						            style="@style/MyListTitle"
-						            android:layout_width="wrap_content"
-						            android:layout_height="wrap_content"
-						           	android:layout_alignTop="@+id/profile_member_num_icon"
-						            android:layout_marginRight="5dp"
-						            android:layout_alignParentRight="true" />
+				    <ImageView
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                
+		                android:layout_marginBottom="1dp"
+		                android:layout_alignTop="@+id/profile_user_name"
+		                android:layout_alignBottom="@+id/profile_user_name"
+		                android:src="@drawable/numberpic"
+		                android:id="@+id/profile_member_num_icon"/>
+			        
+			         
+			         <ImageView
+			             android:contentDescription="@string/photo_description"
+		                android:layout_width="@dimen/member_num_width"
+		                android:layout_marginBottom="1dp"
+		                android:layout_marginLeft="-3dp"
+		                android:layout_height="@dimen/member_num_height"
+		                android:layout_toRightOf="@+id/profile_member_num_icon"
+				        android:layout_alignBottom="@+id/profile_member_num_icon"
+		                android:id="@+id/profile_member_num"/>
+			      
+			        <TextView
+			            android:id="@+id/profile_user_name"
+			            style="@style/MyListTitle"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:layout_gravity="center_vertical"
+			            android:layout_marginLeft="10dp"
+			            android:layout_toRightOf="@+id/profile_member_num" />
+			        
+			        <TextView
+			            android:id="@+id/profile_user_dist"
+			            style="@style/MyListTitle"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:layout_gravity="center_vertical"
+			            android:layout_marginRight="5dp"
+			            android:layout_alignParentRight="true" />
+				            
 						        
 				 </RelativeLayout>
     	
@@ -81,25 +93,45 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/profile_elems"
             android:layout_alignLeft="@+id/profile_elems"
+            android:layout_alignRight="@+id/profile_elems"
             android:layout_alignParentBottom="true"
-            android:layout_margin="@dimen/small_margin">
-    
-	    <Button
+            android:layout_marginTop="@dimen/small_margin">
+      
+	    <RelativeLayout
 	        android:id="@+id/vote_button"
 	        android:layout_width="fill_parent"
 	        android:layout_weight="1"
-	        android:layout_height="50dp" 
-	        android:background="@drawable/vote"
-	        android:onClick="voteUser" />
+	        android:layout_height="45dp" 
+	        android:background="@color/mingle_button_red"
+	         android:layout_marginRight="@dimen/small_margin"
+	        android:onClick="voteUser" >
+			        
+	        <ImageView
+			    android:layout_width="40dp"
+			    android:layout_height="20dp"
+			    android:layout_centerInParent="true"
+			    android:background="@drawable/vote_button" />
+			        </RelativeLayout>
 	    
-	    <Button 
-		    android:layout_height="50dp" 
+	    <RelativeLayout 
+		    android:layout_height="45dp" 
 		    android:layout_width="fill_parent"
 		    android:id="@+id/chat_button" 
 		    android:layout_weight="1"
-	        android:layout_marginLeft="10dp"
-		    android:background="@drawable/chatbutton"
-		    android:onClick="startChat"/>
+	         android:layout_marginLeft="@dimen/small_margin"
+		    android:background="@color/mingle_button_green"
+		    android:onClick="startChat">
+	        <ImageView
+	        	
+			    android:layout_width="45dp"
+			    android:layout_height="25dp"
+			    android:layout_centerInParent="true"
+			    android:background="@drawable/chat_start_button" />
+	        </RelativeLayout>
+		    
+		    
+		    
+		
     </LinearLayout>
 
 </RelativeLayout>

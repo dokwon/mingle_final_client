@@ -4,14 +4,24 @@
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/option_margin"
     android:paddingRight="@dimen/option_margin" 
+    
     >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:background="@drawable/toast_frame"
+        />
         
 	<LinearLayout
             android:orientation="vertical"
             android:id="@+id/front"
             android:tag="front"
-            android:layout_margin="@dimen/small_margin"
-            android:background="@drawable/candidate_cell_border"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_marginBottom="@dimen/small_margin"
+           android:background="@drawable/candidate_cell_border"
             style="@style/MyListFrontContent">
  		 <FrameLayout 
 	        android:layout_width="wrap_content"
@@ -19,11 +29,7 @@
 			        <com.example.mingle.ResizableImageView
 			                style="@style/UserListImage"
 			                android:id="@+id/user_pic"/>
-			        <ImageView 
-			         android:src="@drawable/photo_corner_border"
-			         android:layout_margin="1dp"
-			         android:layout_width="match_parent"
-			         android:layout_height="match_parent" />
+			        
 	     </FrameLayout>
 			<RelativeLayout
 	            android:layout_weight="1"
@@ -35,10 +41,12 @@
 			         
 			         
 			         <ImageView
-		                android:layout_width="@dimen/member_icon_width"
-		                android:layout_height="@dimen/member_icon_height"
-		                android:layout_alignParentBottom="true"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                
 		                android:layout_marginBottom="1dp"
+		                android:layout_alignTop="@+id/user_name"
+		                android:layout_alignBottom="@+id/user_name"
 		                android:src="@drawable/numberpic"
 		                android:id="@+id/member_num_icon"/>
 			        
@@ -47,10 +55,10 @@
 			             android:contentDescription="@string/photo_description"
 		                android:layout_width="@dimen/member_num_width"
 		                android:layout_marginBottom="1dp"
+		                android:layout_marginLeft="-3dp"
 		                android:layout_height="@dimen/member_num_height"
 		                android:layout_toRightOf="@+id/member_num_icon"
 				        android:layout_alignBottom="@+id/member_num_icon"
-				         android:layout_marginLeft="1dp"
 		                android:id="@+id/member_num"/>
 			      
 			        <TextView
@@ -58,8 +66,8 @@
 			            style="@style/MyListTitle"
 			            android:layout_width="wrap_content"
 			            android:layout_height="wrap_content"
-			           	android:layout_alignBottom="@+id/member_num_icon"
-			            android:layout_marginLeft="15dp"
+			            android:layout_gravity="center_vertical"
+			            android:layout_marginLeft="10dp"
 			            android:layout_toRightOf="@+id/member_num" />
 			        
 			        <TextView
@@ -67,7 +75,7 @@
 			            style="@style/MyListTitle"
 			            android:layout_width="wrap_content"
 			            android:layout_height="wrap_content"
-			           	android:layout_alignTop="@+id/member_num_icon"
+			            android:layout_gravity="center_vertical"
 			            android:layout_marginRight="5dp"
 			            android:layout_alignParentRight="true" />
 	 
@@ -75,5 +83,5 @@
 	    	</RelativeLayout>
     	
     </LinearLayout>
-    
+  
 </FrameLayout>

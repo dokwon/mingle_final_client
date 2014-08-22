@@ -183,10 +183,11 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     		public void run() {
     			try {
     				HttpResponse response = PhotoPoster.postPhoto(app, cpy);
-    				HttpResponseBody(response);
+					JSONObject user_info = new JSONObject(HttpResponseBody(response));
     				
 					//notify user for complete
 					Intent dispatcher = new Intent(app, MainActivity.class);
+					dispatcher.putExtra(USER_CONF,user_info.toString());
 					dispatcher.setAction(UPDATE_USER);
 					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
 					
@@ -203,7 +204,8 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     public void voteUser(String uid)  {
         String baseURL = server_url;
     	baseURL += "vote?";
-    	baseURL += "uid=" + uid;
+    	baseURL += "voted_uid=" + uid + "&";
+    	baseURL += "uid=" + app.getMyUser().getUid();
     	
     	final String voteURL = baseURL;
     	new Thread(new Runnable() {

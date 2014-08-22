@@ -79,14 +79,18 @@ public class CandidateFragment extends Fragment {
               
               //Switch selected user from candidate to choice
               currentUser.switchCandidateToChoice(position);
+              candidate_list.remove(position);
               ((HuntActivity)parent).candidateListUpdate();
               ((HuntActivity)parent).choiceListUpdate();
-
+              	
               //Open Chat room
               Intent chat_intent = new Intent(curActivity, ChatroomActivity.class);
        		  chat_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
               chat_intent.putExtra(ChatroomActivity.USER_UID, currentUser.getMingleUser(user_uid).getUid());
               curActivity.startActivity(chat_intent);
+              
+              
+              
               
           }
   

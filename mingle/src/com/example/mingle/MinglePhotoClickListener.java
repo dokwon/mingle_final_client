@@ -60,10 +60,14 @@ public class MinglePhotoClickListener implements OnClickListener{
 		}
 		// Remove image from the Queue
 		((MingleApplication) mainActivity.getApplication()).removePhotoPathAtIndex(indexOfRemoved);
+		((MingleApplication) mainActivity.getApplication()).getMyUser().removePic(indexOfRemoved);
 		
 	}
 	
+	AlertDialog deleteDialog;
+	
 	private void ShowDeleteOption(final ImageView targetView) {
+		if( deleteDialog != null && deleteDialog.isShowing() ) return;
 		final CharSequence[] items = {(String) mainActivity.getResources().getText(R.string.ok),
 				(String) mainActivity.getResources().getText(R.string.cancel) };
 		
@@ -79,12 +83,16 @@ public class MinglePhotoClickListener implements OnClickListener{
 		        }
 		    }
 		});
-		builder.show();
+		deleteDialog = builder.create();
+		deleteDialog.show();
 	}
 	
 	
+	AlertDialog photoOptionDialog;
+	
 	private void getUserPhoto() {
-        final CharSequence[] items = {(String) mainActivity.getResources().getText(R.string.photo_option_camera),
+		if( photoOptionDialog != null && photoOptionDialog.isShowing() ) return;
+		final CharSequence[] items = {(String) mainActivity.getResources().getText(R.string.photo_option_camera),
         		(String) mainActivity.getResources().getText(R.string.photo_option_library),
         		(String) mainActivity.getResources().getText(R.string.cancel)};
 
@@ -108,7 +116,8 @@ public class MinglePhotoClickListener implements OnClickListener{
 		        }
 		    }
 		});
-		builder.show();
+		photoOptionDialog = builder.create();
+		photoOptionDialog.show();
     }
 	
 	@Override
@@ -116,7 +125,6 @@ public class MinglePhotoClickListener implements OnClickListener{
 		if (((ImageView)v).getDrawable() == null) {
 			getUserPhoto();
 		} else {
-			System.out.println("Photo is null!");
 			ShowDeleteOption((ImageView) v);
 		}
 	}

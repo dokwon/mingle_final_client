@@ -129,6 +129,11 @@ public class MingleUser {
     	}
     }
     
+    public void removePic(int index){
+    	pics.remove(index);
+    	pics_bool.remove(index);
+    }
+    
     public void addPic(Drawable pic){
     	pics.add(pic);
     	pics_bool.add(true);

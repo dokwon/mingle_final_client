@@ -9,11 +9,21 @@ import android.content.Intent;
 
 
 
-
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 
 
+import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ThumbnailUtils;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +57,15 @@ public class CandidateAdapter extends ArrayAdapter {
     /* Return drawable id of selected member num */
 
     
+    private int convertToPx(int dp) {
+        // Get the screen's density scale
+        final float scale = context.getResources().getDisplayMetrics().density;
+        // Convert the dps to pixels, based on density scale
+        return (int) (dp * scale + 0.5f);
+    }
+    
 
+    
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -60,13 +78,14 @@ public class CandidateAdapter extends ArrayAdapter {
       	  row = inflater.inflate(layoutResID, parent, false);
       	 
       	  holder = new NewsHolder();
-
+      	
       	  holder.user_num = (ImageView)row.findViewById(R.id.member_num);
       	  holder.user_name = (TextView)row.findViewById(R.id.user_name);
-          holder.user_name.setTypeface(app.koreanTypeFace);
+          holder.user_name.setTypeface(app.koreanBoldTypeFace);
       	  holder.user_pic=(ImageView)row.findViewById(R.id.user_pic);
-      	  holder.user_dist=(TextView)row.findViewById(R.id.user_dist);      	  
-
+      	  holder.user_dist=(TextView)row.findViewById(R.id.user_dist);      
+      	  holder.user_dist.setTextColor(Color.GRAY);
+      	  holder.user_dist.setTypeface(app.koreanTypeFace);
       	  row.setTag(holder);
         } else {
       	  holder = (NewsHolder)row.getTag();
@@ -81,7 +100,8 @@ public class CandidateAdapter extends ArrayAdapter {
         holder.user_name.setText(candidate.getName());
         holder.user_dist.setText(Float.toString(candidate.getDistance())+"km");
         Drawable main_drawable = candidate.getPic(0);
-        holder.user_pic.setImageDrawable(main_drawable);
+        Bitmap rounded =  MingleApplication.getRoundedCornerBitmap(((BitmapDrawable) main_drawable).getBitmap());
+        holder.user_pic.setImageDrawable( new BitmapDrawable(context.getResources(),rounded));
         
         //If user's pic is clicked, show his profile
         final String profile_uid = candidate.getUid();

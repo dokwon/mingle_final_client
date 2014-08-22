@@ -1,13 +1,19 @@
 package com.example.mingle;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,7 +22,12 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnDrawListener;
+import android.view.ViewTreeObserver.OnGlobalFocusChangeListener;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -27,7 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-public class ProfileActivity extends Activity {
+public class ProfileActivity extends Activity implements ActionBar.TabListener {
 	public final static String PROFILE_UID = "com.example.mingle.PROFILE_UID";	//Intent data to pass on when new Profile Activity started
 	public final static String PROFILE_TYPE = "com.example.mingle.PROFILE_TYPE";	//Intent data to pass on when new Profile Activity started
 
@@ -56,19 +67,21 @@ public class ProfileActivity extends Activity {
     }
     
     
+    
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		 super.onCreate(savedInstanceState);
 		//check if custom title is supported BEFORE setting the content view!
-	    boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+	    //boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 	        
 	    setContentView(R.layout.activity_profile);
-	        
-	    if(customTitleSupported) getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.profile_title_bar);
+	    ActionbarController.customizeActionBar(R.layout.profile_title_bar, this, -30, 0);
+	    //if(customTitleSupported) getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.profile_title_bar);
 
 	    //Support Korean Language
-	    koreanTypeFace = Typeface.createFromAsset(getAssets(), "fonts/UnGraphic.ttf");
-	    
+	    koreanTypeFace = Typeface.createFromAsset(getAssets(), "fonts/mingle-font-regular.otf");
+	    Typeface koreanBoldTypeFace = Typeface.createFromAsset(getAssets(), "fonts/mingle-font-bold.otf");
 	    viewFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
          
          Intent intent = getIntent();
@@ -85,10 +98,12 @@ public class ProfileActivity extends Activity {
          for(int i = 0; i < photo_num; i++){
         	 LinearLayout single_photo_layout = (LinearLayout) inflater
                  .inflate(R.layout.single_photo, null);
+        	 
         	 ImageView photo_view = (ImageView) single_photo_layout.findViewById(R.id.photoView);
         	 Drawable photo_drawable = user.getPic(i);
+        	 //Bitmap rounded =  MingleApplication.getRoundedCornerBitmap(((BitmapDrawable) photo_drawable).getBitmap());
+        	 //photo_view.setImageDrawable(new BitmapDrawable(this.getResources(),rounded));
         	 photo_view.setImageDrawable(photo_drawable);
-        	 
         	 viewFlipper.addView(single_photo_layout);
          }
          
@@ -104,13 +119,26 @@ public class ProfileActivity extends Activity {
          ImageView num_view = (ImageView) findViewById(R.id.profile_member_num);
          num_view.setImageResource(app.memberNumRsId(user.getNum()));
          TextView name_view = (TextView) findViewById(R.id.profile_user_name);
-         name_view.setTypeface(koreanTypeFace);
+         name_view.setTypeface(koreanBoldTypeFace);
          name_view.setText(user.getName());
          TextView dist_view = (TextView) findViewById(R.id.profile_user_dist);
+         dist_view.setTypeface(koreanTypeFace);
          dist_view.setText(Float.toString(user.getDistance())+"km");
-
-         Button vote_button = (Button) findViewById(R.id.vote_button);
-         Button chat_button = (Button) findViewById(R.id.chat_button);
+         dist_view.setTextColor(Color.GRAY);
+         
+         final LinearLayout prof_elems = (LinearLayout) findViewById(R.id.profile_elems);
+         ViewTreeObserver vto = prof_elems.getViewTreeObserver(); 
+         vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() { 
+			
+			@Override
+			public void onGlobalLayout() {
+				RelativeLayout shadow = (RelativeLayout) findViewById(R.id.shadow_wrapper);
+		         shadow.getLayoutParams().height = prof_elems.getMeasuredHeight() + 20;
+			} 
+         });
+         
+         RelativeLayout vote_button = (RelativeLayout) findViewById(R.id.vote_button);
+         RelativeLayout chat_button = (RelativeLayout) findViewById(R.id.chat_button);
          Button edit_profile_button = (Button) findViewById(R.id.edit_profile_button);
         
          if(type.equals("preview") || type.equals("setting")){
@@ -128,10 +156,22 @@ public class ProfileActivity extends Activity {
          if(!type.equals("setting")){
         	 edit_profile_button.setVisibility(View.GONE);
          }
-         initializePhotoIndicators();
+         //initializePhotoIndicators();
          //resizeProfilePic();
 	}
 	
+	
+	public void onResume() {
+		super.onResume();
+		
+	         photo_num = user.getPhotoNum();
+	         current_viewing_pic_index = 0;
+	         LinearLayout photoCounterWrapper = (LinearLayout) findViewById(R.id.photo_indicators);
+	         if(((ViewGroup)photoCounterWrapper).getChildCount() != 0)
+	        	 ((ViewGroup) findViewById(R.id.photo_indicators)).removeAllViews();
+	         initializePhotoIndicators();
+		
+	}
 	
 	private int current_viewing_pic_index = 0;
 	
@@ -141,9 +181,11 @@ public class ProfileActivity extends Activity {
 		LinearLayout photoCounterWrapper = (LinearLayout) findViewById(R.id.photo_indicators);
 		for(int i = 0; i < photo_num; i++) {
             ImageView indicator = new ImageView(this);
-            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(R.dimen.indicator_size,R.dimen.indicator_size);
-            indicator.setLayoutParams(params);
-            indicator.setPadding(8, 0, 8, 15);
+            int height = (int) getResources().getDimension(R.dimen.indicator_size);
+            int width = (int) getResources().getDimension(R.dimen.indicator_size);
+            indicator.setLayoutParams(new ViewGroup.LayoutParams(width, height));
+            
+            indicator.setPadding(8, 0, 8, 0);
             if(i == 0) {
             	indicator.setImageResource(R.drawable.profile_photo_current);
             } else {
@@ -219,7 +261,6 @@ public class ProfileActivity extends Activity {
     	if(photo_index < 0 || photo_index >= photo_num) return;
     	
 		if(!user.isPicAvail(photo_index)){
-			System.out.println("download image!");
 			new ImageDownloader(getApplication(), user.getUid(), photo_index).execute();
 		}
 	}
@@ -264,12 +305,14 @@ public class ProfileActivity extends Activity {
         Intent chat_intent = new Intent(this, ChatroomActivity.class);
         chat_intent.putExtra(ChatroomActivity.USER_UID, user.getUid());
         startActivity(chat_intent);
+        finish();
     }
     
     public void modifyProfile(View v){
     	Intent i = new Intent(this, MainActivity.class);
         i.putExtra(MainActivity.MAIN_TYPE, "update");
         startActivity(i);
+        finish();
     }
     
     /* Broadcast Receiver for notification of vote result*/
@@ -300,4 +343,25 @@ public class ProfileActivity extends Activity {
 
 		  super.onDestroy();
 	  }
+
+
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
 }

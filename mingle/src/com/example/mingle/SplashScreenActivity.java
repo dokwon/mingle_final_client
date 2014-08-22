@@ -4,6 +4,7 @@ package com.example.mingle;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -247,9 +248,11 @@ public class SplashScreenActivity extends Activity {
 	   	JSONObject user_data = app.dbHelper.getUserData();
 	   	
 	   	try {
-	   		app.addPhotoPath(user_data.getString("PIC_PATH_1"));
-	   		app.addPhotoPath(user_data.getString("PIC_PATH_2"));
-	   		app.addPhotoPath(user_data.getString("PIC_PATH_3"));
+	   		JSONArray pic_path_arr = new JSONArray(user_data.getString("PIC_PATH_ARR"));
+	   		for(int i = 0; i < pic_path_arr.length(); i++){
+	   			String pic_path = pic_path_arr.getString(i);
+	   			app.setPhotoPath(i, pic_path);
+	   		}
 	   		app.setMyUser(user_data.getString("UID"), user_data.getString("COMM"), 
 										user_data.getInt("NUM"), user_data.getString("SEX"));
 		} catch (JSONException e) {

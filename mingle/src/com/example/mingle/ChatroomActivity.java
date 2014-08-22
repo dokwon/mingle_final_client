@@ -43,8 +43,6 @@ import android.widget.TextView.BufferType;
 
 public class ChatroomActivity extends ListActivity implements ActionBar.TabListener{
 
-	
-	
 	//LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
     ArrayList<String> listItems=new ArrayList<String>();
     
@@ -77,22 +75,12 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
         ((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancelAll();
         recv_user.setInChat(true);
         
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM  | ActionBar.DISPLAY_SHOW_HOME);
-        View titleView =  LayoutInflater.from(this).inflate(R.layout.chatactivity_title_custom_view, null);
-        LayoutParams layout = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        titleView.setLayoutParams(layout);
-        actionBar.setCustomView(titleView);
-	    actionBar.setDisplayHomeAsUpEnabled(true);
+        ActionbarController.customizeActionBar(R.layout.chatactivity_title_custom_view, this, 0, 0);
 	    TextView chatter_name = (TextView)findViewById(R.id.chatter_name_chat);
 	    
 	    chatter_name.setText(recv_user.getName());
 	    ImageView member_num = (ImageView)findViewById(R.id.member_num_chat);
 	    member_num.setImageResource(app.memberNumRsId(recv_user.getNum()));
-	    actionBar.setBackgroundDrawable(new ColorDrawable(0xFFFFFFFF));
-	    
-	   
-		
  
 		//Associate this chat room's message list to adapter
         msg_lv = (ListView) findViewById(android.R.id.list);
@@ -128,22 +116,25 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
 		} 
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
 		setContentView(R.layout.activity_chatroom);
-		
+		KeyboardDismisser.setupKeyboardDismiss(findViewById(R.id.chatroom_parent), this);
 		
     }
     
     /* Function to be called when message send button is clicked */
     public void sendSMS(View v){
+    	
+    	txtSMS=(EditText) findViewById(R.id.txt_inputText);
+		String SMS=txtSMS.getText().toString();
+		
+		if(SMS.length() == 0) return;
+    	
         MingleApplication app = ((MingleApplication) this.getApplication());
         
         //Open socket if closed
         app.socketHelper.connectSocket();
 
-		recv_user.incrementMsgCounter();;
+		recv_user.incrementMsgCounter();
 
-		txtSMS=(EditText) findViewById(R.id.txt_inputText);
-		String SMS=txtSMS.getText().toString();
-		
 		//Determine if my message is response
 		boolean response_msg = true;
 		if(!recv_user.isMsgListEmpty() && recv_user.getLastMsg().isMyMsg()){

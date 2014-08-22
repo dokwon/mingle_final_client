@@ -4,23 +4,22 @@
     xmlns:android="http://schemas.android.com/apk/res/android" 
 	android:layout_height="fill_parent" 
 	android:layout_width="fill_parent" 
-	android:background="@drawable/title_border"
 	android:id="@+id/profileCustomTitleLayout">
 
 	<ImageView 
 	    android:layout_height="wrap_content" 
 	    android:layout_width="wrap_content" 
 	    android:id="@+id/profileTitleLogo" 
-	    android:src="@drawable/setting" 
-	    android:paddingTop="7dp"
-	    android:paddingBottom="7dp"
+	    android:src="@drawable/proicon" 
+	    android:paddingTop="10dp"
+	    android:paddingBottom="10dp"
 	    android:contentDescription="@string/photo_description"
 	    android:layout_centerHorizontal="true" 
 	    android:layout_alignParentTop="true"/>
 	
 	<Button 
 	    android:layout_height="20dp" 
-	    android:layout_width="50dp" 
+	    android:layout_width="40dp" 
 	    android:id="@+id/edit_profile_button" 
 	    android:background="@drawable/editbutton"
 	    android:layout_margin="15dp"

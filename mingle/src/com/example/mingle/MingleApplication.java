@@ -26,10 +26,17 @@ import android.content.Intent;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 
 
+import android.graphics.Bitmap.Config;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
@@ -56,6 +63,7 @@ public class MingleApplication extends Application {
 	
 	public final static String UPDATE_MSG_LIST = "com.example.mingle.UPDATE_MSG_LIST";
     public Typeface koreanTypeFace;
+    public Typeface koreanBoldTypeFace;
     public int blankProfileImage;
     public int blankProfileImageSmall;
     private String question_of_the_day;
@@ -88,7 +96,8 @@ public class MingleApplication extends Application {
    
     
    public void initializeApplication(){
-    	koreanTypeFace = Typeface.createFromAsset(getAssets(), "fonts/UnGraphic.ttf");
+    	koreanTypeFace = Typeface.createFromAsset(getAssets(), "fonts/mingle-font-regular.otf");
+    	koreanBoldTypeFace = Typeface.createFromAsset(getAssets(), "fonts/mingle-font-bold.otf");
     	blankProfileImage = R.drawable.blankprofilelarge;
     	blankProfileImageSmall = R.drawable.blankprofile;
     }
@@ -143,12 +152,8 @@ public class MingleApplication extends Application {
 	   for(int i = 0; i < photoPaths.size(); i++){
 		   if(!(new File(photoPaths.get(i))).exists()) my_user.addPic(this.getResources().getDrawable(blankProfileImage));
 		   else {
-			   Bitmap bm;
-			   BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-			   btmapOptions.inSampleSize = 16;
-			   bm = rotatedBitmap(BitmapFactory.decodeFile(photoPaths.get(i), btmapOptions), photoPaths.get(i));
-			   Drawable user_pic;
-			   user_pic = new BitmapDrawable(getResources(),bm);
+			   Bitmap bm = rotatedBitmap(BitmapFactory.decodeFile(photoPaths.get(i), null), photoPaths.get(i));
+			   Drawable user_pic= new BitmapDrawable(getResources(),bm);
 			   my_user.addPic(user_pic);
 		   }
 	   }
@@ -194,7 +199,16 @@ public class MingleApplication extends Application {
     	photoPaths.remove(index);
     }
     
+    public void setPhotoPath(int index, String photoPath) {
+    	if(photoPaths == null){
+    		photoPaths = new ArrayList<String>();
+    	}
+    	if(photoPaths.size() <= index) photoPaths.add(photoPath);
+    	else photoPaths.set(index, photoPath);
+    }
+    
     public void addPhotoPath(String photoPath) {
+    	System.out.println("ADDING PHOTOPATH");
     	if(photoPaths == null){
     		photoPaths = new ArrayList<String>();
     	}
@@ -479,6 +493,32 @@ public class MingleApplication extends Application {
         dist_lim = 3;
         
         proDialog.dismiss();
+    }
+    
+    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
+                .getHeight(), Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+        float roundPx = (float)2.1;
+        final Rect bottomRect = new Rect(0, bitmap.getHeight()/2, bitmap.getWidth(), bitmap.getHeight());
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        
+        // Fill in bottom corners
+        canvas.drawRect(bottomRect, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
     }
     
     public int memberNumRsId(int numOfMembers) {

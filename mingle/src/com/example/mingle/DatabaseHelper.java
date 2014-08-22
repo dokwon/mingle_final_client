@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -321,6 +322,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 		  for(int i = 0 ; i < 3; i++) {
 			  return_array.add(cursor.getString(0));
 			  if(!cursor.isLast()) cursor.moveToNext();
+			  else break;
 		  }
 		  cursor.close();
 		  db.close();
@@ -354,9 +356,8 @@ public class DatabaseHelper extends SQLiteOpenHelper  {
 			  user_obj.put("LOC_LONG", getMyLocLong());
 			  user_obj.put("DIST_LIM", getMyDistLim());
 			  ArrayList<String> photo_array = getPhotoPaths();
-			  user_obj.put("PIC_PATH_1", photo_array.get(0));
-			  user_obj.put("PIC_PATH_2", photo_array.get(1));
-			  user_obj.put("PIC_PATH_3", photo_array.get(2));
+			  JSONArray temp_arr = new JSONArray(photo_array);
+			  user_obj.put("PIC_PATH_ARR", temp_arr);
 		  } catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -8,6 +8,7 @@
   android:paddingLeft="@dimen/activity_horizontal_margin" 
   android:layout_height="match_parent" 
   android:layout_width="match_parent" 
+  android:id="@+id/main_parent"
   android:background="@color/titlebackgroundcolor"
   xmlns:tools="http://schemas.android.com/tools" 
   xmlns:android="http://schemas.android.com/apk/res/android">
@@ -204,7 +205,7 @@
 	
 	<ImageView 
 	    android:layout_width="@dimen/option_label_width" 
-	    android:layout_height="@dimen/option_label_height" 
+	    android:layout_height="@dimen/member_option_label_height" 
 	    android:background="@drawable/member"
 	    android:cropToPadding="true" 
 	    android:contentDescription="@string/photo_description"
@@ -216,7 +217,7 @@
 	    android:layout_marginTop="@dimen/option_margin"/>
 	<ImageView
 	    android:layout_height="wrap_content" 
-	    android:layout_width="wrap_content" 
+	    android:layout_width="match_parent" 
 	    android:id="@+id/member_background" 
 	    android:background="@color/photobackgroundcolor"
 	    android:layout_alignTop="@+id/memberlabel"
@@ -229,63 +230,87 @@
 	    android:layout_width="@dimen/member_counter_width" 
 	    android:id="@+id/member_1" 
 	    android:background="@drawable/peoplenumberpicon"
+	    android:adjustViewBounds="true"
 	    android:layout_alignTop="@+id/memberlabel"
 	    android:layout_alignBottom="@+id/memberlabel"
 	    android:layout_toRightOf="@+id/memberlabel"
-	    android:layout_margin="@dimen/small_margin"
+	    android:layout_marginTop="@dimen/small_margin"
+	     android:layout_marginBottom="@dimen/small_margin"
+	      android:layout_marginLeft="@dimen/member_margin"
+	       android:layout_marginRight="@dimen/member_margin"
 	    android:onClick="MemberNumberSelected"/>
 	
 	<Button 
 	    android:layout_height="wrap_content" 
 	    android:layout_width="@dimen/member_counter_width" 
+	    android:adjustViewBounds="true"
 	    android:id="@+id/member_2" 
 	    android:background="@drawable/peoplenumberpicon"
 	    android:layout_alignTop="@+id/memberlabel"
 	    android:layout_alignBottom="@+id/memberlabel"
 	    android:layout_toRightOf="@+id/member_1"
-	    android:layout_margin="@dimen/small_margin"
+	    android:layout_marginTop="@dimen/small_margin"
+	     android:layout_marginBottom="@dimen/small_margin"
+	      android:layout_marginLeft="@dimen/member_margin"
+	       android:layout_marginRight="@dimen/member_margin"
 	    android:onClick="MemberNumberSelected"/>
 	<Button 
 	    android:layout_height="wrap_content" android:layout_width="@dimen/member_counter_width" 
 	    android:id="@+id/member_3" 
+	    android:adjustViewBounds="true"
 	    android:background="@drawable/peoplenumberpicon"
 	    android:layout_alignTop="@+id/memberlabel"
 	    android:layout_alignBottom="@+id/memberlabel"
 	    android:layout_toRightOf="@+id/member_2"
-	    android:layout_margin="@dimen/small_margin"
+	    android:layout_marginTop="@dimen/small_margin"
+	     android:layout_marginBottom="@dimen/small_margin"
+	      android:layout_marginLeft="@dimen/member_margin"
+	       android:layout_marginRight="@dimen/member_margin"
 	    android:onClick="MemberNumberSelected"/>
 	<Button 
 	    android:layout_height="wrap_content" 
 	    android:layout_width="@dimen/member_counter_width" 
+	    android:adjustViewBounds="true"
 	    android:id="@+id/member_4" 
 	    android:background="@drawable/peoplenumberpicon"
 	    android:layout_alignTop="@+id/memberlabel"
 	    android:layout_alignBottom="@+id/memberlabel"
 	    android:layout_toRightOf="@+id/member_3"
-	    android:layout_margin="@dimen/small_margin"
+	    android:layout_marginTop="@dimen/small_margin"
+	     android:layout_marginBottom="@dimen/small_margin"
+	      android:layout_marginLeft="@dimen/member_margin"
+	       android:layout_marginRight="@dimen/member_margin"
 	    android:onClick="MemberNumberSelected"/>
 	<Button 
 	    android:layout_height="wrap_content" 
 	    android:layout_width="@dimen/member_counter_width" 
 	    android:id="@+id/member_5" 
+	    android:adjustViewBounds="true"
 	    android:background="@drawable/peoplenumberpicon"
 	    android:layout_alignTop="@+id/memberlabel"
 	    android:layout_alignBottom="@+id/memberlabel"
 	    android:layout_toRightOf="@+id/member_4"
-	    android:layout_margin="@dimen/small_margin"
+	    android:layout_marginTop="@dimen/small_margin"
+	     android:layout_marginBottom="@dimen/small_margin"
+	      android:layout_marginLeft="@dimen/member_margin"
+	       android:layout_marginRight="@dimen/member_margin"
 	    android:onClick="MemberNumberSelected"/>
 	<Button 
 	    android:layout_height="wrap_content" 
 	    android:layout_width="@dimen/member_counter_width" 
 	    android:id="@+id/member_6" 
+	    android:adjustViewBounds="true"
 	    android:background="@drawable/peoplenumberpicon"
 	    android:layout_alignTop="@+id/memberlabel"
 	    android:layout_alignBottom="@+id/memberlabel"
 	    android:layout_toRightOf="@+id/member_5"
-	    android:layout_margin="@dimen/small_margin"
+	    android:layout_marginTop="@dimen/small_margin"
+	     android:layout_marginBottom="@dimen/small_margin"
+	      android:layout_marginLeft="@dimen/member_margin"
+	       android:layout_marginRight="@dimen/member_margin"
 	    android:onClick="MemberNumberSelected"/>
 	
-	<Button 
+	<RelativeLayout
 	    android:layout_height="50dp" 
 	    android:layout_width="fill_parent" 
 	    android:id="@+id/enter_button" 
@@ -293,18 +318,35 @@
 	    android:layout_alignLeft="@+id/photoView1"
 	    android:layout_below="@+id/memberlabel"
 	    android:layout_marginTop="@dimen/option_margin"
-	    android:background="@drawable/enter"
-	    android:onClick="userCreateButtonPressed"/>
+	    android:background="@color/mingle_button_green"
+	    android:onClick="userCreateButtonPressed">
+			<ImageView
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_centerInParent="true"
+			    android:background="@drawable/entry_button" />
+			</RelativeLayout>
 	
-	<Button 
-	    android:layout_height="wrap_content" 
-	    android:layout_width="266dp" 
+	<RelativeLayout 
+	    android:layout_height="50dp" 
+	    android:layout_width="match_parent" 
+	    android:layout_alignRight="@+id/photoView3"
+	    android:background="@color/mingle_button_new_green"
 	    android:id="@+id/modify_button" 
 	    android:layout_alignLeft="@+id/photoView1"
 	    android:layout_below="@+id/memberlabel"
 	    android:layout_marginTop="@dimen/option_margin"
 	    android:text="edit"
-	    android:onClick="modifyUserData"/>
-	
+	    android:onClick="modifyUserData">
+			
+	    <ImageView
+	        	android:adjustViewBounds="true"
+			    android:layout_width="45dp"
+			    android:layout_height="25dp"
+			    android:layout_centerInParent="true"
+			    android:background="@drawable/edit_complete" />
+	    
+	    
+	</RelativeLayout>
 
 </RelativeLayout>

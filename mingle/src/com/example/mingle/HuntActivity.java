@@ -9,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar.LayoutParams;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -18,10 +17,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.app.ActionBar;
 import android.content.Context;
 
@@ -29,18 +26,14 @@ import com.example.mingle.MingleApplication;
 
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
 public class HuntActivity extends FragmentActivity implements ActionBar.TabListener	 {
 	public CandidateFragment candidateFragment;			//Fragment for list of candidates
 	public ChoiceFragment choiceFragment;				//Fragment for list of choices
@@ -52,32 +45,12 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	private ActionBar actionBar;
 	private ArrayList<Integer> tabOnIcons; 
 	private ArrayList<Integer> tabOffIcons;
-	 	
+		 	
 	//Set up Action bar
 	 @SuppressLint("NewApi")
 	private void customizeActionBar() {
 		// Set up the action bar to show tabs.
-		 
-	        actionBar = getActionBar();
-	        
-			View mCustomView = LayoutInflater.from(this).inflate(R.layout.custom_actionbar, null);
-			LayoutParams layout = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-			mCustomView.setLayoutParams(layout);
-	        actionBar.setCustomView(mCustomView);
-	        
-	        mCustomView.findViewById(R.id.preview_button).setVisibility(View.GONE);
-	        
-	        //actionBar.setBackgroundDrawable(new ColorDrawable(0xFFFFFFFF));
-	        actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_border));
-	        actionBar.setDisplayShowTitleEnabled(false);
-	        actionBar.setDisplayShowHomeEnabled(true);
-	        View homeIcon = findViewById(android.R.id.home);
-	        
-	        homeIcon.setVisibility(View.GONE);
-	        actionBar.setDisplayHomeAsUpEnabled(false);
-
-	        actionBar.setDisplayShowCustomEnabled(true);
-	        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		 	actionBar = ActionbarController.customizeActionBar(R.layout.custom_actionbar, this, 130, 0);
 	        
 	        // for each of the sections in the app, add a tab to the action bar.
 	        actionBar.addTab(actionBar.newTab().setCustomView(getViewForIcon(tabOffIcons.get(0)))
@@ -86,18 +59,8 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	            .setTabListener(this).setTag(R.string.tab2title));
 	        actionBar.addTab(actionBar.newTab().setCustomView(getViewForIcon(tabOffIcons.get(2)))
 	            .setTabListener(this).setTag(R.string.tab3title));
-	        ActionBar.LayoutParams params = (ActionBar.LayoutParams) actionBar.getCustomView().getLayoutParams();
-	        
+	       
 	        actionBar.setSelectedNavigationItem(1); 
-	        
-	        if(Integer.valueOf(android.os.Build.VERSION.SDK_INT) >= 14 && ViewConfiguration.get(this).hasPermanentMenuKey()) {
-	        	System.out.println("fdssadfdafsfasd");
-	        	params.setMargins(0, 0, 85, 0);
-	        } else { 
-	        	params.setMargins(95, 0, 0, 0);
-	        	actionBar.getCustomView().setLayoutParams(params);
-	        }
-	        
 	 }
 
 	@Override
@@ -142,11 +105,27 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	private ImageView getViewForIcon(int id) {
         ImageView image = new ImageView(this);
         image.setImageResource(id);
-        ActionBar.LayoutParams params = 
-        		new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, 
-        				ActionBar.LayoutParams.WRAP_CONTENT, 0x10|0x01);
-        params.setMargins(15, 15, 15, 15);
         
+        int width = 0 , height = 0;
+        switch(id) {
+        	case R.drawable.vote_tab_off :
+        		width = (int) getResources().getDimension(R.dimen.tab1_icon_width);
+        		height = (int) getResources().getDimension(R.dimen.tab1_icon_height);
+        	break;
+        	case R.drawable.chat_tab_off :
+        		width = (int) getResources().getDimension(R.dimen.tab2_icon_width);
+        		height = (int) getResources().getDimension(R.dimen.tab2_icon_height);
+        	break;
+        	case R.drawable.choice_tab_off :
+        		width = (int) getResources().getDimension(R.dimen.tab3_icon_width);
+        		height = (int) getResources().getDimension(R.dimen.tab3_icon_height);
+        	break;
+        }
+        
+        ActionBar.LayoutParams params = 
+        		new ActionBar.LayoutParams(width, 
+        				height, 0x10|0x01);
+      
         image.setLayoutParams(params);
         
         image.requestLayout();
