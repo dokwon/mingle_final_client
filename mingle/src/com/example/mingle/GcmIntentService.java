@@ -114,7 +114,6 @@ public class GcmIntentService extends IntentService {
 				       .setAutoCancel(true);	
 		
 		builder.setContentIntent(contentIntent);
-		NOTIFICATION_ID = (NOTIFICATION_ID + 1) % 10;
 		mNotificationManager.notify(NOTIFICATION_ID, builder.build());
     }
     

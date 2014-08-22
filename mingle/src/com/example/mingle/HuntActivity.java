@@ -376,7 +376,8 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 						app.addMingleUser(candidate);
 					}
 					if(!candidate.isPicAvail(0)) new ImageDownloader(this.getApplicationContext(), candidate.getUid(), 0).execute();
-					
+					if(!candidate.isPicAvail(-1)) new ImageDownloader(this.getApplicationContext(), candidate.getUid(), -1).execute();
+
 					app.addCandidate(shownUser.getString("UID"));
 				} catch (JSONException e){
 					e.printStackTrace();

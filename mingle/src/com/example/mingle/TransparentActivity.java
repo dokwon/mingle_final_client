@@ -16,14 +16,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.TextView;
 
 public class TransparentActivity extends Activity {
 
 	public final static String DATA_BUNDLE = "com.example.mingle.DATA_BUNDLE";
 	
-	static final int TIME_OUT = 3000;
+	static final int TIME_OUT = 2500;
     static final int MSG_DISMISS_DIALOG = 0;
 	private AlertDialog popupDialog;
 	private TimeoutHandler mHandler;
@@ -64,38 +69,56 @@ public class TransparentActivity extends Activity {
 	@Override
 	protected void onResume(){
 		super.onResume();
+
 		Bundle data = getIntent().getBundleExtra(GcmIntentService.DATA_BUNDLE);
 		final String uid = data.getString("send_uid");
 		MingleUser send_user = app.getMingleUser(uid);
+		
+		View layout = getLayoutInflater().inflate(R.layout.dialog, null);
+		
+		RoundedImageView user_pic=(RoundedImageView)layout.findViewById(R.id.noti_sender_image);
+		user_pic.setImageDrawable(send_user.getPic(-1));
+		TextView user_name = (TextView)layout.findViewById(R.id.noti_sender_name);
+		user_name.setText(send_user.getName());
+        user_name.setTypeface(app.koreanTypeFace);
+        TextView msg_view = (TextView)layout.findViewById(R.id.noti_msg);
+    	msg_view.setText(data.getString("msg"));
+    	
+    	layout.setOnClickListener(new View.OnClickListener() {
+    		@Override
+    		public void onClick(View view){
+    			Intent chat_intent = new Intent(context, ChatroomActivity.class);
+				chat_intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+				chat_intent.putExtra(ChatroomActivity.USER_UID, uid);
+				startActivity(chat_intent);
+				popupDialog.dismiss();
+				finish();
+				overridePendingTransition(0, 0);
+    		}
+    	});
+    	
 		AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
-												.setTitle(send_user.getName())
-												.setCancelable(false)
-												.setMessage(data.getString("msg"))
-												.setIcon(R.drawable.icon_tiny)
-												.setPositiveButton(getResources().getString(R.string.view), new DialogInterface.OnClickListener() {
+												.setCancelable(true)
+												.setOnCancelListener(new DialogInterface.OnCancelListener() {
 													@Override
-													public void onClick(DialogInterface dialog, int id) {
-														Intent chat_intent = new Intent(context, ChatroomActivity.class);
-														chat_intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-														chat_intent.putExtra(ChatroomActivity.USER_UID, uid);
-														startActivity(chat_intent);
-														dialog.dismiss();
+													public void onCancel(DialogInterface dialog) {
 														finish();
 														overridePendingTransition(0, 0);
 													}
 												})
-												.setNegativeButton(getResources().getString(R.string.close), new DialogInterface.OnClickListener() {
-													@Override
-													public void onClick(DialogInterface dialog, int id) {
-														dialog.dismiss();
-														finish();
-														overridePendingTransition(0, 0);
-													}
-												});
-		
+												.setView(layout);
+										
 		popupDialog = popupBuilder.create();
-		popupDialog.show();
+		popupDialog.setCanceledOnTouchOutside(true);
 		
+	    Window window = popupDialog.getWindow();
+		WindowManager.LayoutParams wlp = window.getAttributes();
+		wlp.gravity = Gravity.TOP;
+		wlp.y += 300;
+		window.setAttributes(wlp);
+
+        popupDialog.show();
+
 		mHandler = new TimeoutHandler(popupDialog, this);
 		mHandler.sendEmptyMessageDelayed(MSG_DISMISS_DIALOG, TIME_OUT);
 	}
