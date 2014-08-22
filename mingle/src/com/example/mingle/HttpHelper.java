@@ -55,6 +55,8 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     
     private Lock newUserLock = new ReentrantLock();
     private Condition newUserFetched = newUserLock.newCondition();
+    private Lock deactLock = new ReentrantLock();
+    private Condition deactResult = deactLock.newCondition();
     
     /* Constructor for HttpHelper */
     public HttpHelper(String url, MingleApplication curApp){
@@ -361,6 +363,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     
     /* Request user's deactivation to the server */
     public void requestDeactivation(String uid){
+    	deactLock.lock();
     	String baseURL = server_url;
     	baseURL += "deactivate?";
     	baseURL += "uid=" + uid;
@@ -368,6 +371,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	final String deactURL = baseURL;
     	new Thread(new Runnable() {
     		public void run() {
+    			deactLock.lock();
     			HttpClient client = new DefaultHttpClient();
     	        HttpGet poster = new HttpGet(deactURL);
 				try {
@@ -384,8 +388,10 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
 					e.printStackTrace();
 				}
+				deactResult.signal();
     		}
     	}).start();	
+    	deactResult.awaitUninterruptibly();
     }
 
     public void getNewUser(String uid, final String user_type) {
@@ -414,10 +420,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 				newUserFetched.signal();
     		}
     	}).start();	
-    	
-
     	newUserFetched.awaitUninterruptibly();
-	
     }
     
     //@Override
