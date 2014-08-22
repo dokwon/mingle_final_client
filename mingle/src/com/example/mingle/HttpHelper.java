@@ -9,9 +9,12 @@ import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 
 import java.net.*;
-
 import java.util.ArrayList;
 
+
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.example.mingle.MingleUser;        
 
@@ -24,6 +27,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.*;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -48,6 +52,9 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 
     private String server_url;				//URL of server
     private MingleApplication app;
+    
+    private Lock newUserLock = new ReentrantLock();
+    private Condition newUserFetched = newUserLock.newCondition();
     
     /* Constructor for HttpHelper */
     public HttpHelper(String url, MingleApplication curApp){
@@ -381,6 +388,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     }
 
     public void getNewUser(String uid, final String user_type) {
+    	newUserLock.lock();
     	String baseURL = server_url;
     	baseURL += "get_user?";
     	baseURL += "uid=" + uid;
@@ -389,6 +397,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	final String new_uid = uid;
     	new Thread(new Runnable() {
     		public void run() {
+    			newUserLock.lock();
     			HttpClient client = new DefaultHttpClient();
     	        HttpGet poster = new HttpGet(getUserURL);
     	        HttpResponse response = null;
@@ -401,9 +410,13 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				newUserFetched.signal();
     		}
-
     	}).start();	
+    	
+
+    	newUserFetched.awaitUninterruptibly();
+	
     }
     
     //@Override

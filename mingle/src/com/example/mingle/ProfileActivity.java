@@ -93,7 +93,9 @@ public class ProfileActivity extends Activity {
          String type = intent.getExtras().getString(ProfileActivity.PROFILE_TYPE);
          
          MingleApplication app = ((MingleApplication) this.getApplication());
-         ((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancel(GcmIntentService.getNotificationId(uid));
+         int id = GcmIntentService.getNotificationId(uid);
+         if(id != -1)
+        	 ((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancel(id);
 
          if(type.equals("preview") || type.equals("setting")) user = app.getMyUser();
          else user = app.getMingleUser(uid);

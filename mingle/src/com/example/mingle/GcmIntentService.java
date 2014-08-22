@@ -98,6 +98,7 @@ public class GcmIntentService extends IntentService {
     private void sendVoteNotification(Bundle data) {
         mNotificationManager = (NotificationManager)this.getSystemService(NOTIFICATION_SERVICE);
         MingleApplication app = (MingleApplication)this.getApplicationContext();
+        String user_type = "candidate";
         String voter_uid = data.getString("voter_uid");
         MingleUser user = app.getMingleUser(voter_uid);
 		if(user == null) {
@@ -109,14 +110,17 @@ public class GcmIntentService extends IntentService {
 			int candidate_pos = app.getCandidatePos(voter_uid);
 			if(candidate_pos < 0){
 				int choice_pos = app.getChoicePos(voter_uid);
-				if(choice_pos < 0) app.addCandidate(voter_uid);
-			}			
+				if(choice_pos < 0) {
+					app.addCandidate(voter_uid);
+					user_type = "choice";
+				} else user_type = "popular";
+			}
 		}
         
 		Intent profile_intent = new Intent(app, ProfileActivity.class);
  		profile_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
  		profile_intent.putExtra(ProfileActivity.PROFILE_UID, data.getString("voter_uid"));
-        profile_intent.putExtra(ProfileActivity.PROFILE_TYPE, "candidate");
+        profile_intent.putExtra(ProfileActivity.PROFILE_TYPE, user_type);
         
         PendingIntent contentIntent = PendingIntent.getActivity(this, 1, profile_intent, PendingIntent.FLAG_UPDATE_CURRENT);
         CharSequence tickerTxt = (CharSequence)(data.getString("name") + "님이 당신을 투표하였습니다.");
@@ -177,7 +181,7 @@ public class GcmIntentService extends IntentService {
     }
 
     public static int getNotificationId(String uid) {
-    	return notificationMap.get(uid);
+    	return (notificationMap.get(uid) == null? -1 : notificationMap.get(uid));
     }
        
     public static void resetNumMsgNotification() {
