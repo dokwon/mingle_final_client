@@ -180,14 +180,6 @@
 		android:layout_toRightOf="@+id/sexlabel"
 		
 	    android:orientation="horizontal" >
-	
-			<Button 
-			    android:layout_weight="1"
-			    android:layout_height="match_parent" 
-			    android:layout_width="match_parent" 
-			    android:id="@+id/manbutton" 
-			   android:background="@drawable/genderchoice_man"
-			    android:onClick="SexOptionChanged"/>
 			<Button 
 			    android:layout_weight="1"
 			    android:layout_height="match_parent" 
@@ -195,6 +187,14 @@
 			    android:id="@+id/womanbutton" 
 			    android:background="@drawable/genderchoice_notwoman"
 			    android:onClick="SexOptionChanged"/>
+			<Button 
+			    android:layout_weight="1"
+			    android:layout_height="match_parent" 
+			    android:layout_width="match_parent" 
+			    android:id="@+id/manbutton" 
+			   android:background="@drawable/genderchoice_man"
+			    android:onClick="SexOptionChanged"/>
+			
 	</LinearLayout>
 	
 	<!-- 

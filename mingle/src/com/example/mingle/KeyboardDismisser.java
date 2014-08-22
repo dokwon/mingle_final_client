@@ -23,10 +23,10 @@ public class KeyboardDismisser {
 
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
-					//if(v.getOnClickListener() != null)v.performClick();
+					v.performClick();
 					if(activity.getCurrentFocus() != null)
 						hideSoftKeyboard(activity);
-					return false;
+					return true;
 				}
 	    		
 	    	});

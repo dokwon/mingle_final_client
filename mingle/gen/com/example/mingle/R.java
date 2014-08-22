@@ -1667,28 +1667,29 @@ containing a value of this type.
         public static final int preview=0x7f0200b6;
         public static final int profile_photo_current=0x7f0200b7;
         public static final int profile_photo_notcurrent=0x7f0200b8;
-        public static final int progress=0x7f0200b9;
-        public static final int proicon=0x7f0200ba;
-        public static final int queen_symbol=0x7f0200bb;
-        public static final int range=0x7f0200bc;
-        public static final int searchsetting=0x7f0200bd;
-        public static final int selectoff=0x7f0200be;
-        public static final int selecton=0x7f0200bf;
-        public static final int setting=0x7f0200c0;
-        public static final int shadow=0x7f0200c1;
-        public static final int shadow_black=0x7f0200c2;
-        public static final int speechbubble=0x7f0200c3;
-        public static final int title_bar_shadow=0x7f0200c4;
-        public static final int title_border=0x7f0200c5;
-        public static final int toast_frame=0x7f0200c6;
-        public static final int unselectoff=0x7f0200c7;
-        public static final int unselecton=0x7f0200c8;
-        public static final int vote=0x7f0200c9;
-        public static final int vote_button=0x7f0200ca;
-        public static final int vote_profile=0x7f0200cb;
-        public static final int vote_tab_off=0x7f0200cc;
-        public static final int vote_tab_on=0x7f0200cd;
-        public static final int vote_time_error=0x7f0200ce;
+        public static final int profilesetting=0x7f0200b9;
+        public static final int progress=0x7f0200ba;
+        public static final int proicon=0x7f0200bb;
+        public static final int queen_symbol=0x7f0200bc;
+        public static final int range=0x7f0200bd;
+        public static final int searchsetting=0x7f0200be;
+        public static final int selectoff=0x7f0200bf;
+        public static final int selecton=0x7f0200c0;
+        public static final int setting=0x7f0200c1;
+        public static final int shadow=0x7f0200c2;
+        public static final int shadow_black=0x7f0200c3;
+        public static final int speechbubble=0x7f0200c4;
+        public static final int title_bar_shadow=0x7f0200c5;
+        public static final int title_border=0x7f0200c6;
+        public static final int toast_frame=0x7f0200c7;
+        public static final int unselectoff=0x7f0200c8;
+        public static final int unselecton=0x7f0200c9;
+        public static final int vote=0x7f0200ca;
+        public static final int vote_button=0x7f0200cb;
+        public static final int vote_profile=0x7f0200cc;
+        public static final int vote_tab_off=0x7f0200cd;
+        public static final int vote_tab_on=0x7f0200ce;
+        public static final int vote_time_error=0x7f0200cf;
     }
     public static final class id {
         public static final int ActionBarWrapper=0x7f060095;
@@ -1704,7 +1705,7 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f06002e;
         public static final int action_menu_presenter=0x7f06002f;
         public static final int action_mode_close_button=0x7f06003c;
-        public static final int action_settings=0x7f0600b6;
+        public static final int action_settings=0x7f0600b5;
         public static final int activity_chooser_view_content=0x7f06003d;
         public static final int add1=0x7f06005f;
         public static final int add2=0x7f060060;
@@ -1767,7 +1768,7 @@ containing a value of this type.
         public static final int load_more_progressBar=0x7f06009e;
         public static final int main_parent=0x7f06005a;
         public static final int maleTopLogo=0x7f0600aa;
-        public static final int male_vote_rl=0x7f0600b2;
+        public static final int male_vote_rl=0x7f0600b1;
         public static final int manbutton=0x7f060065;
         public static final int match_parent=0x7f060012;
         public static final int member_1=0x7f060069;
@@ -1838,9 +1839,9 @@ containing a value of this type.
         public static final int sender_name=0x7f06008f;
         public static final int setting_list=0x7f0600a6;
         public static final int setting_option=0x7f0600a7;
-        public static final int setting_option_delete=0x7f0600b9;
-        public static final int setting_option_profile=0x7f0600b7;
-        public static final int setting_option_search=0x7f0600b8;
+        public static final int setting_option_delete=0x7f0600b8;
+        public static final int setting_option_profile=0x7f0600b6;
+        public static final int setting_option_search=0x7f0600b7;
         public static final int sexlabel=0x7f060064;
         public static final int shadow_wrapper=0x7f060071;
         public static final int shortcut=0x7f060046;
@@ -1856,15 +1857,14 @@ containing a value of this type.
         public static final int titleLogo=0x7f060096;
         public static final int title_icon=0x7f06009f;
         public static final int top_action_bar=0x7f060038;
-        public static final int top_female_background=0x7f0600ae;
-        public static final int top_female_image=0x7f0600af;
-        public static final int top_female_name=0x7f0600b1;
-        public static final int top_female_rank=0x7f0600b0;
+        public static final int top_female_image=0x7f0600ae;
+        public static final int top_female_name=0x7f0600b0;
+        public static final int top_female_rank=0x7f0600af;
         public static final int top_line=0x7f06009d;
         public static final int top_list=0x7f0600ac;
-        public static final int top_male_image=0x7f0600b3;
-        public static final int top_male_name=0x7f0600b5;
-        public static final int top_male_rank=0x7f0600b4;
+        public static final int top_male_image=0x7f0600b2;
+        public static final int top_male_name=0x7f0600b4;
+        public static final int top_male_rank=0x7f0600b3;
         public static final int txt_inputText=0x7f060056;
         public static final int up=0x7f060039;
         public static final int useLogo=0x7f06001c;
@@ -2209,17 +2209,19 @@ containing a value of this type.
          */
         public static final int AppTheme=0x7f090093;
         public static final int ChatRoomImage=0x7f09009f;
-        public static final int ChatRoomRank=0x7f0900a1;
+        public static final int ChatRoomRank=0x7f0900a3;
         /**   Chat Room Theme 
          */
         public static final int ChatRoomTheme=0x7f090095;
+        public static final int ChatSnippetTitle=0x7f0900a0;
+        public static final int ChatroomTitle=0x7f0900a1;
         /**  the theme applied to the application or activity 
          */
         public static final int CustomActionBarTheme=0x7f090090;
         /**   Title Bar Theme 
          */
         public static final int MainTheme=0x7f090094;
-        public static final int MsgStyle=0x7f0900a3;
+        public static final int MsgStyle=0x7f0900a5;
         /**  ActionBar tabs styles 
          */
         public static final int MyActionBarTabs=0x7f090091;
@@ -2228,7 +2230,7 @@ containing a value of this type.
         public static final int MyListBackContent=0x7f090098;
         public static final int MyListButtonAction=0x7f09009b;
         public static final int MyListFrontContent=0x7f090099;
-        public static final int MyListTitle=0x7f0900a0;
+        public static final int MyListTitle=0x7f0900a2;
         /**   Photo View Theme 
          */
         public static final int PictureViewTheme=0x7f090096;
@@ -2341,9 +2343,9 @@ containing a value of this type.
         /**  Base platform-dependent theme providing a light-themed activity. 
          */
         public static final int Theme_Base_Light=0x7f090083;
-        public static final int Theme_Intro=0x7f0900a5;
-        public static final int Theme_SplashScreen=0x7f0900a6;
-        public static final int Theme_Transparent=0x7f0900a2;
+        public static final int Theme_Intro=0x7f0900a7;
+        public static final int Theme_SplashScreen=0x7f0900a8;
+        public static final int Theme_Transparent=0x7f0900a4;
         public static final int UserListImage=0x7f09009c;
         public static final int VoteProfileBackground=0x7f09009d;
         public static final int VoteProfileImage=0x7f09009e;
@@ -2451,7 +2453,7 @@ containing a value of this type.
         public static final int Widget_AppCompat_ProgressBar_Horizontal=0x7f09000d;
         public static final int Widget_AppCompat_Spinner_DropDown_ActionBar=0x7f090026;
         public static final int WindowTitleBackground=0x7f090097;
-        public static final int newMsgNumStyle=0x7f0900a4;
+        public static final int newMsgNumStyle=0x7f0900a6;
         public static final int thin_ab_style=0x7f09008f;
     }
     public static final class styleable {

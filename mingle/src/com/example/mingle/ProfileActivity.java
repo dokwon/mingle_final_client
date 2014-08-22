@@ -342,7 +342,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 	  public void onDestroy(){
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(imageUpdateReceiver);
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(httpErrorReceiver);
-
+		  
 		  super.onDestroy();
 	  }
 

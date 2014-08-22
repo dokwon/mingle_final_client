@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ChoiceAdapter extends ArrayAdapter {
@@ -43,16 +44,17 @@ public class ChoiceAdapter extends ArrayAdapter {
       	  holder = new NewsHolder();
 
       	  holder.msg_view = (TextView)row.findViewById(R.id.msg);
+      	  holder.msg_view.setTypeface(app.koreanTypeFace);
       	  holder.user_pic=(RoundedImageView)row.findViewById(R.id.sender_image);
       	  holder.user_name = (TextView)row.findViewById(R.id.sender_name);
       	  holder.new_msg_num = (TextView)row.findViewById(R.id.new_msg_num);
           holder.user_name.setTypeface(app.koreanBoldTypeFace);
-      	 
+      	  holder.num_pic = (ImageView)row.findViewById(R.id.choice_member_num);
       	  row.setTag(holder);
         } else {
       	  holder = (NewsHolder)row.getTag();
         }
-
+        
         //Set values for this row
        final String choice_uid = (String)data.get(position);
         MingleUser choice = app.getMingleUser(choice_uid);
@@ -63,12 +65,18 @@ public class ChoiceAdapter extends ArrayAdapter {
         if(new_msg_num > 0) holder.new_msg_num.setText(String.valueOf(new_msg_num));
         else holder.new_msg_num.setVisibility(View.GONE);
         holder.user_pic.setImageDrawable(choice.getPic(-1));
+        
+
+  	  holder.num_pic.setImageResource(app.memberNumRsId(choice.getNum()));
+  	  
+        
         return row;
 
     }
 
     
     static class NewsHolder{
+    	ImageView num_pic;
   	  TextView msg_view;
   	  TextView user_name;
   	  TextView new_msg_num;

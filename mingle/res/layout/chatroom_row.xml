@@ -32,26 +32,33 @@
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/sender_image"
                 android:layout_alignTop="@+id/sender_image"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="-2dp"
                 android:layout_marginLeft="8dp"
                 style="@style/MyListTitle"
                 android:id="@+id/sender_name"/>
 
 
-	<ImageView
-					                android:layout_width="@dimen/member_icon_width"
-							android:layout_height="@dimen/member_icon_height"
+						<ImageView
+					        android:layout_width="wrap_content"
+		                	android:layout_height="wrap_content"
 							android:layout_toRightOf="@+id/sender_name"
+							android:layout_alignTop="@+id/sender_name"
 							android:layout_alignBottom="@+id/sender_name"
+							android:paddingTop="3dp"
+							android:paddingBottom="3dp"
+							android:adjustViewBounds="true"
 							android:layout_marginLeft="2dp"
 					                android:src="@drawable/numberpic"
 					                android:id="@+id/choice_member_num_icon"/>
 						         <ImageView
 						             android:contentDescription="@string/photo_description"
 					                	android:layout_width="@dimen/member_num_width"
-								android:layout_height="@dimen/member_num_height"
-								android:layout_marginLeft="@dimen/member_num_and_icon_margin"
-					                	android:layout_toRightOf="@+id/choice_member_num_icon"
+									android:layout_height="@dimen/member_num_height"
+									android:paddingTop="3dp"
+									android:paddingBottom="3dp"
+									android:adjustViewBounds="true"
+									android:layout_marginLeft="-7dp"
+					                android:layout_toRightOf="@+id/choice_member_num_icon"
 							        android:layout_alignBottom="@+id/choice_member_num_icon"
 					                	android:id="@+id/choice_member_num"/>
 						      
@@ -64,7 +71,7 @@
                 android:layout_below="@id/sender_name"
                 android:layout_marginBottom="2dp"
                 android:layout_marginLeft="8dp"
-                style="@style/MyListTitle"
+                style="@style/ChatSnippetTitle"
                 android:id="@+id/msg"/>
 
  

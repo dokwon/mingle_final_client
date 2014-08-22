@@ -412,11 +412,13 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 					e.printStackTrace();
 				}
 				newUserFetched.signal();
+				newUserLock.unlock();
     		}
     	}).start();	
     	
 
     	newUserFetched.awaitUninterruptibly();
+    	newUserLock.unlock();
 	
     }
     
