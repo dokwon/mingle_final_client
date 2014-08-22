@@ -51,6 +51,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
     
     @Override
     protected void onNewIntent(Intent intent) {
+    	super.onNewIntent(intent);
     	setIntent(intent);
     }
    
@@ -333,6 +334,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 	    public void onBackPressed(){
 	    	if(this.isTaskRoot()){
 	    		Intent huntIntent = new Intent(this, HuntActivity.class);
+	        	huntIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 	    		startActivity(huntIntent);
 	    	}
 	    	super.onBackPressed();

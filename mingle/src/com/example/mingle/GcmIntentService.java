@@ -117,12 +117,12 @@ public class GcmIntentService extends IntentService {
 			}
 		}
         
-		Intent profile_intent = new Intent(app, ProfileActivity.class);
+		Intent profile_intent = new Intent(this, ProfileActivity.class);
  		profile_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
  		profile_intent.putExtra(ProfileActivity.PROFILE_UID, data.getString("voter_uid"));
         profile_intent.putExtra(ProfileActivity.PROFILE_TYPE, user_type);
         
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 1, profile_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, profile_intent, PendingIntent.FLAG_UPDATE_CURRENT);
         CharSequence tickerTxt = (CharSequence)(data.getString("name") + "님이 당신을 투표하였습니다.");
         
 		builder = new NotificationCompat.Builder(this)
@@ -147,12 +147,12 @@ public class GcmIntentService extends IntentService {
         mNotificationManager = (NotificationManager)this.getSystemService(NOTIFICATION_SERVICE);
         MingleUser send_user = ((MingleApplication)this.getApplication()).getMingleUser(data.getString("send_uid"));
         
-		Intent chat_intent = new Intent((MingleApplication)this.getApplicationContext(), ChatroomActivity.class);
+		Intent chat_intent = new Intent(this, ChatroomActivity.class);
  		chat_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		chat_intent.putExtra(ChatroomActivity.USER_UID, data.getString("send_uid"));
 		chat_intent.putExtra(ChatroomActivity.FROM_GCM, true);
 		
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 1, chat_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, chat_intent, PendingIntent.FLAG_UPDATE_CURRENT);
         CharSequence tickerTxt = (CharSequence)(send_user.getName() + ": " + data.getString("msg"));
         
 		builder = new NotificationCompat.Builder(this)
