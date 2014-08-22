@@ -21,6 +21,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.app.ActionBar.LayoutParams;
 import android.content.Context;
@@ -475,23 +476,11 @@ public class MingleApplication extends Application {
         else return true;
     }
     
-    /*
-    private void clearUserMapData() {
-    	Iterator<Entry<String, MingleUser>> it = user_map.entrySet().iterator();
-    	while(it.hasNext()) {
-    		ConcurrentHashMap.Entry<String, MingleUser> pairs = (ConcurrentHashMap.Entry<String, MingleUser>)it.next();
-    		MingleUser user = (MingleUser)pairs.getValue();
-    		
-    		for(int i = -1 ; i < 3 ; i++) {
-    			if(user.isPicAvail(i)){
-    			}
-    		}
-    	}
-    }*/
-    
     public void deactivateApp(Context context){
     	String uid = this.my_user.getUid();
-        this.socketHelper.disconnectSocket();
+    	this.connectHelper.requestDeactivation(uid);
+
+    	this.socketHelper.disconnectSocket();
         this.dbHelper.deleteAll();
         
         photoPaths.clear();
@@ -500,7 +489,8 @@ public class MingleApplication extends Application {
         choices.clear();
         pop_users.clear();
         
-        this.connectHelper.requestDeactivation(uid);
+        ((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancelAll();
+        GcmIntentService.clearNotificationData();
 
         notification_on = true;
         for(int i = 0 ; i < 5 ; i++) groupNumFilter[i] = true;

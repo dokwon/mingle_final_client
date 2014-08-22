@@ -494,12 +494,6 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	  @Override
 	  public void onResume(){
 	        super.onRestart();
-	        
-	        for(int i = 0; i < GcmIntentService.getNumVoteNotification(); i++) {
-	        	((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancel(i);
-	        }
-	        
-	        GcmIntentService.resetNumVoteNotification();
 	        candidateListUpdate();
 	        choiceListUpdate();
 	  }

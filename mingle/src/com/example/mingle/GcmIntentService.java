@@ -1,5 +1,6 @@
 package com.example.mingle;
 
+import java.util.HashMap;
 import java.util.Set;
 
 import org.json.JSONException;
@@ -9,18 +10,12 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 public class GcmIntentService extends IntentService {
@@ -31,9 +26,13 @@ public class GcmIntentService extends IntentService {
     static final String TAG = "GCM Demo";
 	public final static String DATA_BUNDLE = "com.example.mingle.DATA_BUNDLE";
 
-	private static int numVoteNotification = 0;
+	private static int NEXT_NOTIFICATION_ID = 0;
 	private static int numMsgNotification = 0;
 
+	private static HashMap<String, Integer> notificationMap = new HashMap<String, Integer>();
+	
+	/*TODO clear notification map */
+	
     public GcmIntentService() {
         super("GcmIntentService");
     }
@@ -132,8 +131,9 @@ public class GcmIntentService extends IntentService {
 				       .setAutoCancel(true);	
 		
 		builder.setContentIntent(contentIntent);
-		mNotificationManager.notify(numVoteNotification, builder.build());
-		numVoteNotification++;
+		mNotificationManager.notify(NEXT_NOTIFICATION_ID, builder.build());
+		notificationMap.put(voter_uid, NEXT_NOTIFICATION_ID);
+		NEXT_NOTIFICATION_ID++;
     }
     
     // Put the message into a notification and post it.
@@ -151,7 +151,6 @@ public class GcmIntentService extends IntentService {
         PendingIntent contentIntent = PendingIntent.getActivity(this, 1, chat_intent, PendingIntent.FLAG_UPDATE_CURRENT);
         CharSequence tickerTxt = (CharSequence)(send_user.getName() + ": " + data.getString("msg"));
         
-        numMsgNotification ++;
 		builder = new NotificationCompat.Builder(this)
 				       .setSmallIcon(R.drawable.icon_tiny)
 				       .setLargeIcon(((BitmapDrawable)send_user.getPic(-1)).getBitmap())
@@ -161,6 +160,7 @@ public class GcmIntentService extends IntentService {
 				       .setDefaults(Notification.DEFAULT_ALL)
 				       .setAutoCancel(true);	
 		
+		numMsgNotification ++;
 		if(numMsgNotification > 1)
 			builder.setContentInfo(Integer.toString(numMsgNotification));
 		
@@ -175,16 +175,17 @@ public class GcmIntentService extends IntentService {
     	dispatcher.putExtra(DATA_BUNDLE, data);		
 		startActivity(dispatcher);
     }
-    
-    public static int getNumVoteNotification() {
-    	return numVoteNotification;
+
+    public static int getNotificationId(String uid) {
+    	return notificationMap.get(uid);
     }
-    
-    public static void resetNumVoteNotification() {
-    	numVoteNotification = 0;
-    }
-    
+       
     public static void resetNumMsgNotification() {
+    	numMsgNotification = 0;
+    }
+    
+    public static void clearNotificationData() {
+    	notificationMap.clear();
     	numMsgNotification = 0;
     }
 }
