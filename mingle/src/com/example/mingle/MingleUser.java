@@ -20,6 +20,7 @@ public class MingleUser {
 	boolean voted;
 	ArrayList<Message> msg_list;
 	int my_msg_counter;
+	int new_msg_num;
     boolean inChat;
     float distance;
 
@@ -42,9 +43,13 @@ public class MingleUser {
         	  pics_bool.add(false);
           }
           this.distance = distance;
-          
+          this.new_msg_num = 0;
     }
 
+    public void setDistance(float dist){
+    	this.distance = dist;
+    }
+    
     public float getDistance(){
     	return this.distance;
     }
@@ -134,6 +139,11 @@ public class MingleUser {
     	pics_bool.add(true);
     }
     
+    public void addBlankPic(Drawable pic){
+    	pics.add(pic);
+    	pics_bool.add(false);
+    }
+    
     public void clearPics(){
     	pics.clear();
     	pics_bool.clear();
@@ -189,6 +199,17 @@ public class MingleUser {
 		return null;
 	}
     
+    public void incrNewMsgNum(){
+    	this.new_msg_num++;
+    }
+    
+    public void zeroNewMsgNum(){
+    	this.new_msg_num = 0;
+    }
+    
+    public int getNewMsgNum(){
+    	return this.new_msg_num;
+    }
     class MsgComparator implements Comparator<Message> {
         public int compare(Message msg1, Message msg2) {
         	return (msg1.getTimestamp()).compareTo(msg2.getTimestamp());

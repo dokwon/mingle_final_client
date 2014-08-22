@@ -16,6 +16,7 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -39,8 +40,7 @@ public class ProfileActivity extends Activity {
     @SuppressLint("NewApi")
 	private void resizeProfilePic() {
     	final Display display = getWindowManager().getDefaultDisplay();
-    	
-    	
+    
     	@SuppressWarnings("deprecation")
 		int height = display.getHeight();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
@@ -55,6 +55,10 @@ public class ProfileActivity extends Activity {
     	layout.setLayoutParams(params);
     }
     
+    @Override
+    protected void onNewIntent(Intent intent) {
+    	setIntent(intent);
+    }
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +75,19 @@ public class ProfileActivity extends Activity {
 	    
 	    viewFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
          
-         Intent intent = getIntent();
+         LocalBroadcastManager.getInstance(this).registerReceiver(imageUpdateReceiver,
+        		  new IntentFilter(ImageDownloader.UPDATE_PROFILE));
+         
+         LocalBroadcastManager.getInstance(this).registerReceiver(voteResultReceiver,
+        		  new IntentFilter(HttpHelper.HANDLE_VOTE_RESULT));
+         
+         LocalBroadcastManager.getInstance(this).registerReceiver(httpErrorReceiver,
+         		  new IntentFilter(HttpHelper.HANDLE_HTTP_ERROR));
+	}
+	
+	@Override
+	protected void onResume(){
+		 Intent intent = getIntent();
          String uid = intent.getExtras().getString(ProfileActivity.PROFILE_UID);
          String type = intent.getExtras().getString(ProfileActivity.PROFILE_TYPE);
          
@@ -92,15 +108,6 @@ public class ProfileActivity extends Activity {
         	 viewFlipper.addView(single_photo_layout);
          }
          
-         LocalBroadcastManager.getInstance(this).registerReceiver(imageUpdateReceiver,
-        		  new IntentFilter(ImageDownloader.UPDATE_PROFILE));
-         
-         LocalBroadcastManager.getInstance(this).registerReceiver(voteResultReceiver,
-        		  new IntentFilter(HttpHelper.HANDLE_VOTE_RESULT));
-         
-         LocalBroadcastManager.getInstance(this).registerReceiver(httpErrorReceiver,
-         		  new IntentFilter(HttpHelper.HANDLE_HTTP_ERROR));
-         
          ImageView num_view = (ImageView) findViewById(R.id.profile_member_num);
          num_view.setImageResource(app.memberNumRsId(user.getNum()));
          TextView name_view = (TextView) findViewById(R.id.profile_user_name);
@@ -115,6 +122,7 @@ public class ProfileActivity extends Activity {
         
          if(type.equals("preview") || type.equals("setting")){
         	 vote_button.setVisibility(View.GONE);
+        	 dist_view.setVisibility(View.GONE);
          } else {
         	 getNewImage(0);
          }
@@ -140,6 +148,8 @@ public class ProfileActivity extends Activity {
 		LinearLayout photoCounterWrapper = (LinearLayout) findViewById(R.id.photo_indicators);
 		for(int i = 0; i < photo_num; i++) {
             ImageView indicator = new ImageView(this);
+            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(R.dimen.indicator_size,R.dimen.indicator_size);
+            indicator.setLayoutParams(params);
             indicator.setPadding(8, 0, 8, 15);
             if(i == 0) {
             	indicator.setImageResource(R.drawable.profile_photo_current);
@@ -212,7 +222,6 @@ public class ProfileActivity extends Activity {
     }
     
     public void getNewImage(int photo_index){
-    	System.out.println("photo index: " + photo_index);
     	if(photo_index < 0 || photo_index >= photo_num) return;
     	
 		if(!user.isPicAvail(photo_index)){

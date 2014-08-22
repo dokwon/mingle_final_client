@@ -17,6 +17,10 @@ public class VoteFragment extends Fragment{
 	public ListView top_list_view;
 	private VoteAdapter top_adapter;
 	
+	private ImageView not_vote_time_view;
+	private ImageView female_top_logo_view;
+	private ImageView male_top_logo_view;
+	
 	private Activity parent; 
 	
 	@Override
@@ -27,7 +31,9 @@ public class VoteFragment extends Fragment{
 		
 		top_list_view = (ListView)(rootView.findViewById(R.id.top_list));
 		
-		ImageView not_vote_time_view = (ImageView)(rootView.findViewById(R.id.vote_error_page));
+		not_vote_time_view = (ImageView)(rootView.findViewById(R.id.vote_error_page));
+		female_top_logo_view = (ImageView)(rootView.findViewById(R.id.femaleTopLogo));
+		male_top_logo_view = (ImageView)(rootView.findViewById(R.id.maleTopLogo));
 		
 		
 	    // Stores 
@@ -40,23 +46,26 @@ public class VoteFragment extends Fragment{
 	    // Set the ArrayAdapter as the ListView's adapter.  
 	    top_list_view.setAdapter(top_adapter);  
 	        
-	    if(isVoteTime()) {
-	    	not_vote_time_view.setVisibility(View.GONE);
-	    } else {
-	    	rootView.findViewById(R.id.femaleTopLogo).setVisibility(View.GONE);
-	    	rootView.findViewById(R.id.maleTopLogo).setVisibility(View.GONE);
-	    	top_list_view.setVisibility(View.GONE);
-	    }
+	    female_top_logo_view.setVisibility(View.GONE);
+    	male_top_logo_view.setVisibility(View.GONE);
+    	top_list_view.setVisibility(View.GONE);
+    	not_vote_time_view.setVisibility(View.GONE);
 	    
 		return rootView;
 	}
 	
-	private boolean isVoteTime() {
-		int curHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-		if( curHour < 21 || curHour > 1) {
-			return false;
-		}
-		return true;
+	public void noPopList(){
+		female_top_logo_view.setVisibility(View.GONE);
+    	male_top_logo_view.setVisibility(View.GONE);
+    	top_list_view.setVisibility(View.GONE);
+    	not_vote_time_view.setVisibility(View.VISIBLE);
+	}
+
+	public void showPopList(){
+		female_top_logo_view.setVisibility(View.VISIBLE);
+    	male_top_logo_view.setVisibility(View.VISIBLE);
+    	top_list_view.setVisibility(View.VISIBLE);
+    	not_vote_time_view.setVisibility(View.GONE);
 	}
 	
 	  public void listDataChanged(){

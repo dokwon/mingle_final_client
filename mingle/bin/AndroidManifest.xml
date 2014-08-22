@@ -21,7 +21,7 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
 
     <uses-sdk
-        android:minSdkVersion="11"
+        android:minSdkVersion="14"
         android:targetSdkVersion="20" />
 
     <!-- For GCM here -->
@@ -46,7 +46,6 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/MainTheme" 
         	android:hardwareAccelerated="false">
         </activity>
 

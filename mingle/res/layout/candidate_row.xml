@@ -38,6 +38,7 @@
 		                android:layout_width="@dimen/member_icon_width"
 		                android:layout_height="@dimen/member_icon_height"
 		                android:layout_alignParentBottom="true"
+		                android:layout_marginBottom="1dp"
 		                android:src="@drawable/numberpic"
 		                android:id="@+id/member_num_icon"/>
 			        
@@ -45,10 +46,11 @@
 			         <ImageView
 			             android:contentDescription="@string/photo_description"
 		                android:layout_width="@dimen/member_num_width"
+		                android:layout_marginBottom="1dp"
 		                android:layout_height="@dimen/member_num_height"
-		                android:layout_alignLeft="@+id/member_num_icon"
+		                android:layout_toRightOf="@+id/member_num_icon"
 				        android:layout_alignBottom="@+id/member_num_icon"
-				         android:layout_marginLeft="3dp"
+				         android:layout_marginLeft="1dp"
 		                android:id="@+id/member_num"/>
 			      
 			        <TextView
@@ -56,7 +58,7 @@
 			            style="@style/MyListTitle"
 			            android:layout_width="wrap_content"
 			            android:layout_height="wrap_content"
-			           	android:layout_alignTop="@+id/member_num_icon"
+			           	android:layout_alignBottom="@+id/member_num_icon"
 			            android:layout_marginLeft="15dp"
 			            android:layout_toRightOf="@+id/member_num" />
 			        

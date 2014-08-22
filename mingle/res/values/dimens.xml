@@ -11,30 +11,35 @@
 	<dimen name="option_label_height">40dp</dimen>
 	<dimen name="option_margin">13dp</dimen>
 	<dimen name="photo_margin">10dp</dimen>
+	
+	<dimen name="member_counter_width">20dp</dimen>
+	<dimen name="member_counter_height">25dp</dimen>
 	<dimen name="small_margin">5dp</dimen>
 
-	<dimen name="member_icon_width">11dp</dimen>
-	<dimen name="member_icon_height">17dp</dimen>
-	<dimen name="member_num_width">9dp</dimen>
-	<dimen name="member_num_height">13dp</dimen>
-<dimen name="member_num_and_icon_margin">2dp</dimen>
+	<dimen name="member_icon_width">16dp</dimen>
+	<dimen name="member_icon_height">25dp</dimen>
+	<dimen name="member_num_width">13dp</dimen>
+	<dimen name="member_num_height">21dp</dimen>
+	<dimen name="member_num_and_icon_margin">0px</dimen>
 
 
-<dimen name="action_bar_height">101dp</dimen>
+	<dimen name="indicator_size">10dp</dimen>
+	
+	<dimen name="action_bar_height">51dp</dimen>
 
-<dimen name="tab1_icon_width">28dp</dimen>
-<dimen name="tab1_icon_height">23dp</dimen>
+	<dimen name="tab1_icon_width">56px</dimen>
+	<dimen name="tab1_icon_height">45px</dimen>
 
-<dimen name="tab2_icon_width">26dp</dimen>
-<dimen name="tab2_icon_height">14dp</dimen>
+	<dimen name="tab2_icon_width">51px</dimen>
+	<dimen name="tab2_icon_height">37px</dimen>
 
-<dimen name="tab3_icon_width">24dp</dimen>
-<dimen name="tab3_icon_height">20dp</dimen>
+	<dimen name="tab3_icon_width">47px</dimen>
+	<dimen name="tab3_icon_height">39px</dimen>
 
-<dimen name="main_logo_width">86dp</dimen>
-<dimen name="main_logo_height">33dp</dimen>
+	<dimen name="main_logo_width">172dp</dimen>
+	<dimen name="main_logo_height">65dp</dimen>
 
-<dimen name="profile_activity_margin">12dp</dimen>
+	<dimen name="profile_activity_margin">24px</dimen>
 
 
 

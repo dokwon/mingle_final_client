@@ -226,7 +226,7 @@
 	    android:layout_alignRight="@+id/photoView3"/>
 	<Button 
 	    android:layout_height="wrap_content" 
-	    android:layout_width="@dimen/member_icon_width" 
+	    android:layout_width="@dimen/member_counter_width" 
 	    android:id="@+id/member_1" 
 	    android:background="@drawable/peoplenumberpicon"
 	    android:layout_alignTop="@+id/memberlabel"
@@ -237,7 +237,7 @@
 	
 	<Button 
 	    android:layout_height="wrap_content" 
-	    android:layout_width="@dimen/member_icon_width" 
+	    android:layout_width="@dimen/member_counter_width" 
 	    android:id="@+id/member_2" 
 	    android:background="@drawable/peoplenumberpicon"
 	    android:layout_alignTop="@+id/memberlabel"
@@ -246,8 +246,7 @@
 	    android:layout_margin="@dimen/small_margin"
 	    android:onClick="MemberNumberSelected"/>
 	<Button 
-	    android:layout_height="wrap_content" 
-	    android:layout_width="@dimen/member_icon_width" 
+	    android:layout_height="wrap_content" android:layout_width="@dimen/member_counter_width" 
 	    android:id="@+id/member_3" 
 	    android:background="@drawable/peoplenumberpicon"
 	    android:layout_alignTop="@+id/memberlabel"
@@ -257,7 +256,7 @@
 	    android:onClick="MemberNumberSelected"/>
 	<Button 
 	    android:layout_height="wrap_content" 
-	    android:layout_width="@dimen/member_icon_width" 
+	    android:layout_width="@dimen/member_counter_width" 
 	    android:id="@+id/member_4" 
 	    android:background="@drawable/peoplenumberpicon"
 	    android:layout_alignTop="@+id/memberlabel"
@@ -267,7 +266,7 @@
 	    android:onClick="MemberNumberSelected"/>
 	<Button 
 	    android:layout_height="wrap_content" 
-	    android:layout_width="@dimen/member_icon_width" 
+	    android:layout_width="@dimen/member_counter_width" 
 	    android:id="@+id/member_5" 
 	    android:background="@drawable/peoplenumberpicon"
 	    android:layout_alignTop="@+id/memberlabel"
@@ -277,7 +276,7 @@
 	    android:onClick="MemberNumberSelected"/>
 	<Button 
 	    android:layout_height="wrap_content" 
-	    android:layout_width="@dimen/member_icon_width" 
+	    android:layout_width="@dimen/member_counter_width" 
 	    android:id="@+id/member_6" 
 	    android:background="@drawable/peoplenumberpicon"
 	    android:layout_alignTop="@+id/memberlabel"
@@ -285,9 +284,6 @@
 	    android:layout_toRightOf="@+id/member_5"
 	    android:layout_margin="@dimen/small_margin"
 	    android:onClick="MemberNumberSelected"/>
-	
-
-	
 	
 	<Button 
 	    android:layout_height="50dp" 
