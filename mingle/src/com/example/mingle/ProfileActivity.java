@@ -2,6 +2,7 @@ package com.example.mingle;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
+import android.app.NotificationManager;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
 import android.app.FragmentTransaction;
@@ -48,27 +49,11 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
     private MingleUser user;
     private Typeface koreanTypeFace;
     
-    @SuppressLint("NewApi")
-	private void resizeProfilePic() {
-    	final Display display = getWindowManager().getDefaultDisplay();
-    
-    	@SuppressWarnings("deprecation")
-		int height = display.getHeight();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-        	final Point point = new Point();
-        	getWindowManager().getDefaultDisplay().getSize(point);
-            height = point.y;
-        } 
-    	RelativeLayout layout = (RelativeLayout) findViewById(R.id.profile_elems);
-    	
-    	RelativeLayout.LayoutParams params =(RelativeLayout.LayoutParams) layout.getLayoutParams();
-    	params.height = (int)(height * 0.6);
-    	layout.setLayoutParams(params);
+    @Override
+    protected void onNewIntent(Intent intent) {
+    	setIntent(intent);
     }
-    
-    
-    
-    
+   
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		 super.onCreate(savedInstanceState);
@@ -81,31 +66,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 
 	    //Support Korean Language
 	    koreanTypeFace = Typeface.createFromAsset(getAssets(), "fonts/mingle-font-regular.otf");
-	    Typeface koreanBoldTypeFace = Typeface.createFromAsset(getAssets(), "fonts/mingle-font-bold.otf");
 	    viewFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
-         
-         Intent intent = getIntent();
-         String uid = intent.getExtras().getString(ProfileActivity.PROFILE_UID);
-         String type = intent.getExtras().getString(ProfileActivity.PROFILE_TYPE);
-         
-         MingleApplication app = ((MingleApplication) this.getApplication());
-
-         if(type.equals("preview") || type.equals("setting")) user = app.getMyUser();
-         else user = app.getMingleUser(uid);
-         photo_num = user.getPhotoNum();
-                  
-         LayoutInflater inflater = getLayoutInflater();
-         for(int i = 0; i < photo_num; i++){
-        	 LinearLayout single_photo_layout = (LinearLayout) inflater
-                 .inflate(R.layout.single_photo, null);
-        	 
-        	 ImageView photo_view = (ImageView) single_photo_layout.findViewById(R.id.photoView);
-        	 Drawable photo_drawable = user.getPic(i);
-        	 //Bitmap rounded =  MingleApplication.getRoundedCornerBitmap(((BitmapDrawable) photo_drawable).getBitmap());
-        	 //photo_view.setImageDrawable(new BitmapDrawable(this.getResources(),rounded));
-        	 photo_view.setImageDrawable(photo_drawable);
-        	 viewFlipper.addView(single_photo_layout);
-         }
          
          LocalBroadcastManager.getInstance(this).registerReceiver(imageUpdateReceiver,
         		  new IntentFilter(ImageDownloader.UPDATE_PROFILE));
@@ -116,15 +77,6 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
          LocalBroadcastManager.getInstance(this).registerReceiver(httpErrorReceiver,
          		  new IntentFilter(HttpHelper.HANDLE_HTTP_ERROR));
          
-         ImageView num_view = (ImageView) findViewById(R.id.profile_member_num);
-         num_view.setImageResource(app.memberNumRsId(user.getNum()));
-         TextView name_view = (TextView) findViewById(R.id.profile_user_name);
-         name_view.setTypeface(koreanBoldTypeFace);
-         name_view.setText(user.getName());
-         TextView dist_view = (TextView) findViewById(R.id.profile_user_dist);
-         dist_view.setTypeface(koreanTypeFace);
-         dist_view.setText(Float.toString(user.getDistance())+"km");
-         dist_view.setTextColor(Color.GRAY);
          
          final LinearLayout prof_elems = (LinearLayout) findViewById(R.id.profile_elems);
          ViewTreeObserver vto = prof_elems.getViewTreeObserver(); 
@@ -137,25 +89,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 			} 
          });
          
-         RelativeLayout vote_button = (RelativeLayout) findViewById(R.id.vote_button);
-         RelativeLayout chat_button = (RelativeLayout) findViewById(R.id.chat_button);
-         Button edit_profile_button = (Button) findViewById(R.id.edit_profile_button);
         
-         if(type.equals("preview") || type.equals("setting")){
-        	 vote_button.setVisibility(View.GONE);
-        	 dist_view.setVisibility(View.GONE);
-         } else {
-        	 getNewImage(0);
-         }
-         if (type.equals("popular")) {
-        	 vote_button.setVisibility(View.GONE);
-         }
-         if(!type.equals("candidate") || type.equals("choice")){
-        	 chat_button.setVisibility(View.GONE);
-         }
-         if(!type.equals("setting")){
-        	 edit_profile_button.setVisibility(View.GONE);
-         }
          //initializePhotoIndicators();
          //resizeProfilePic();
 	}
@@ -164,13 +98,71 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 	public void onResume() {
 		super.onResume();
 		
-	         photo_num = user.getPhotoNum();
-	         current_viewing_pic_index = 0;
-	         LinearLayout photoCounterWrapper = (LinearLayout) findViewById(R.id.photo_indicators);
-	         if(((ViewGroup)photoCounterWrapper).getChildCount() != 0)
-	        	 ((ViewGroup) findViewById(R.id.photo_indicators)).removeAllViews();
-	         initializePhotoIndicators();
-		
+		Intent intent = getIntent();
+        String uid = intent.getExtras().getString(ProfileActivity.PROFILE_UID);
+        String type = intent.getExtras().getString(ProfileActivity.PROFILE_TYPE);
+        
+        MingleApplication app = ((MingleApplication) this.getApplication());
+        int id = GcmIntentService.getNotificationId(uid);
+        if(id != -1)
+       	 		((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancel(id);
+        
+        if(type.equals("preview") || type.equals("setting")) user = app.getMyUser();
+        else user = app.getMingleUser(uid);
+        photo_num = user.getPhotoNum();
+                 
+        LayoutInflater inflater = getLayoutInflater();
+        for(int i = 0; i < photo_num; i++){
+       	 LinearLayout single_photo_layout = (LinearLayout) inflater
+                .inflate(R.layout.single_photo, null);
+       	 
+       	 ImageView photo_view = (ImageView) single_photo_layout.findViewById(R.id.photoView);
+       	 Drawable photo_drawable = user.getPic(i);
+       	 //Bitmap rounded =  MingleApplication.getRoundedCornerBitmap(((BitmapDrawable) photo_drawable).getBitmap());
+       	 //photo_view.setImageDrawable(new BitmapDrawable(this.getResources(),rounded));
+       	 photo_view.setImageDrawable(photo_drawable);
+       	 viewFlipper.addView(single_photo_layout);
+        }
+        
+	    Typeface koreanBoldTypeFace = Typeface.createFromAsset(getAssets(), "fonts/mingle-font-bold.otf");
+
+        ImageView num_view = (ImageView) findViewById(R.id.profile_member_num);
+        num_view.setImageResource(app.memberNumRsId(user.getNum()));
+        TextView name_view = (TextView) findViewById(R.id.profile_user_name);
+        name_view.setTypeface(koreanBoldTypeFace);
+        name_view.setText(user.getName());
+        TextView dist_view = (TextView) findViewById(R.id.profile_user_dist);
+        dist_view.setTypeface(koreanTypeFace);
+        dist_view.setText(Float.toString(user.getDistance())+"km");
+        dist_view.setTextColor(Color.GRAY);
+        
+        
+        RelativeLayout vote_button = (RelativeLayout) findViewById(R.id.vote_button);
+        RelativeLayout chat_button = (RelativeLayout) findViewById(R.id.chat_button);
+        Button edit_profile_button = (Button) findViewById(R.id.edit_profile_button);
+        
+        if(type.equals("preview") || type.equals("setting")){
+       	 vote_button.setVisibility(View.GONE);
+       	 dist_view.setVisibility(View.GONE);
+        } else {
+       	 getNewImage(0);
+        }
+        if (type.equals("popular")) {
+       	 vote_button.setVisibility(View.GONE);
+        }
+        if(!type.equals("candidate") || type.equals("choice")){
+       	 chat_button.setVisibility(View.GONE);
+        }
+        if(!type.equals("setting")){
+       	 edit_profile_button.setVisibility(View.GONE);
+        }
+        
+	    photo_num = user.getPhotoNum();
+	    current_viewing_pic_index = 0;
+	    LinearLayout photoCounterWrapper = (LinearLayout) findViewById(R.id.photo_indicators);
+	    if(((ViewGroup)photoCounterWrapper).getChildCount() != 0)
+	      	 ((ViewGroup) findViewById(R.id.photo_indicators)).removeAllViews();
+	    initializePhotoIndicators();
 	}
 	
 	private int current_viewing_pic_index = 0;
@@ -336,6 +328,16 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 	    	}
 	  };
     
+	  /* If current activity is called from GCM not Hunt, start Hunt */
+	    @Override
+	    public void onBackPressed(){
+	    	if(this.isTaskRoot()){
+	    		Intent huntIntent = new Intent(this, HuntActivity.class);
+	    		startActivity(huntIntent);
+	    	}
+	    	super.onBackPressed();
+	    }
+	  
 	  @Override
 	  public void onDestroy(){
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(imageUpdateReceiver);

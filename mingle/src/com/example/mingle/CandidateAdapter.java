@@ -98,7 +98,8 @@ public class CandidateAdapter extends ArrayAdapter {
         final int num_pic_id = app.memberNumRsId(candidate.getNum());
         holder.user_num.setImageResource(num_pic_id);
         holder.user_name.setText(candidate.getName());
-        holder.user_dist.setText(Float.toString(candidate.getDistance())+"km");
+        if(app.getLat() == 0.0 || app.getLong() == 0.0) holder.user_dist.setVisibility(View.GONE);
+        else holder.user_dist.setText(Float.toString(candidate.getDistance())+"km");
         Drawable main_drawable = candidate.getPic(0);
         Bitmap rounded =  MingleApplication.getRoundedCornerBitmap(((BitmapDrawable) main_drawable).getBitmap());
         holder.user_pic.setImageDrawable( new BitmapDrawable(context.getResources(),rounded));

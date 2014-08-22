@@ -1,6 +1,7 @@
 package com.example.mingle;
 //package com.hmkcode.android;
 
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +10,12 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import java.net.*;
 import java.util.ArrayList;
+
+
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import com.example.mingle.MingleUser;        
 
 import org.apache.http.HttpEntity;
@@ -46,11 +53,15 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     private String server_url;				//URL of server
     private MingleApplication app;
     
+    private Lock newUserLock = new ReentrantLock();
+    private Condition newUserFetched = newUserLock.newCondition();
+    
     /* Constructor for HttpHelper */
     public HttpHelper(String url, MingleApplication curApp){
     	app = curApp; 
     	server_url = url+"/"; 
     }
+
     
     /* encode given string in utf-8 */
     private String encodeString(String str){
@@ -182,6 +193,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	new Thread(new Runnable() {
     		public void run() {
     			try {
+					
     				HttpResponse response = PhotoPoster.postPhoto(app, cpy);
 					JSONObject user_info = new JSONObject(HttpResponseBody(response));
     				
@@ -313,6 +325,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	baseURL += "get_vote";
         
     	final String getVoteURL = baseURL;
+       
     	new Thread(new Runnable() {
     		public void run() {
     			HttpClient client = new DefaultHttpClient();
@@ -375,7 +388,8 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	}).start();	
     }
 
-    public void getNewUser(String uid) {
+    public void getNewUser(String uid, final String user_type) {
+    	newUserLock.lock();
     	String baseURL = server_url;
     	baseURL += "get_user?";
     	baseURL += "uid=" + uid;
@@ -384,6 +398,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	final String new_uid = uid;
     	new Thread(new Runnable() {
     		public void run() {
+    			newUserLock.lock();
     			HttpClient client = new DefaultHttpClient();
     	        HttpGet poster = new HttpGet(getUserURL);
     	        HttpResponse response = null;
@@ -391,14 +406,18 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 				try {
 					response = client.execute(poster);
 					success_obj = new JSONObject(HttpResponseBody(response));
-					app.createNewChoiceUser(new_uid, success_obj);
+					app.setNewUser(new_uid, success_obj, user_type);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				newUserFetched.signal();
     		}
-
     	}).start();	
+    	
+
+    	newUserFetched.awaitUninterruptibly();
+	
     }
     
     //@Override

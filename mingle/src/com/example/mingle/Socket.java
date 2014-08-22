@@ -118,10 +118,31 @@ public class Socket extends AsyncTask<String, MingleApplication, Integer>  {
     					app.handleIncomingMsg(get_msg_obj);
     					socket.emit("msg_to_user_conf");
     				} else if(event.equals("no_user_exist")){
-    					Intent dispatcher = new Intent(app, ChatroomActivity.class);
+    							
+    					
+    					AlertDialog.Builder popupBuilder = new AlertDialog.Builder(app)
+																.setTitle("Mingle")
+																.setCancelable(false)
+																.setMessage("This user is not active anymore.")
+																.setIcon(R.drawable.mingle_logo)
+																.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+																	@Override
+																	public void onClick(DialogInterface dialog, int id) {
+																		dialog.dismiss();
+																	}
+																});
+    					popupBuilder.show();
+    					/*
+						try {
+							String recv_uid = ((JSONObject)args[0]).getString("send_uid");
+							app.getMingleUser(recv_uid).removeLastMsg();
+						} catch (JSONException e) {
+							e.printStackTrace();
+						} */   				
+						Intent dispatcher = new Intent(app, ChatroomActivity.class);
     					dispatcher.putExtra(DEACT_USER, args[0].toString());
     					dispatcher.setAction(NO_USER_NOTI);
-    					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher);
+    					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher);	
     				}
     			}
 

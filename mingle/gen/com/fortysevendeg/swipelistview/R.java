@@ -35,15 +35,15 @@ public final class R {
 		public static final int choice = 0x7f060006;
 		public static final int dismiss = 0x7f060005;
 		public static final int left = 0x7f060003;
-		public static final int load_more_footer = 0x7f060098;
-		public static final int load_more_progressBar = 0x7f06009a;
+		public static final int load_more_footer = 0x7f06009c;
+		public static final int load_more_progressBar = 0x7f06009e;
 		public static final int none = 0x7f060000;
 		public static final int reveal = 0x7f060004;
 		public static final int right = 0x7f060002;
-		public static final int top_line = 0x7f060099;
+		public static final int top_line = 0x7f06009d;
 	}
 	public static final class layout {
-		public static final int load_more_footer = 0x7f030027;
+		public static final int load_more_footer = 0x7f030028;
 	}
 	public static final class styleable {
 		public static final int[] SwipeListView = { 0x7f010000, 0x7f010001, 0x7f010002, 0x7f010003, 0x7f010004, 0x7f010005, 0x7f010006, 0x7f010007, 0x7f010008, 0x7f010009, 0x7f01000a, 0x7f01000b };

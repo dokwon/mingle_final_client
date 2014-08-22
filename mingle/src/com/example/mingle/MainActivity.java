@@ -235,6 +235,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         	view.setOnClickListener(new MinglePhotoClickListener( this, photoViewArr));
         }
         if(type.equals("update")){
+        	
 			for (int i = 0; i < app.getMyUser().getPhotoNum(); i++){
         		FindAppropriateImageView().setImageDrawable(app.getMyUser().getPic(i));
         	}
@@ -282,6 +283,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
        KeyboardDismisser.setupKeyboardDismiss(findViewById(R.id.main_parent), this);
     }
     
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -340,6 +342,15 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     	//Check validity of user input and send user update request to server
     	String valid_message = app.isValid(name);
     	if(valid_message == null){
+    		proDialog = new ProgressDialog(this);
+        	proDialog.setCancelable(false);
+        	proDialog.setCanceledOnTouchOutside(false);	
+            proDialog.setIndeterminate(true);
+            proDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            proDialog.getWindow().getAttributes().dimAmount = (float)0.5;
+            proDialog.show(); 
+            proDialog.setContentView(new GifView(this));
+            
         	app.connectHelper.userUpdateRequest(app, name, sex, num);
       } else {
     	   showInvalidUserAlert(valid_message);
@@ -395,7 +406,9 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			e1.printStackTrace();
 		}
     	app.dbHelper.setMyInfo(userData);
-    	Toast.makeText(getApplicationContext(), getResources().getString(R.string.update_complete), Toast.LENGTH_SHORT).show();
+    	proDialog.dismiss();
+    	finish();
+    	//Toast.makeText(getApplicationContext(), getResources().getString(R.string.update_complete), Toast.LENGTH_SHORT).show();
     }
     
     static class GifView extends View {

@@ -76,14 +76,14 @@
             android:name=".ChatroomActivity"
             android:label="@string/title_activity_chatroom"
             android:taskAffinity="com.example.mingle.main" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.mingle.HuntActivity" />
+
         </activity>
         <activity
             android:name=".ProfileActivity"
             android:label="@string/title_activity_profile"
-             >
+            
+            android:taskAffinity="com.example.mingle.main" >
+
         </activity>
         <activity
             android:name=".TransparentActivity"

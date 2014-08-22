@@ -14,13 +14,26 @@
 	    <com.example.mingle.RoundedImageView
 	            style="@style/ChatRoomImage"
 	            android:id="@+id/sender_image"/>
+	    
+	     <TextView
+            android:id="@+id/new_msg_num"
+            android:layout_width="wrap_content"	
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/sender_image"
+            android:layout_toRightOf="@+id/sender_image"
+            android:layout_marginLeft="-23dp"
+            android:gravity="center_horizontal"
+            android:includeFontPadding="false"
+            android:background="@drawable/new_msg_bubble"
+            style="@style/newMsgNumStyle"/>
       
         <TextView
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/sender_image"
-                android:layout_alignTop="@id/sender_image"
+                android:layout_toRightOf="@+id/sender_image"
+                android:layout_alignTop="@+id/sender_image"
                 android:layout_marginTop="2dp"
+                android:layout_marginLeft="8dp"
                 style="@style/MyListTitle"
                 android:id="@+id/sender_name"/>
 
@@ -50,6 +63,7 @@
                 android:layout_toRightOf="@id/sender_image"
                 android:layout_below="@id/sender_name"
                 android:layout_marginBottom="2dp"
+                android:layout_marginLeft="8dp"
                 style="@style/MyListTitle"
                 android:id="@+id/msg"/>
 

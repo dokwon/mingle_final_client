@@ -8,7 +8,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.TimeZone;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +21,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.app.ActionBar.LayoutParams;
 import android.content.Context;
@@ -61,6 +65,8 @@ import com.example.mingle.MingleUser.MsgComparator;
 public class MingleApplication extends Application {
 	public static final int PHOTO_COMPRESS_FACTOR = 2;
 	
+	private static final String server_url = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080";
+
 	public final static String UPDATE_MSG_LIST = "com.example.mingle.UPDATE_MSG_LIST";
     public Typeface koreanTypeFace;
     public Typeface koreanBoldTypeFace;
@@ -86,7 +92,7 @@ public class MingleApplication extends Application {
     private boolean notification_on = true;
     private boolean[] groupNumFilter = {true, true, true, true, true};
     
-    private HashMap<String, MingleUser> user_map = new HashMap<String, MingleUser>();
+    private ConcurrentHashMap<String, MingleUser> user_map = new ConcurrentHashMap<String, MingleUser>();
     
     private ArrayList<String> candidates = new ArrayList<String>();
     private ArrayList<String> choices = new ArrayList<String>();
@@ -325,6 +331,9 @@ public class MingleApplication extends Application {
     
     public void switchCandidateToChoice(int index){
     	String uid = candidates.get(index);
+    	MingleUser user = this.getMingleUser(uid);
+    	if(!user.isPicAvail(-1))
+    		new ImageDownloader(this, uid, -1).execute();
     	choices.add(uid);
     	candidates.remove(index);
     }
@@ -344,26 +353,32 @@ public class MingleApplication extends Application {
     	pop_users.clear();
     }
 
-    public void createNewChoiceUser(String uid, JSONObject new_user_data){
+    public void setNewUser(String uid, JSONObject new_user_data, String user_type){
     	String sex = "M";
 		if(my_user.getSex().equals("M")) sex = "F";
-		MingleUser new_user = null;
+		MingleUser new_user = this.getMingleUser(uid);
 		try {
+			new_user.setName(new_user_data.getString("COMM"));
+			new_user.setNum(new_user_data.getInt("NUM"));
+			for(int i = 0; i < new_user_data.getInt("PHOTO_NUM"); i++){
+				new_user.addBlankPic((Drawable) this.getResources().getDrawable(blankProfileImage));
+			}
+			new_user.setSex(sex);
 			float distance = this.getDistance(new_user_data.getDouble("LOC_LAT"), new_user_data.getDouble("LOC_LONG"));
-			new_user = new MingleUser(uid, new_user_data.getString("COMM"), new_user_data.getInt("NUM"), 
-											new_user_data.getInt("PHOTO_NUM"), (Drawable) this.getResources().getDrawable(blankProfileImage),
-											sex, distance);
+			new_user.setDistance(distance);
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 		
-		this.addMingleUser(new_user);
-		this.addChoice(uid);
-		
-		new ImageDownloader(this.getApplicationContext(), new_user.getUid(), -1).execute();
-		dbHelper.insertNewUID(uid, new_user.getNum(), new_user.getName(), new_user.getDistance());		
-    }
+		if(user_type.equals("choice")) {
+			new ImageDownloader(this.getApplicationContext(), new_user.getUid(), -1).execute();
+			dbHelper.insertNewUID(uid, new_user.getNum(), new_user.getName(), new_user.getDistance());		
+		} else if(user_type.equals("candidate")){
+			new ImageDownloader(this.getApplicationContext(), new_user.getUid(), 0).execute();
+		}
+	}
     
     public String getLocalTime(String timestamp){
     	timestamp = timestamp.replaceAll("T"," ");
@@ -387,14 +402,15 @@ public class MingleApplication extends Application {
     
     public void handleIncomingMsg(JSONObject get_msg_obj){
 		try {
-			//MingleApplication curr_user = ((MingleApplication) this.getApplicationContext());
 			String chat_user_uid = get_msg_obj.getString("send_uid");
 
 			MingleUser user = this.getMingleUser(chat_user_uid);
 			
 			if(user == null) {
-				connectHelper.getNewUser(chat_user_uid);				
-			
+				user = new MingleUser(chat_user_uid, "", 0, 0, (Drawable) this.getResources().getDrawable(blankProfileImageSmall), "", 0);
+				this.addMingleUser(user);
+				this.addChoice(chat_user_uid);
+				connectHelper.getNewUser(chat_user_uid, "choice");
 			} else {
 				int candidate_pos = this.getCandidatePos(chat_user_uid);
 				if(candidate_pos >= 0){
@@ -422,7 +438,11 @@ public class MingleApplication extends Application {
 				Intent dispatcher = new Intent(this, ChatroomActivity.class);
 				dispatcher.setAction(UPDATE_MSG_LIST);
 				LocalBroadcastManager.getInstance(this).sendBroadcast(dispatcher);
-    		}
+    		} else this.getMingleUser(chat_user_uid).incrNewMsgNum();
+    		
+    		Intent dispatcher = new Intent(this, HuntActivity.class);
+			dispatcher.setAction(HuntActivity.NEW_MESSAGE);
+			LocalBroadcastManager.getInstance(this).sendBroadcast(dispatcher);
         	
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -470,17 +490,12 @@ public class MingleApplication extends Application {
         else return true;
     }
     
-    
     public void deactivateApp(Context context){
-    	ProgressDialog proDialog = new ProgressDialog(context);
-        proDialog.setIndeterminate(true);
-        proDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        proDialog.getWindow().getAttributes().dimAmount = (float)0.8;
-        proDialog.show();
+    	String uid = this.my_user.getUid();
+    	this.connectHelper.requestDeactivation(uid);
 
-        this.socketHelper.disconnectSocket();
+    	this.socketHelper.disconnectSocket();
         this.dbHelper.deleteAll();
-        this.connectHelper.requestDeactivation(this.my_user.getUid());
         
         photoPaths.clear();
         user_map.clear();
@@ -488,11 +503,13 @@ public class MingleApplication extends Application {
         choices.clear();
         pop_users.clear();
         
+        ((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancelAll();
+        GcmIntentService.clearNotificationData();
+
         notification_on = true;
         for(int i = 0 ; i < 5 ; i++) groupNumFilter[i] = true;
         dist_lim = 3;
-        
-        proDialog.dismiss();
+
     }
     
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {

@@ -3,6 +3,7 @@
 	<name>mingle</name>
 	<comment></comment>
 	<projects>
+		<project>socket.io-java-client</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

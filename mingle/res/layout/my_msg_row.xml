@@ -8,7 +8,10 @@
             android:id="@+id/msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/small_margin"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_marginRight="@dimen/small_margin"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:layout_marginLeft="80dp"
             android:layout_alignParentRight="true"
             android:background="@drawable/my_message_bubble"
             style="@style/MsgStyle"/>

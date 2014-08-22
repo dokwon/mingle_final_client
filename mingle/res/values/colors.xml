@@ -10,6 +10,7 @@
 	<color name="light_gray">#eee9e9</color>
 	<color name="white_gray">#FFF2F2F2</color>
 	<color name="black">#FF000000</color>
+	<color name="white">#FFFFFFFF</color>
 	<color name="actionbar_gray">#F1F1F1</color>
 	
 	<color name="mingle_button_green">#e3e97d</color>

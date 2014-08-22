@@ -3,9 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/option_margin"
-    android:paddingRight="@dimen/option_margin" 
-    
-    >
+    android:paddingRight="@dimen/option_margin" >
 
     <RelativeLayout
         android:layout_width="match_parent"
