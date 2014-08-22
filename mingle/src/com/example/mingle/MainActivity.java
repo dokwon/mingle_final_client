@@ -386,6 +386,15 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     	//Check validity of user input and send user update request to server
     	String valid_message = app.isValid(name);
     	if(valid_message == null){
+    		proDialog = new ProgressDialog(this);
+        	proDialog.setCancelable(false);
+        	proDialog.setCanceledOnTouchOutside(false);
+            proDialog.setIndeterminate(true);
+            proDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            proDialog.getWindow().getAttributes().dimAmount = (float)0.5;
+            proDialog.show(); 
+            proDialog.setContentView(new GifView(this));
+            
     		app.setMyUser(null, name, num, sex);
         	app.connectHelper.userUpdateRequest(app, name, sex, num);
       } else {
@@ -419,7 +428,9 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     };
     
     public void updateUser(){
-    	Toast.makeText(getApplicationContext(), getResources().getString(R.string.update_complete), Toast.LENGTH_SHORT).show();
+    	proDialog.dismiss();
+    	finish();
+    	//Toast.makeText(getApplicationContext(), getResources().getString(R.string.update_complete), Toast.LENGTH_SHORT).show();
     }
     
     static class GifView extends View {

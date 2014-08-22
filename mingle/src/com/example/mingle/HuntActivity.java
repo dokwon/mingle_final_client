@@ -14,6 +14,7 @@ import android.app.ActionBar.Tab;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.app.NotificationManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.os.Bundle;
@@ -42,6 +43,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ScaleDrawable;
 public class HuntActivity extends FragmentActivity implements ActionBar.TabListener	 {
+	public final static String NEW_MESSAGE = "com.example.mingle.NEW_MESSAGE";
+
 	public CandidateFragment candidateFragment;			//Fragment for list of candidates
 	public ChoiceFragment choiceFragment;				//Fragment for list of choices
 	public VoteFragment voteFragment;					//Fragment for list of popular users
@@ -117,6 +120,9 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
         
         LocalBroadcastManager.getInstance(this).registerReceiver(listUpdateReceiver,
       		  new IntentFilter(ImageDownloader.UPDATE_HUNT));
+        
+        LocalBroadcastManager.getInstance(this).registerReceiver(newMessageReceiver,
+        		  new IntentFilter(HuntActivity.NEW_MESSAGE));
         
         LocalBroadcastManager.getInstance(this).registerReceiver(httpErrorReceiver,
       		  new IntentFilter(HttpHelper.HANDLE_HTTP_ERROR));
@@ -316,6 +322,9 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    		   if(pop_result.getString("RESULT").equals("success")){
 	    			   JSONArray pop_list_arr = new JSONArray(pop_result.getString("POP_LIST"));
 	    			   handlePopList(pop_list_arr);
+	    			   voteFragment.showPopList();
+	    		   } else {
+	    			   voteFragment.noPopList();
 	    		   }
 	    	   } catch (JSONException e) {
 	    		   // TODO Auto-generated catch block
@@ -437,6 +446,14 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    popListUpdate();
 	  }
 	  
+	  /* Broadcast Receiver for notification of new message arrival from a user that is not currently in chat with*/
+	  private BroadcastReceiver newMessageReceiver = new BroadcastReceiver() {
+	    	@Override
+	    	public void onReceive(Context context, Intent intent) {
+	    	   choiceListUpdate();
+	    	}
+	    };
+	  
 	  /* Broadcast Receiver for notification of need for lists update from the server*/
 	  private BroadcastReceiver listUpdateReceiver = new BroadcastReceiver() {
 	    	@Override
@@ -477,6 +494,12 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	  @Override
 	  public void onResume(){
 	        super.onRestart();
+	        
+	        for(int i = 0; i < GcmIntentService.getNumVoteNotification(); i++) {
+	        	((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancel(i);
+	        }
+	        
+	        GcmIntentService.resetNumVoteNotification();
 	        candidateListUpdate();
 	        choiceListUpdate();
 	  }

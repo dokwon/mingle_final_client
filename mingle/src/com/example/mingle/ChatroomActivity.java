@@ -74,8 +74,14 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
         recv_user = app.getMingleUser(recv_uid);
         
         //Clear the notification from gcm.
-        ((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancelAll();
+        ((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancel(GcmIntentService.NOTIFICATION_MSG_ID);
+        GcmIntentService.resetNumMsgNotification();
+        
         recv_user.setInChat(true);
+        recv_user.zeroNewMsgNum();
+		Intent dispatcher = new Intent(this, HuntActivity.class);
+		dispatcher.setAction(HuntActivity.NEW_MESSAGE);
+		LocalBroadcastManager.getInstance(this).sendBroadcast(dispatcher);
         
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM  | ActionBar.DISPLAY_SHOW_HOME);
@@ -108,9 +114,6 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
     	recv_user.setInChat(false);
     	super.onPause();
     }
-    
-    
-  
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {

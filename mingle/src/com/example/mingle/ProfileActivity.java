@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -55,6 +56,10 @@ public class ProfileActivity extends Activity {
     	layout.setLayoutParams(params);
     }
     
+    @Override
+    protected void onNewIntent(Intent intent) {
+    	setIntent(intent);
+    }
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,10 +73,21 @@ public class ProfileActivity extends Activity {
 
 	    //Support Korean Language
 	    koreanTypeFace = Typeface.createFromAsset(getAssets(), "fonts/UnGraphic.ttf");
-	    
-	    viewFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
+	             
+         LocalBroadcastManager.getInstance(this).registerReceiver(imageUpdateReceiver,
+        		  new IntentFilter(ImageDownloader.UPDATE_PROFILE));
          
-         Intent intent = getIntent();
+         LocalBroadcastManager.getInstance(this).registerReceiver(voteResultReceiver,
+        		  new IntentFilter(HttpHelper.HANDLE_VOTE_RESULT));
+         
+         LocalBroadcastManager.getInstance(this).registerReceiver(httpErrorReceiver,
+         		  new IntentFilter(HttpHelper.HANDLE_HTTP_ERROR));
+	}
+	
+	@Override
+	protected void onResume(){
+		 super.onResume();
+		 Intent intent = getIntent();
          String uid = intent.getExtras().getString(ProfileActivity.PROFILE_UID);
          String type = intent.getExtras().getString(ProfileActivity.PROFILE_TYPE);
          
@@ -80,7 +96,8 @@ public class ProfileActivity extends Activity {
          if(type.equals("preview") || type.equals("setting")) user = app.getMyUser();
          else user = app.getMingleUser(uid);
          photo_num = user.getPhotoNum();
-                  
+         
+         viewFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
          LayoutInflater inflater = getLayoutInflater();
          for(int i = 0; i < photo_num; i++){
         	 LinearLayout single_photo_layout = (LinearLayout) inflater
@@ -91,15 +108,6 @@ public class ProfileActivity extends Activity {
         	 
         	 viewFlipper.addView(single_photo_layout);
          }
-         
-         LocalBroadcastManager.getInstance(this).registerReceiver(imageUpdateReceiver,
-        		  new IntentFilter(ImageDownloader.UPDATE_PROFILE));
-         
-         LocalBroadcastManager.getInstance(this).registerReceiver(voteResultReceiver,
-        		  new IntentFilter(HttpHelper.HANDLE_VOTE_RESULT));
-         
-         LocalBroadcastManager.getInstance(this).registerReceiver(httpErrorReceiver,
-         		  new IntentFilter(HttpHelper.HANDLE_HTTP_ERROR));
          
          ImageView num_view = (ImageView) findViewById(R.id.profile_member_num);
          num_view.setImageResource(app.memberNumRsId(user.getNum()));
@@ -215,7 +223,6 @@ public class ProfileActivity extends Activity {
     }
     
     public void getNewImage(int photo_index){
-    	System.out.println("photo index: " + photo_index);
     	if(photo_index < 0 || photo_index >= photo_num) return;
     	
 		if(!user.isPicAvail(photo_index)){
@@ -293,6 +300,16 @@ public class ProfileActivity extends Activity {
 	    	}
 	  };
     
+	    /* If current activity is called from GCM not Hunt, start Hunt */
+	    @Override
+	    public void onBackPressed(){
+	    	if(this.isTaskRoot()){
+	    		Intent huntIntent = new Intent(this, HuntActivity.class);
+	    		startActivity(huntIntent);
+	    	}
+	    	super.onBackPressed();
+	    }
+	  
 	  @Override
 	  public void onDestroy(){
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(imageUpdateReceiver);
