@@ -62,7 +62,7 @@
     <string name="invalid_input">다시 입력해주세요.</string>
     <string name="no_photo_input">사진을 입력해주세요.</string>
     <string name="photo_input_invalid">입력하신 사진이 존재하지 않습니다.</string>
-    <string name="name_input_short">5글자 닉네임을 입력해주세요.</string>
+    <string name="name_input_wrong_length">5글자 닉네임을 입력해주세요.</string>
     <string name="name_input_invalid">닉네임에 여백을 없애주세요.</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="title_activity_intro">IntroActivity</string>

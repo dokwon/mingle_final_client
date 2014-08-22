@@ -389,9 +389,11 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 					e.printStackTrace();
 				}
 				deactResult.signal();
+				deactLock.unlock();
     		}
     	}).start();	
     	deactResult.awaitUninterruptibly();
+    	deactLock.unlock();
     }
 
     public void getNewUser(String uid, final String user_type) {
@@ -418,9 +420,11 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 					e.printStackTrace();
 				}
 				newUserFetched.signal();
+				newUserLock.unlock();
     		}
     	}).start();	
     	newUserFetched.awaitUninterruptibly();
+    	newUserLock.unlock();
     }
     
     //@Override

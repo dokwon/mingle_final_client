@@ -779,7 +779,7 @@ int string member_num_small 0x7f070066
 int string message_error 0x7f07005b
 int string minge_start_button_string 0x7f070045
 int string name_input_invalid 0x7f07006c
-int string name_input_short 0x7f07006b
+int string name_input_wrong_length 0x7f07006b
 int string network_error 0x7f070065
 int string nickname_placeholder 0x7f070047
 int string no_more_candidates 0x7f070067

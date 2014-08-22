@@ -2121,7 +2121,7 @@ containing a value of this type.
         public static final int message_error=0x7f07005b;
         public static final int minge_start_button_string=0x7f070045;
         public static final int name_input_invalid=0x7f07006c;
-        public static final int name_input_short=0x7f07006b;
+        public static final int name_input_wrong_length=0x7f07006b;
         public static final int network_error=0x7f070065;
         public static final int nickname_placeholder=0x7f070047;
         public static final int no_more_candidates=0x7f070067;
