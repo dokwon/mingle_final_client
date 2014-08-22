@@ -271,7 +271,7 @@ public class MingleApplication extends Application {
         	if(!(new File(photoPaths.get(i))).exists()) return getResources().getText(R.string.photo_input_invalid).toString();
         }
         
-        if(my_name.length() < 5) return getResources().getText(R.string.name_input_short).toString();
+        if(my_name.length() != 5) return getResources().getText(R.string.name_input_wrong_length).toString();
         if(my_name.contains(" ")) return getResources().getText(R.string.name_input_invalid).toString();
         return null;
     }
@@ -493,23 +493,27 @@ public class MingleApplication extends Application {
     public void deactivateApp(Context context){
     	String uid = this.my_user.getUid();
     	this.connectHelper.requestDeactivation(uid);
-
+    	System.out.println("1");
     	this.socketHelper.disconnectSocket();
-        this.dbHelper.deleteAll();
+    	System.out.println("2");
+    	this.dbHelper.deleteAll();
         
         photoPaths.clear();
         user_map.clear();
         candidates.clear();
         choices.clear();
         pop_users.clear();
-        
+        System.out.println("3");
+    	
         ((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancelAll();
-        GcmIntentService.clearNotificationData();
+        System.out.println("4");
+    	GcmIntentService.clearNotificationData();
 
         notification_on = true;
         for(int i = 0 ; i < 5 ; i++) groupNumFilter[i] = true;
         dist_lim = 3;
 
+        System.out.println("5");
     }
     
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {

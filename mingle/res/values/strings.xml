@@ -4,7 +4,7 @@
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
-    <string name="action_settings">Personal Settings</string>
+    <string name="action_settings">Action Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_hunt">HuntActivity</string>
@@ -57,20 +57,19 @@
     <string name="vote_fail">투표 시간이 아닙니다.</string>
     <string name="not_event_time">현재 투표 시간이 아닙니다.</string>
     <string name="network_error">네트워크 상태가 원활하지 않습니다. 네트워크 상태를 확인하시고 다시 시도해주세요.</string>
-    <string name="member_num_small">소셜 그루핑 밍글은 2명 이상의 그룹을 지원합니다.</string>
     <string name="no_more_candidates">현재 근처에 밍글 유저가 더 존재하지 않습니다. 잠시 후 다시 시도해주세요.</string>
     <string name="invalid_input">다시 입력해주세요.</string>
     <string name="no_photo_input">사진을 입력해주세요.</string>
     <string name="photo_input_invalid">입력하신 사진이 존재하지 않습니다.</string>
-    <string name="name_input_short">5글자 닉네임을 입력해주세요.</string>
+    <string name="name_input_wrong_length">5글자 닉네임을 입력해주세요.</string>
     <string name="name_input_invalid">닉네임에 여백을 없애주세요.</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="title_activity_intro">IntroActivity</string>
 
     <string name="photo_option_title">사진 추가</string>
-    <string name="photo_option_camera">새로 사진 찍기</string>
+    <string name="photo_option_camera">사진 찍기</string>
     <string name="photo_option_library">사진첩에서 불러오기</string>
-    <string name="photo_delete">이 사진을 삭제할까요?</string>
-    <string name="select_file">파일 선택해주세요.</string>
+    <string name="photo_delete">이 사진을 삭제하시겠습니까?</string>
+    <string name="select_file">파일을 선택해주세요.</string>
     
 </resources>
