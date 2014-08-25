@@ -16,6 +16,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 public class GcmIntentService extends IntentService {
@@ -44,6 +45,7 @@ public class GcmIntentService extends IntentService {
         // The getMessageType() intent parameter must be the intent you received
         // in your BroadcastReceiver.
         String messageType = gcm.getMessageType(intent);
+        MingleApplication app = ((MingleApplication)this.getApplicationContext());
 
         if (!extras.isEmpty()) {  // has effect of unparcelling Bundle
    
@@ -61,9 +63,11 @@ public class GcmIntentService extends IntentService {
                 String type = extras.getString("gcm_type");
                 if(type.equals("vote")){
                     sendVoteNotification(extras);
+                } else if(type.equals("refresh")) {
+                	app.deactivateApp();
+                	app.setNeedRefreshAccount();
                 } else {
                 	String send_uid = extras.getString("send_uid");
-                    MingleApplication app = ((MingleApplication)this.getApplicationContext());
                
                     //If socket is not connected, then update chat list with GCM msg, 
                     //and reconnect the socket for further use.

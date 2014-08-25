@@ -46,7 +46,8 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
-        	android:hardwareAccelerated="false">
+        	android:hardwareAccelerated="false"
+            android:taskAffinity="com.example.mingle.main" >
         </activity>
 
         <receiver android:name=".PartnerReceiver" >
@@ -99,7 +100,8 @@
         </activity>
         <activity
             android:name=".SearchSettingActivity"
-            android:label="@string/title_activity_search_setting"  >
+            android:label="@string/title_activity_search_setting"  
+            android:taskAffinity="com.example.mingle.main" >
         </activity>
         <activity
             android:name=".SplashScreenActivity"
@@ -115,7 +117,8 @@
         <activity
             android:name=".IntroActivity"
             android:label="@string/title_activity_intro"
-            android:theme="@style/Theme.Intro" >
+            android:theme="@style/Theme.Intro"
+            android:taskAffinity="com.example.mingle.main"  >
         </activity>
     </application>
 
