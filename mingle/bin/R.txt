@@ -513,9 +513,9 @@ int id dialogButtonCancel 0x7f0600a2
 int id dialogButtonOK 0x7f0600a1
 int id disableHome 0x7f060021
 int id dismiss 0x7f060005
-int id distBar 0x7f06007a
-int id distText 0x7f06007c
-int id dist_range 0x7f06007b
+int id distBar 0x7f06007c
+int id distText 0x7f06007b
+int id dist_range 0x7f06007a
 int id dropdown 0x7f060028
 int id edit_profile_button 0x7f0600a5
 int id edit_query 0x7f060048

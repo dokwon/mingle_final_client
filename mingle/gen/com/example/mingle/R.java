@@ -1734,9 +1734,9 @@ containing a value of this type.
         public static final int dialogButtonOK=0x7f0600a1;
         public static final int disableHome=0x7f060021;
         public static final int dismiss=0x7f060005;
-        public static final int distBar=0x7f06007a;
-        public static final int distText=0x7f06007c;
-        public static final int dist_range=0x7f06007b;
+        public static final int distBar=0x7f06007c;
+        public static final int distText=0x7f06007b;
+        public static final int dist_range=0x7f06007a;
         public static final int dropdown=0x7f060028;
         public static final int edit_profile_button=0x7f0600a5;
         public static final int edit_query=0x7f060048;

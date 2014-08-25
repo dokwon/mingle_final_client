@@ -4,29 +4,32 @@
     android:layout_height="match_parent"
     tools:context="${relativePackage}.${activityClass}" >
 
-    <SeekBar
-        android:id="@+id/distBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="56dp"
-        android:max="4" />
-
     <ImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="80dp"
+		android:layout_height="20dp"
+		android:layout_marginTop="15dp"
+		android:layout_marginLeft="10dp"
 		android:src="@drawable/range"
 		android:id="@+id/dist_range"/>
-
+    
     <TextView
         android:id="@+id/distText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/dist_range"
-        android:layout_alignBottom="@+id/dist_range"
+        android:layout_below="@+id/dist_range"
+        android:layout_marginTop="7dp"
+        style="@style/MyListTitle"
         android:layout_centerHorizontal="true" />
 
+    <SeekBar
+        android:id="@+id/distBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/distText"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:max="4" />
     <!-- 
 
 	+++++	PUSH CHOICE   +++++

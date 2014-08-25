@@ -172,6 +172,7 @@ public class CandidateFragment extends Fragment {
   
   //Load num_of_matches more candidates to the list if there are more candidates available at server
   public void loadNewMatches(int num_of_matches) {
+	  System.out.println("loadmore");
 	  MingleApplication app = (MingleApplication) parent.getApplication();
 	  ArrayList<String> combined_list = new ArrayList<String>();
 	  combined_list.addAll(app.getCandidateList());
