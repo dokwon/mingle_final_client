@@ -58,6 +58,7 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
 	
     @Override
     protected void onNewIntent(Intent intent){
+		super.onNewIntent(intent);
     	setIntent(intent);
     }
     
@@ -226,13 +227,12 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
     	
     }
 
-    /* If current activity is called from GCM not Hunt, start Hunt */
     @Override
     public void onBackPressed(){
-    	if(this.isTaskRoot()){
-    		Intent huntIntent = new Intent(this, HuntActivity.class);
-    		startActivity(huntIntent);
-    	}
+    	Intent huntIntent = new Intent(this, HuntActivity.class);
+    	huntIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    	huntIntent.putExtra(HuntActivity.FROM_CHATROOM, true);
+    	startActivity(huntIntent);
     	super.onBackPressed();
     }
     

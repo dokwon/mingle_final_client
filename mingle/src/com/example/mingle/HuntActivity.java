@@ -37,6 +37,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 public class HuntActivity extends FragmentActivity implements ActionBar.TabListener	 {
 	public final static String NEW_MESSAGE = "com.example.mingle.NEW_MESSAGE";
+	public final static String FROM_CHATROOM = "com.example.mingle.FROM_CHATROOM";
 
 	public CandidateFragment candidateFragment;			//Fragment for list of candidates
 	public ChoiceFragment choiceFragment;				//Fragment for list of choices
@@ -62,9 +63,9 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	            .setTabListener(this).setTag(R.string.tab2title));
 	        actionBar.addTab(actionBar.newTab().setCustomView(getViewForIcon(tabOffIcons.get(2)))
 	            .setTabListener(this).setTag(R.string.tab3title));
-	       
-	        actionBar.setSelectedNavigationItem(1); 
-	 }
+	        
+	        actionBar.setSelectedNavigationItem(1);
+	}
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,7 +213,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 															.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
 																@Override
 																public void onClick(DialogInterface dialog, int id) {
-																	((MingleApplication)curActivity.getApplication()).deactivateApp((Context)curActivity);
+																	((MingleApplication)curActivity.getApplication()).deactivateApp();
 															        Intent backToMain = new Intent(curActivity, MainActivity.class);
 												       	         	backToMain.putExtra(MainActivity.MAIN_TYPE, "new");  
 															        backToMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -471,10 +472,23 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	  };
 	  
 	  @Override
+	  protected void onNewIntent(Intent intent) {
+		  super.onNewIntent(intent);
+		  setIntent(intent);
+	  }
+	  
+	  @Override
 	  public void onResume(){
-	        super.onRestart();
+	        super.onResume();        
 	        candidateListUpdate();
 	        choiceListUpdate();
+	        
+	        Intent intent = getIntent();
+	        if(intent.getExtras() == null) intent.putExtras(new Bundle());
+	        
+	        if(intent.getBooleanExtra(FROM_CHATROOM, false))
+	        	actionBar.setSelectedNavigationItem(2);
+
 	  }
 	 
 	  @Override
