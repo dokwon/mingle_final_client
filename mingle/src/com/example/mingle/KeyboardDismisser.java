@@ -11,6 +11,9 @@ import android.widget.EditText;
 public class KeyboardDismisser {
 	public static void hideSoftKeyboard(Activity activity) {
 	    InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+	    if (activity instanceof MainActivity) {
+	    	((MainActivity) activity).editName();
+	    }
 	    inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
 	}
 	

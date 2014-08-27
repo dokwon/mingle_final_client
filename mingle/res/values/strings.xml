@@ -72,4 +72,7 @@
     <string name="photo_delete">이 사진을 삭제하시겠습니까?</string>
     <string name="select_file">파일을 선택해주세요.</string>
     
+    <string name="vote_time_notif">투표시간 18:00 ~ 01:00</string>
+    
+    
 </resources>

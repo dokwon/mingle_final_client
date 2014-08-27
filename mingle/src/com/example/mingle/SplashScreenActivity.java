@@ -137,6 +137,7 @@ public class SplashScreenActivity extends Activity {
 		    }
 
 		} else {
+			
 			Thread launcherThread = new Thread() {
 				@Override
 				public void run() {

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class VoteFragment extends Fragment{
 
@@ -51,6 +52,8 @@ public class VoteFragment extends Fragment{
     	top_list_view.setVisibility(View.GONE);
     	not_vote_time_view.setVisibility(View.GONE);
 	    
+    	TextView question_textview = (TextView)rootView.findViewById(R.id.daily_question_vote);
+    	question_textview.setText(((MingleApplication) parent.getApplication()).getQuestion());
 		return rootView;
 	}
 	

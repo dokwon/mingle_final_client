@@ -19,6 +19,6 @@
 					android:layout_height="wrap_content"
 					android:padding="50dp"
 					android:layout_gravity="center"
-					android:src="@drawable/errormassagechat" >
-	</ImageView>     	
+					android:src="@drawable/errormassagechat" />
+	     	
 </LinearLayout>

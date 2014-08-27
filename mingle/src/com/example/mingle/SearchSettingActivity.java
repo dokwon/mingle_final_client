@@ -61,7 +61,7 @@ public class SearchSettingActivity extends Activity implements ActionBar.TabList
 		
 		ActionBar actionBar = getActionBar();
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM  | ActionBar.DISPLAY_SHOW_HOME);
-        View titleView =  LayoutInflater.from(this).inflate(R.layout.chatactivity_title_custom_view, null);
+        View titleView =  LayoutInflater.from(this).inflate(R.layout.searchactivity_title_custom_view, null);
         LayoutParams layout = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         titleView.setLayoutParams(layout);
         actionBar.setCustomView(titleView);
@@ -82,7 +82,7 @@ public class SearchSettingActivity extends Activity implements ActionBar.TabList
 		distBar = (SeekBar)findViewById(R.id.distBar);
 		distText = (TextView)findViewById(R.id.distText);
 		
-		distText.setText(String.valueOf(app.getDist()));
+		distText.setText(String.valueOf(app.getDist()) + " km");
 		distBar.setProgress(app.getDist() - 1);
 		distBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
 			@Override
@@ -96,7 +96,7 @@ public class SearchSettingActivity extends Activity implements ActionBar.TabList
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
 				app.setDist(progress + 1);
-				distText.setText(String.valueOf(progress + 1));
+				distText.setText(String.valueOf(progress + 1) + " km");
 			}
 		});
 	}

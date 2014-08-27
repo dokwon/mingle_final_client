@@ -129,8 +129,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
       	       	 
       	       	 ResizableImageView photo_view = (ResizableImageView) single_photo_layout.findViewById(R.id.photoView);
       	       	 Drawable photo_drawable = user.getPic(i);
-      	        photo_view.setImageDrawable(ImageRounder.getRoundedDrawable(temp,photo_drawable, 13));
-      	        photo_view.setImageDrawable(photo_drawable);
+      	        photo_view.setImageDrawable(ImageRounder.getProfileRoundedDrawable(temp,photo_drawable, 13));
       	       	 viewFlipper.addView(single_photo_layout);
               }
         	   
