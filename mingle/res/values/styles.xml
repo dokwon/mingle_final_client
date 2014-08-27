@@ -142,9 +142,10 @@
    </style>
      
      <style name="VoteProfileImage">
-       <item name="android:layout_width">65dp</item>
+       <item name="android:layout_width">78dp</item>
        <item name="android:layout_height">fill_parent</item>
        <item name="android:scaleGravity">fill</item>
+       <item name="android:layout_marginLeft">-8dp</item>
        <item name="android:layout_marginRight">8dp</item>
    </style>
    <style name="ChatRoomImage">
@@ -157,7 +158,17 @@
        <item name="android:layout_marginTop">15dp</item>
        <item name="android:layout_marginBottom">15dp</item>
    </style>
- 
+  <style name="ChatSnippetTitle">
+       <item name="android:textSize">13sp</item>
+       <item name="android:maxLines">2</item>
+       <item name="android:ellipsize">end</item>
+   </style>
+   <style name="ChatroomTitle">
+       <item name="android:textSize">19sp</item>
+       <item name="android:textStyle">bold</item>
+       <item name="android:maxLines">1</item>
+       <item name="android:ellipsize">end</item>
+   </style>
    <style name="MyListTitle">
        <item name="android:textSize">17sp</item>
        <item name="android:textStyle">bold</item>

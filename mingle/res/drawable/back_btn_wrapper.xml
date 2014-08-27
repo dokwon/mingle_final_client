@@ -4,8 +4,8 @@
 
     <item
         android:drawable="@drawable/back_button"
-        android:top="15dp"
-        android:bottom="15dp"/>
+        android:top="30dp"
+        android:bottom="30dp"/>
     
   
 </layer-list>

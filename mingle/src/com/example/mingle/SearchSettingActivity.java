@@ -189,23 +189,23 @@ public class SearchSettingActivity extends Activity implements ActionBar.TabList
     
     public void turnNotiOn(View v){
     	app.setNotiFlag(true);
-    	((Button)findViewById(R.id.pushonbutton)).setBackground(getResources().getDrawable(R.drawable.selecton));
-		((Button)findViewById(R.id.pushoffbutton)).setBackground(getResources().getDrawable(R.drawable.unselectoff));
+    	((Button)findViewById(R.id.pushonbutton)).setBackgroundResource(R.drawable.selecton);
+		((Button)findViewById(R.id.pushoffbutton)).setBackgroundResource(R.drawable.unselectoff);
     }
     
     public void turnNotiOff(View v){
     	app.setNotiFlag(false);
-    	((Button)findViewById(R.id.pushonbutton)).setBackground(getResources().getDrawable(R.drawable.unselecton));
-		((Button)findViewById(R.id.pushoffbutton)).setBackground(getResources().getDrawable(R.drawable.selectoff));
+    	((Button)findViewById(R.id.pushonbutton)).setBackgroundResource(R.drawable.unselecton);
+		((Button)findViewById(R.id.pushoffbutton)).setBackgroundResource(R.drawable.selectoff);
     }
     
 	private void notificationSetting(){		
 		if(app.getNotiFlag()){
-			((Button)findViewById(R.id.pushonbutton)).setBackground(getResources().getDrawable(R.drawable.selecton));
-			((Button)findViewById(R.id.pushoffbutton)).setBackground(getResources().getDrawable(R.drawable.unselectoff));
+			((Button)findViewById(R.id.pushonbutton)).setBackgroundResource(R.drawable.selecton);
+			((Button)findViewById(R.id.pushoffbutton)).setBackgroundResource(R.drawable.unselectoff);
 		} else {
-			((Button)findViewById(R.id.pushonbutton)).setBackground(getResources().getDrawable(R.drawable.unselecton));
-			((Button)findViewById(R.id.pushoffbutton)).setBackground(getResources().getDrawable(R.drawable.selectoff));
+			((Button)findViewById(R.id.pushonbutton)).setBackgroundResource(R.drawable.unselecton);
+			((Button)findViewById(R.id.pushoffbutton)).setBackgroundResource(R.drawable.selectoff);
 		}
 	}
 	

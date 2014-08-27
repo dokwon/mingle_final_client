@@ -24,6 +24,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.ThumbnailUtils;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,7 +65,7 @@ public class CandidateAdapter extends ArrayAdapter {
         return (int) (dp * scale + 0.5f);
     }
     
-
+    
     
     
     @Override
@@ -101,8 +102,9 @@ public class CandidateAdapter extends ArrayAdapter {
         if(app.getLat() == 0.0 || app.getLong() == 0.0) holder.user_dist.setVisibility(View.GONE);
         else holder.user_dist.setText(Float.toString(candidate.getDistance())+"km");
         Drawable main_drawable = candidate.getPic(0);
-        Bitmap rounded =  MingleApplication.getRoundedCornerBitmap(((BitmapDrawable) main_drawable).getBitmap());
-        holder.user_pic.setImageDrawable( new BitmapDrawable(context.getResources(),rounded));
+        
+        holder.user_pic.setImageDrawable(ImageRounder.getRoundedDrawable((Activity)context,
+        		main_drawable, 13));
         
         //If user's pic is clicked, show his profile
         final String profile_uid = candidate.getUid();

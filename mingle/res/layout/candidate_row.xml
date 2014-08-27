@@ -8,8 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
+         android:padding="10dp"
         android:background="@drawable/toast_frame"
         />
         
@@ -17,8 +16,7 @@
             android:orientation="vertical"
             android:id="@+id/front"
             android:tag="front"
-            android:layout_marginTop="@dimen/small_margin"
-            android:layout_marginBottom="@dimen/small_margin"
+            android:layout_margin="@dimen/small_margin"
            android:background="@drawable/candidate_cell_border"
             style="@style/MyListFrontContent">
  		 <FrameLayout 
@@ -35,7 +33,7 @@
 	            android:layout_width="match_parent"
 	            android:layout_height="30dp"
 	            android:layout_margin="@dimen/option_margin"
-	            android:gravity = "bottom">
+	            android:gravity = "center_vertical">
 			         
 			         
 			         <ImageView
