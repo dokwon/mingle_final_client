@@ -169,7 +169,7 @@ public class MingleApplication extends Application {
 		    	break;
 		    // etc.
 		}
-		matrix.postScale(0.5f, 0.5f);
+		//matrix.postScale(0.5f, 0.5f);
 		return Bitmap.createBitmap(source , 0, 0, source .getWidth(), source .getHeight(), matrix, true);
 	}	
    
@@ -323,7 +323,7 @@ public class MingleApplication extends Application {
     
     public void addCandidate(String uid){
     	Log.i("Cand debug", "befre add" + candidates.size());
-    	if(getCandidatePos(uid) < 0) return;
+    	if(getCandidatePos(uid) >= 0) return;
         candidates.add(uid);
     	Log.i("Cand debug", "after add " + uid + "->" + candidates.size());
     }

@@ -218,15 +218,7 @@ public class SplashScreenActivity extends Activity {
     			if(update_required.equals("true")){
     				Toast.makeText(getApplicationContext(), getResources().getString(R.string.application_update_required), Toast.LENGTH_SHORT).show();
     			} else {
-    				String encoded_str = init_info_obj.getString("QUESTION");
-    				String decoded_str = "";
-					try {
-						decoded_str = URLDecoder.decode(encoded_str,"UTF-8");
-					} catch (UnsupportedEncodingException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-    				app.setQuestion(decoded_str);
+    				app.setQuestion(init_info_obj.getString("QUESTION"));
     				Intent i = new Intent(context, MainActivity.class);
        	         	i.putExtra(MainActivity.MAIN_TYPE, "new");  
        	         	startActivity(i);

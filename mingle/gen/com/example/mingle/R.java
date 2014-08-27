@@ -1412,7 +1412,7 @@ containing a value of this type.
  Minimum width of the search view text entry area. 
          */
         public static final int abc_search_view_text_min_width=0x7f0b000c;
-        public static final int action_bar_height=0x7f0b0028;
+        public static final int action_bar_height=0x7f0b0029;
         /**  Default screen margins, per the Android Design guidelines. 
 
          Example customization of dimensions originally defined in res/values/dimens.xml
@@ -1454,31 +1454,32 @@ containing a value of this type.
          (the screen is in portrait). This may be either a fraction or a dimension.
          */
         public static final int dialog_fixed_width_minor=0x7f0b0012;
-        public static final int indicator_size=0x7f0b0027;
-        public static final int main_logo_height=0x7f0b0030;
-        public static final int main_logo_width=0x7f0b002f;
+        public static final int indicator_size=0x7f0b0028;
+        public static final int main_logo_height=0x7f0b0031;
+        public static final int main_logo_width=0x7f0b0030;
+        public static final int medium_margin=0x7f0b0021;
         public static final int member_counter_height=0x7f0b001f;
         public static final int member_counter_width=0x7f0b001e;
-        public static final int member_icon_height=0x7f0b0023;
-        public static final int member_icon_width=0x7f0b0022;
-        public static final int member_margin=0x7f0b0021;
-        public static final int member_num_and_icon_margin=0x7f0b0026;
-        public static final int member_num_height=0x7f0b0025;
-        public static final int member_num_width=0x7f0b0024;
+        public static final int member_icon_height=0x7f0b0024;
+        public static final int member_icon_width=0x7f0b0023;
+        public static final int member_margin=0x7f0b0022;
+        public static final int member_num_and_icon_margin=0x7f0b0027;
+        public static final int member_num_height=0x7f0b0026;
+        public static final int member_num_width=0x7f0b0025;
         public static final int member_option_label_height=0x7f0b001b;
         public static final int option_label_height=0x7f0b001a;
         public static final int option_label_width=0x7f0b0019;
         public static final int option_margin=0x7f0b001c;
         public static final int photo_margin=0x7f0b001d;
         public static final int photo_view_size=0x7f0b0017;
-        public static final int profile_activity_margin=0x7f0b0031;
+        public static final int profile_activity_margin=0x7f0b0032;
         public static final int small_margin=0x7f0b0020;
-        public static final int tab1_icon_height=0x7f0b002a;
-        public static final int tab1_icon_width=0x7f0b0029;
-        public static final int tab2_icon_height=0x7f0b002c;
-        public static final int tab2_icon_width=0x7f0b002b;
-        public static final int tab3_icon_height=0x7f0b002e;
-        public static final int tab3_icon_width=0x7f0b002d;
+        public static final int tab1_icon_height=0x7f0b002b;
+        public static final int tab1_icon_width=0x7f0b002a;
+        public static final int tab2_icon_height=0x7f0b002d;
+        public static final int tab2_icon_width=0x7f0b002c;
+        public static final int tab3_icon_height=0x7f0b002f;
+        public static final int tab3_icon_width=0x7f0b002e;
         public static final int title_bar_height=0x7f0b0016;
     }
     public static final class drawable {
