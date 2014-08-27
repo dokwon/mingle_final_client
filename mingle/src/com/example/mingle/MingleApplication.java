@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,9 +20,11 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Application;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.ActionBar.LayoutParams;
 import android.content.Context;
@@ -55,6 +58,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
+import android.os.Bundle;
 
 import com.example.mingle.HttpHelper;
 import com.example.mingle.MingleUser.MsgComparator;
@@ -91,15 +95,43 @@ public class MingleApplication extends Application {
     private int extra_match_num = 5;
     private boolean can_get_more_candidate = true;
     private boolean notification_on = true;
+    private boolean needRefresh = false;
     private boolean[] groupNumFilter = {true, true, true, true, true};
-    
     private ConcurrentHashMap<String, MingleUser> user_map = new ConcurrentHashMap<String, MingleUser>();
     
     private ArrayList<String> candidates = new ArrayList<String>();
     private ArrayList<String> choices = new ArrayList<String>();
     private ArrayList<ArrayList<String>> pop_users = new ArrayList<ArrayList<String>>();
+
     
- 
+  @Override
+  public void onCreate() {
+	  registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks(){
+		  @Override
+		  public void onActivityStopped(Activity activity) {}
+		  @Override
+		  public void onActivityStarted(Activity activity) {}
+		  @Override
+		  public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
+		  @Override
+		  public void onActivityResumed(Activity activity) {
+			  	if(needRefresh) {
+			  		needRefresh = false;
+			  		
+			  		Intent backToMain = new Intent(activity, MainActivity.class);
+			  		backToMain.putExtra(MainActivity.MAIN_TYPE, "new");  
+			  		backToMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+			  		startActivity(backToMain);
+			  	}
+		  }
+		  @Override
+		  public void onActivityPaused(Activity activity) {}
+		  @Override
+		  public void onActivityDestroyed(Activity activity) {}
+		  @Override
+		  public void onActivityCreated(Activity activity, Bundle savedInstanceState) {}
+	  });
+  }
    
     
    public void initializeApplication(){
@@ -491,7 +523,7 @@ public class MingleApplication extends Application {
         else return true;
     }
     
-    public void deactivateApp(Context context){
+    public void deactivateApp(){
     	String uid = this.my_user.getUid();
     	this.connectHelper.requestDeactivation(uid);
     	System.out.println("1");
@@ -571,6 +603,10 @@ public class MingleApplication extends Application {
  	
  	private float rad2deg(float rad) {
  		return (float)(rad * 180 / Math.PI);
+ 	}
+ 	
+ 	public void setNeedRefreshAccount() {
+ 		this.needRefresh = true;
  	}
 }
 

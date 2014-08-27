@@ -51,6 +51,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
     
     @Override
     protected void onNewIntent(Intent intent) {
+    	super.onNewIntent(intent);
     	setIntent(intent);
     }
    
@@ -330,9 +331,9 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 	    	public void onReceive(Context context, Intent intent) {
 	    		String result = intent.getExtras().getString(HttpHelper.VOTE_RESULT);
 	    		if(result.equals("success")){
-		    		Toast.makeText(getApplicationContext(), "Vote success!", Toast.LENGTH_SHORT).show();
+		    		Toast.makeText(getApplicationContext(),  getResources().getString(R.string.vote_success), Toast.LENGTH_SHORT).show();
 	    		} else {
-		    		Toast.makeText(getApplicationContext(), "Can't vote yet!", Toast.LENGTH_SHORT).show();
+		    		Toast.makeText(getApplicationContext(),  getResources().getString(R.string.vote_fail), Toast.LENGTH_SHORT).show();
 	    		}
 	    	}
 	  };
@@ -350,6 +351,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 	    public void onBackPressed(){
 	    	if(this.isTaskRoot()){
 	    		Intent huntIntent = new Intent(this, HuntActivity.class);
+	        	huntIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 	    		startActivity(huntIntent);
 	    	}
 	    	super.onBackPressed();

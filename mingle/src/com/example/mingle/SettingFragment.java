@@ -73,7 +73,7 @@ public class SettingFragment extends Fragment{
 																	@Override
 																	public void onClick(DialogInterface dialog, int id) {
 																		dialog.dismiss();
-																		((MingleApplication)curActivity.getApplication()).deactivateApp((Context)curActivity);
+																		((MingleApplication)curActivity.getApplication()).deactivateApp();
 																        Intent backToMain = new Intent(curActivity, HuntActivity.class);
 																        backToMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 																        startActivity(backToMain);
