@@ -8,19 +8,24 @@
     android:orientation="horizontal" >
     <TextView
 		android:id="@+id/chatter_name_chat"
-		style="@style/MyListTitle"
+		style="@style/ChatroomTitle"
 		android:layout_width="wrap_content"
 		android:layout_marginLeft="@dimen/small_margin"
 		android:layout_height="wrap_content"/>
     <ImageView
 		android:layout_width="@dimen/member_icon_width"
 		android:layout_height="@dimen/member_icon_height"
+		android:layout_marginLeft="10dp"
+		android:paddingTop="3dp"
+		android:paddingBottom="3dp"
 		android:src="@drawable/numberpic"
 		android:id="@+id/member_num_icon_chat"/>        
 	<ImageView
 		android:contentDescription="@string/photo_description"
 		android:layout_width="@dimen/member_num_width"
 		android:layout_height="@dimen/member_num_height"
+		android:paddingTop="3dp"
+		android:paddingBottom="3dp"
 		android:layout_marginLeft="@dimen/member_num_and_icon_margin"
 		android:id="@+id/member_num_chat"/>
 	

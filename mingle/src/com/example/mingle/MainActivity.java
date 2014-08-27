@@ -290,11 +290,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         app = ((MingleApplication) this.getApplication());
         prefs = getSharedPreferences("com.example.mingle", MODE_PRIVATE);
 
-        if (prefs.getBoolean("firstrun", true)) {
+        //if (prefs.getBoolean("firstrun", true)) {
             Intent introIntent = new Intent(this, IntroActivity.class);
             startActivity(introIntent);
             prefs.edit().putBoolean("firstrun", false).commit();
-        }
+        //}
         
         //check if custom title is supported BEFORE setting the content view!
         //boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
