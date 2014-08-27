@@ -58,13 +58,10 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		 super.onCreate(savedInstanceState);
-		//check if custom title is supported BEFORE setting the content view!
-	    //boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-	        
+		
 	    setContentView(R.layout.activity_profile);
 	    ActionbarController.customizeActionBar(R.layout.profile_title_bar, this, -30, 0);
-	    //if(customTitleSupported) getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.profile_title_bar);
-
+	    
 	    //Support Korean Language
 	    koreanTypeFace = Typeface.createFromAsset(getAssets(), "fonts/mingle-font-regular.otf");
 	    viewFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
@@ -89,10 +86,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 		         shadow.getLayoutParams().height = prof_elems.getMeasuredHeight() + 20;
 			} 
          });
-         
         
-         //initializePhotoIndicators();
-         //resizeProfilePic();
 	}
 	
 	

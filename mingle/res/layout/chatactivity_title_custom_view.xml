@@ -15,7 +15,7 @@
     <ImageView
 		android:layout_width="@dimen/member_icon_width"
 		android:layout_height="@dimen/member_icon_height"
-		android:layout_marginLeft="10dp"
+		android:layout_marginLeft="5dp"
 		android:paddingTop="3dp"
 		android:paddingBottom="3dp"
 		android:src="@drawable/numberpic"
@@ -26,7 +26,7 @@
 		android:layout_height="@dimen/member_num_height"
 		android:paddingTop="3dp"
 		android:paddingBottom="3dp"
-		android:layout_marginLeft="@dimen/member_num_and_icon_margin"
+		android:layout_marginLeft="-3dp"
 		android:id="@+id/member_num_chat"/>
 	
 	
