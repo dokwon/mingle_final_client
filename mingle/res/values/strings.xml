@@ -71,6 +71,8 @@
     <string name="photo_option_library">사진첩에서 불러오기</string>
     <string name="photo_delete">이 사진을 삭제하시겠습니까?</string>
     <string name="select_file">파일을 선택해주세요.</string>
+    <string name="location_error">현재 위치를 파악할 수 없습니다.</string>
+    <string name="location_error_title">GPS 위치 정보</string>
     
     <string name="vote_time_notif">투표시간 18:00 ~ 01:00</string>
     

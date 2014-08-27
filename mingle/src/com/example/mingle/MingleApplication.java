@@ -77,6 +77,7 @@ public class MingleApplication extends Application {
     public Typeface koreanBoldTypeFace;
     public int blankProfileImage;
     public int blankProfileImageSmall;
+    private String theme_of_the_day;
     private String question_of_the_day;
 	
     public HttpHelper connectHelper;
@@ -170,15 +171,23 @@ public class MingleApplication extends Application {
 		    	break;
 		    // etc.
 		}
-		matrix.postScale(0.5f, 0.5f);
+		//matrix.postScale(0.5f, 0.5f);
 		return Bitmap.createBitmap(source , 0, 0, source .getWidth(), source .getHeight(), matrix, true);
 	}	
    
-   public void setQuestion(String question){
+   public void setThemeToday(String theme){
+	   theme_of_the_day = theme;
+   }
+   
+   public String getThemeToday(){
+	   return theme_of_the_day;
+   }
+   
+   public void setQuestionToday(String question){
 	   question_of_the_day = question;
    }
    
-   public String getQuestion(){
+   public String getQuestionToday(){
 	   return question_of_the_day;
    }
    
@@ -324,6 +333,7 @@ public class MingleApplication extends Application {
     
     public void addCandidate(String uid){
     	Log.i("Cand debug", "befre add" + candidates.size());
+    	if(getCandidatePos(uid) >= 0) return;
         candidates.add(uid);
     	Log.i("Cand debug", "after add " + uid + "->" + candidates.size());
     }

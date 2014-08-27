@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 
 public class KeyboardDismisser {
@@ -26,7 +27,10 @@ public class KeyboardDismisser {
 
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
-					//v.performClick();
+					
+					if(v instanceof Button) {
+						v.performClick();
+					}
 					if(activity.getCurrentFocus() != null)
 						hideSoftKeyboard(activity);
 					return false;

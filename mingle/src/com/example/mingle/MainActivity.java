@@ -215,9 +215,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     private void initializeUIViews() {
     	ActionbarController.customizeActionBar(R.layout.custom_actionbar, this, -30, 0);
     	
-    	TextView question_textview = (TextView)findViewById(R.id.daily_question_individual);
-    	System.out.println(app.getQuestion() + " ++++++++++++++++++++++++++ ");
-    	question_textview.setText(app.getQuestion());
+    	TextView theme_text_view = (TextView)findViewById(R.id.daily_theme_individual);
+    	theme_text_view.setText(app.getThemeToday());
+        theme_text_view.setTypeface(app.koreanTypeFace);
+        
     	
     	//Set Default Values
     	if(type.equals("new")){
@@ -299,6 +300,9 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
             preview_button.setVisibility(View.GONE);
         }
        KeyboardDismisser.setupKeyboardDismiss(findViewById(R.id.main_parent), this);
+       
+       
+       
     }
     
 

@@ -71,6 +71,7 @@
                 android:layout_below="@id/sender_name"
                 android:layout_marginBottom="2dp"
                 android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 style="@style/ChatSnippetTitle"
                 android:id="@+id/msg"/>
 

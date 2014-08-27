@@ -26,6 +26,10 @@ public class IntroActivity extends Activity {
 	private ArrayList<Integer> intro_arr;
     private float lastX;
     private Button startButton;
+	
+    
+    private ArrayList<Bitmap> intro_bitmaps;
+	
 	private int current_viewing_pic_index;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +37,22 @@ public class IntroActivity extends Activity {
 		setContentView(R.layout.activity_intro);
 		
 	    viewFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
-	    LayoutInflater inflater = getLayoutInflater();
+	    
 	    
 	    intro_arr = new ArrayList<Integer>();
 	    intro_arr.add(R.drawable.intro1);
 	    intro_arr.add(R.drawable.intro2);
 	    intro_arr.add(R.drawable.intro3);
 	    intro_arr.add(R.drawable.intro4);
-       	final BitmapFactory.Options options = new BitmapFactory.Options();
+
+	    intro_bitmaps = new ArrayList<Bitmap>();
+	}
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		LayoutInflater inflater = getLayoutInflater();
+		final BitmapFactory.Options options = new BitmapFactory.Options();
        	
        	current_viewing_pic_index = 0;
 	    LinearLayout indicatorWrapper = (LinearLayout) findViewById(R.id.intro_indicators);
@@ -54,7 +66,9 @@ public class IntroActivity extends Activity {
        		BitmapFactory.decodeResource(getResources(), intro_arr.get(i), options);
        		options.inSampleSize = 2;
        		options.inJustDecodeBounds = false;
-       		photo_view.setImageBitmap(BitmapFactory.decodeResource(getResources(), intro_arr.get(i), options));
+       		Bitmap bm = BitmapFactory.decodeResource(getResources(), intro_arr.get(i), options);
+       		photo_view.setImageBitmap(bm);
+       		intro_bitmaps.add(bm);
        		
        		startButton = (Button) single_photo_layout.findViewById(R.id.startButton);
     		if(i < intro_arr.size()-1) startButton.setVisibility(View.GONE);
@@ -63,7 +77,15 @@ public class IntroActivity extends Activity {
        		viewFlipper.addView(single_photo_layout);
        	}
 	}
-	
+
+	@Override
+	public void onPause(){
+		for(int i = 0; i < intro_bitmaps.size(); i++){
+			intro_bitmaps.get(i).recycle();
+		}
+		intro_bitmaps.clear();
+		super.onPause();
+	}
 	private void updatePhotoIndicators(int changeInIndex) {
 		if(changeInIndex == 0) return; 
 		LinearLayout indicatorWrapper = (LinearLayout) findViewById(R.id.intro_indicators);
