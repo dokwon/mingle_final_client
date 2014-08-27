@@ -88,7 +88,8 @@ public class GcmIntentService extends IntentService {
                 	}
  
                     //If the user is looking at the chat room now, we need not show notification.
-                    if(!app.getMingleUser(send_uid).isInChat() && app.getNotiFlag()) {
+                    MingleUser sender = app.getMingleUser(send_uid);
+                    if(sender != null && sender.isInChat() && app.getNotiFlag()) {
                         openPopupActivity(extras);
                         sendNotification(extras);
                     }

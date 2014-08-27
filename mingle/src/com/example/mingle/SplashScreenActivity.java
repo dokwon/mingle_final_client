@@ -236,7 +236,8 @@ public class SplashScreenActivity extends Activity {
     			if(update_required.equals("true")){
     				Toast.makeText(getApplicationContext(), getResources().getString(R.string.application_update_required), Toast.LENGTH_SHORT).show();
     			} else {
-    				app.setQuestion(init_info_obj.getString("QUESTION"));
+    				app.setThemeToday(init_info_obj.getString("THEME"));
+    				app.setQuestionToday(init_info_obj.getString("QUESTION"));
     				Intent i = new Intent(context, MainActivity.class);
        	         	i.putExtra(MainActivity.MAIN_TYPE, "new");  
        	         	startActivity(i);
