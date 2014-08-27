@@ -207,6 +207,7 @@ public class SplashScreenActivity extends Activity {
     			default:
     				checkLocationError(app.getLat(), app.getLong());
     				break;
+    				
     		}
     	}
     };
