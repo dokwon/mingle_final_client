@@ -48,7 +48,8 @@
     <string name="account_delete">계정 삭제</string>
     <string name="message_error">메시지 오류</string>
     <string name="update_complete">사용자 정보가 업데이트 되었습니다.</string>
-    <string name="application_update_required">업데이트가 필요합니다.</string>
+    <string name="application_update_question">소프트웨어 업데이트를 하시겠습니까?</string>
+    <string name="application_update_required">어플리케이션 업데이트</string>
     <string name="account_delete_alert">계정을 삭제하시겠습니까?</string>
     <string name="user_no_exist_alert">사용자가 존재하지 않습니다.</string>
     <string name="gps_disabled_alert">GPS 위치 탐색기가 해제되어있습니다. 허용하시겠습니까?</string>

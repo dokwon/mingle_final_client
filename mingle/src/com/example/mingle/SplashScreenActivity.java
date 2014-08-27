@@ -32,6 +32,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -226,23 +227,58 @@ public class SplashScreenActivity extends Activity {
         
     }
     
+    private void showUpdateRequired(final String update_url){
+    	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
+		.setTitle(getResources().getString(R.string.application_update_required))
+		.setCancelable(false)
+		.setMessage(getResources().getString(R.string.application_update_question))
+		.setIcon(R.drawable.icon_tiny)
+		.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.dismiss();
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				intent.setData(Uri.parse(update_url));
+				startActivity(intent);
+			}
+		})
+		.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.dismiss();
+				finish();
+			}
+		});
+    	popupBuilder.show();  	
+    }
+    
 	private BroadcastReceiver initInfoReceiver = new BroadcastReceiver() {
     	@Override
     	public void onReceive(Context context, Intent intent) {
     		String data = intent.getStringExtra(HttpHelper.INIT_INFO);
     		try {
     			JSONObject init_info_obj = new JSONObject(data);
-    			String update_required = init_info_obj.getString("UPDATE_REQUIRED");
-    			if(update_required.equals("true")){
-    				Toast.makeText(getApplicationContext(), getResources().getString(R.string.application_update_required), Toast.LENGTH_SHORT).show();
+    			PackageInfo pInfo=null;
+				try {
+					pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+				} catch (NameNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    			String version;
+    			if(pInfo == null) version="";
+    			else version = pInfo.versionName;
+    			String current_version = init_info_obj.getString("CURR_VERSION");
+    			if(!version.equals(current_version)){
+    				showUpdateRequired(init_info_obj.getString("UPDATE_URL"));
     			} else {
     				app.setThemeToday(init_info_obj.getString("THEME"));
     				app.setQuestionToday(init_info_obj.getString("QUESTION"));
     				Intent i = new Intent(context, MainActivity.class);
        	         	i.putExtra(MainActivity.MAIN_TYPE, "new");  
        	         	startActivity(i);
+       	         	finish();
     			}
-   	         	finish();
 	    	} catch (JSONException e) {
 	    		e.printStackTrace();
 	    	}

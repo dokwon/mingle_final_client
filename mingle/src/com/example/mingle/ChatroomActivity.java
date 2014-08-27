@@ -213,9 +213,9 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
     
     private void showNoUserPopup(){
     	AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
-												.setTitle("Mingle")
+												.setTitle(getResources().getString(R.string.message_error))
 												.setCancelable(false)
-												.setMessage("This user has been deactivated")
+												.setMessage(getResources().getString(R.string.user_no_exist_alert))
 												.setIcon(R.drawable.icon_tiny)
 												.setNeutralButton("OK", new DialogInterface.OnClickListener() {
 													@Override

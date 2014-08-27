@@ -13,6 +13,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.net.*;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.socket.*;
 
@@ -32,6 +35,9 @@ public class Socket extends AsyncTask<String, MingleApplication, Integer>  {
     private String url;
 	public final static String DEACT_USER = "com.example.mingle.DEACT_USER";	//Intent data to pass on when chatting user has been deactivated
 	public final static String NO_USER_NOTI = "com.example.mingle.NO_USER_NOTI";
+	
+	public Lock newMsgLock = new ReentrantLock();
+    public Condition newMsgFetched = newMsgLock.newCondition();
 
     public Socket(String url, MingleApplication currApp){
     	this.url = url;
@@ -114,31 +120,14 @@ public class Socket extends AsyncTask<String, MingleApplication, Integer>  {
     					//and send confirmation to server so that it knows client received the message
     				} else if(event.equals("msg_to_user")){
     					JSONObject get_msg_obj = (JSONObject) args[0];
-                	
-    					app.handleIncomingMsg(get_msg_obj);
-    					socket.emit("msg_to_user_conf");
-    				} else if(event.equals("no_user_exist")){
-    							
     					
-    					AlertDialog.Builder popupBuilder = new AlertDialog.Builder(app)
-																.setTitle("Mingle")
-																.setCancelable(false)
-																.setMessage("This user is not active anymore.")
-																.setIcon(R.drawable.mingle_logo)
-																.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-																	@Override
-																	public void onClick(DialogInterface dialog, int id) {
-																		dialog.dismiss();
-																	}
-																});
-    					popupBuilder.show();
-    					/*
-						try {
-							String recv_uid = ((JSONObject)args[0]).getString("send_uid");
-							app.getMingleUser(recv_uid).removeLastMsg();
-						} catch (JSONException e) {
-							e.printStackTrace();
-						} */   				
+    					newMsgLock.lock();
+    					app.handleIncomingMsg(get_msg_obj);
+    					newMsgFetched.signal();
+    					newMsgLock.unlock();
+    					
+    					socket.emit("msg_to_user_conf");
+    				} else if(event.equals("no_user_exist")){				
 						Intent dispatcher = new Intent(app, ChatroomActivity.class);
     					dispatcher.putExtra(DEACT_USER, args[0].toString());
     					dispatcher.setAction(NO_USER_NOTI);
