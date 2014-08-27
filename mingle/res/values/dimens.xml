@@ -18,6 +18,7 @@
 	<dimen name="member_counter_width">23dp</dimen>
 	<dimen name="member_counter_height">25dp</dimen>
 	<dimen name="small_margin">5dp</dimen>
+	<dimen name="medium_margin">8dp</dimen>
 	<dimen name="member_margin">7dp</dimen>
 	
 	

@@ -212,7 +212,7 @@ public class SplashScreenActivity extends Activity {
     };
     
     private boolean checkLocationError(float loc_lat, float loc_long){
-    	if(Math.abs(loc_lat)+Math.abs(loc_long)<0.1){
+    	/*if(Math.abs(loc_lat)+Math.abs(loc_long)<0.1){
     		new AlertDialog.Builder(this)
     		.setTitle(getResources().getString(R.string.location_error_title))
     		.setMessage(getResources().getString(R.string.gps_cannot_find_location))
@@ -225,7 +225,7 @@ public class SplashScreenActivity extends Activity {
             .show();
     		return true;
     	}
-    	else return false;
+    	else*/ return false;
         
     }
     
@@ -239,15 +239,7 @@ public class SplashScreenActivity extends Activity {
     			if(update_required.equals("true")){
     				Toast.makeText(getApplicationContext(), getResources().getString(R.string.application_update_required), Toast.LENGTH_SHORT).show();
     			} else {
-    				String encoded_str = init_info_obj.getString("QUESTION");
-    				String decoded_str = "";
-					try {
-						decoded_str = URLDecoder.decode(encoded_str,"UTF-8");
-					} catch (UnsupportedEncodingException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-    				app.setQuestion(decoded_str);
+    				app.setQuestion(init_info_obj.getString("QUESTION"));
     				Intent i = new Intent(context, MainActivity.class);
        	         	i.putExtra(MainActivity.MAIN_TYPE, "new");  
        	         	startActivity(i);

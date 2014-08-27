@@ -48,7 +48,9 @@ public class IntroActivity extends Activity {
        		BitmapFactory.decodeResource(getResources(), intro_arr.get(i), options);
        		options.inSampleSize = 2;
        		options.inJustDecodeBounds = false;
-       		photo_view.setImageBitmap(BitmapFactory.decodeResource(getResources(), intro_arr.get(i), options));
+       		Bitmap bm = BitmapFactory.decodeResource(getResources(), intro_arr.get(i), options);
+       		photo_view.setImageBitmap(bm);
+       		bm.recycle();
        		
        		startButton = (Button) single_photo_layout.findViewById(R.id.startButton);
     		if(i < intro_arr.size()-1) startButton.setVisibility(View.GONE);
