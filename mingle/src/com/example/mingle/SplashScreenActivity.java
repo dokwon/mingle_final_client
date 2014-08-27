@@ -194,14 +194,10 @@ public class SplashScreenActivity extends Activity {
     			    	//If so, use previous data.
     			    	if(location != null) {
     			    		app.setLat((float)location.getLatitude());
-    			    		app.setLong((float)location.getLongitude());
-    			    		
-    			    	//If no, kill the app for now. should be modified.
-    			    	} else{
-    			    		checkLocationError(app.getLat(), app.getLong());
+    			    		app.setLong((float)location.getLongitude());	
     			    	}
     				}
-    				else if(!checkLocationError(app.getLat(), app.getLong())) app.connectHelper.getInitInfo();
+    				if(!checkLocationError(app.getLat(), app.getLong())) app.connectHelper.getInitInfo();
     				break;
     				
     			default:
