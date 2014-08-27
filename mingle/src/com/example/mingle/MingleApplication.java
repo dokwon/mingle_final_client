@@ -30,6 +30,7 @@ import android.content.Intent;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -271,7 +272,7 @@ public class MingleApplication extends Application {
         	if(!(new File(photoPaths.get(i))).exists()) return getResources().getText(R.string.photo_input_invalid).toString();
         }
         
-        if(my_name.length() < 5) return getResources().getText(R.string.name_input_short).toString();
+        if(my_name.length() != 5) return getResources().getText(R.string.name_input_wrong_length).toString();
         if(my_name.contains(" ")) return getResources().getText(R.string.name_input_invalid).toString();
         return null;
     }
@@ -493,50 +494,32 @@ public class MingleApplication extends Application {
     public void deactivateApp(Context context){
     	String uid = this.my_user.getUid();
     	this.connectHelper.requestDeactivation(uid);
-
+    	System.out.println("1");
     	this.socketHelper.disconnectSocket();
-        this.dbHelper.deleteAll();
+    	System.out.println("2");
+    	this.dbHelper.deleteAll();
         
         photoPaths.clear();
         user_map.clear();
         candidates.clear();
         choices.clear();
         pop_users.clear();
-        
+        System.out.println("3");
+    	
         ((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancelAll();
-        GcmIntentService.clearNotificationData();
+        System.out.println("4");
+    	GcmIntentService.clearNotificationData();
 
         notification_on = true;
         for(int i = 0 ; i < 5 ; i++) groupNumFilter[i] = true;
         dist_lim = 3;
 
+        System.out.println("5");
     }
     
-    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
-                .getHeight(), Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
+    
 
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
-        float roundPx = (float)2.1;
-        final Rect bottomRect = new Rect(0, bitmap.getHeight()/2, bitmap.getWidth(), bitmap.getHeight());
-
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-        
-        // Fill in bottom corners
-        canvas.drawRect(bottomRect, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-
-        return output;
-    }
+  
     
     public int memberNumRsId(int numOfMembers) {
     	

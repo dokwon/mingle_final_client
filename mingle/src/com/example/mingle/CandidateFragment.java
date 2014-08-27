@@ -79,7 +79,6 @@ public class CandidateFragment extends Fragment {
               
               //Switch selected user from candidate to choice
               currentUser.switchCandidateToChoice(position);
-              candidate_list.remove(position);
               ((HuntActivity)parent).candidateListUpdate();
               ((HuntActivity)parent).choiceListUpdate();
               	

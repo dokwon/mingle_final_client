@@ -212,12 +212,12 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 															.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
 																@Override
 																public void onClick(DialogInterface dialog, int id) {
-																	dialog.dismiss();
 																	((MingleApplication)curActivity.getApplication()).deactivateApp((Context)curActivity);
 															        Intent backToMain = new Intent(curActivity, MainActivity.class);
 												       	         	backToMain.putExtra(MainActivity.MAIN_TYPE, "new");  
 															        backToMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 															        startActivity(backToMain);
+															        dialog.dismiss();
 																}
 															})
 															.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {

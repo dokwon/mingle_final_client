@@ -111,18 +111,35 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
         else user = app.getMingleUser(uid);
         photo_num = user.getPhotoNum();
                  
-        LayoutInflater inflater = getLayoutInflater();
-        for(int i = 0; i < photo_num; i++){
-       	 LinearLayout single_photo_layout = (LinearLayout) inflater
-                .inflate(R.layout.single_photo, null);
-       	 
-       	 ImageView photo_view = (ImageView) single_photo_layout.findViewById(R.id.photoView);
-       	 Drawable photo_drawable = user.getPic(i);
-       	 //Bitmap rounded =  MingleApplication.getRoundedCornerBitmap(((BitmapDrawable) photo_drawable).getBitmap());
-       	 //photo_view.setImageDrawable(new BitmapDrawable(this.getResources(),rounded));
-       	 photo_view.setImageDrawable(photo_drawable);
-       	 viewFlipper.addView(single_photo_layout);
-        }
+        final LayoutInflater inflater = getLayoutInflater();
+        final Activity temp = this;
+        viewFlipper.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+        	 @SuppressLint("NewApi")
+        	 @SuppressWarnings("deprecation")
+        	 @Override
+        	  public void onGlobalLayout() {
+        	   //now we can retrieve the width and height
+        	   int width = viewFlipper.getWidth();
+        	   int height = viewFlipper.getHeight();
+        	   
+        	   for(int i = 0; i < photo_num; i++){
+      	       	 LinearLayout single_photo_layout = (LinearLayout) inflater
+      	                .inflate(R.layout.single_photo, null);
+      	       	 
+      	       	 ResizableImageView photo_view = (ResizableImageView) single_photo_layout.findViewById(R.id.photoView);
+      	       	 Drawable photo_drawable = user.getPic(i);
+      	        photo_view.setImageDrawable(ImageRounder.getRoundedDrawable(temp,photo_drawable, 13));
+      	        photo_view.setImageDrawable(photo_drawable);
+      	       	 viewFlipper.addView(single_photo_layout);
+              }
+        	   
+        	if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
+        	    viewFlipper.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        	   else
+        	    viewFlipper.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+        	  }
+        	 });
+        
         
 	    Typeface koreanBoldTypeFace = Typeface.createFromAsset(getAssets(), "fonts/mingle-font-bold.otf");
 
