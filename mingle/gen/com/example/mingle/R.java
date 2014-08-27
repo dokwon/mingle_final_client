@@ -1687,18 +1687,20 @@ containing a value of this type.
         public static final int shadow_black=0x7f0200c8;
         public static final int speechbubble=0x7f0200c9;
         public static final int startkorean=0x7f0200ca;
-        public static final int title_bar_shadow=0x7f0200cb;
-        public static final int title_border=0x7f0200cc;
-        public static final int toast_frame=0x7f0200cd;
-        public static final int unselectoff=0x7f0200ce;
-        public static final int unselecton=0x7f0200cf;
-        public static final int vote=0x7f0200d0;
-        public static final int vote_button=0x7f0200d1;
-        public static final int vote_profile=0x7f0200d2;
-        public static final int vote_tab_off=0x7f0200d3;
-        public static final int vote_tab_on=0x7f0200d4;
-        public static final int vote_time_error=0x7f0200d5;
-        public static final int votetoday=0x7f0200d6;
+        public static final int themelike=0x7f0200cb;
+        public static final int title_bar_shadow=0x7f0200cc;
+        public static final int title_border=0x7f0200cd;
+        public static final int toast_frame=0x7f0200ce;
+        public static final int unselectoff=0x7f0200cf;
+        public static final int unselecton=0x7f0200d0;
+        public static final int vote=0x7f0200d1;
+        public static final int vote_button=0x7f0200d2;
+        public static final int vote_profile=0x7f0200d3;
+        public static final int vote_tab_off=0x7f0200d4;
+        public static final int vote_tab_on=0x7f0200d5;
+        public static final int vote_time_error=0x7f0200d6;
+        public static final int votecomment=0x7f0200d7;
+        public static final int votetoday=0x7f0200d8;
     }
     public static final class id {
         public static final int ActionBarWrapper=0x7f060097;

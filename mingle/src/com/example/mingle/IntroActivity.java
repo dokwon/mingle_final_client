@@ -110,13 +110,13 @@ public class IntroActivity extends Activity {
                              // if left to right swipe on screen
                              if (lastX < currentX) 
                              {
-                            	 updatePhotoIndicators(-1);
                                   // If no more View/Child to flip
                             	 int curr_pos = viewFlipper.getDisplayedChild();
                             	 if (curr_pos == intro_arr.size()-1) startButton.setVisibility(View.GONE);
                                  if (curr_pos == 0)
                                      break;
-                                 
+                            	 updatePhotoIndicators(-1);
+
                                  // set the required Animation type to ViewFlipper
                                  // The Next screen will come in form Left and current Screen will go OUT from Right 
                                  viewFlipper.setInAnimation(this, R.anim.in_from_left);
@@ -129,11 +129,11 @@ public class IntroActivity extends Activity {
                              // if right to left swipe on screen
                              if (lastX > currentX)
                              {
-                            	 updatePhotoIndicators(1);
                             	 int curr_pos = viewFlipper.getDisplayedChild();
                             	 if (curr_pos == intro_arr.size()-2) startButton.setVisibility(View.VISIBLE);
                                  if (curr_pos == intro_arr.size()-1)
                                      break;
+                            	 updatePhotoIndicators(1);
                                  // set the required Animation type to ViewFlipper
                                  // The Next screen will come in form Right and current Screen will go OUT from Left 
                                  viewFlipper.setInAnimation(this, R.anim.in_from_right);

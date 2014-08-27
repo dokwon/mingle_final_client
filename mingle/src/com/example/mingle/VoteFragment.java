@@ -52,8 +52,9 @@ public class VoteFragment extends Fragment{
     	top_list_view.setVisibility(View.GONE);
     	not_vote_time_view.setVisibility(View.GONE);
 	    
-    	TextView question_textview = (TextView)rootView.findViewById(R.id.daily_question_vote);
-    	question_textview.setText(((MingleApplication) parent.getApplication()).getQuestion());
+    	TextView question_text_view = (TextView)rootView.findViewById(R.id.daily_question_vote);
+    	question_text_view.setText(((MingleApplication) parent.getApplication()).getQuestion());
+    	question_text_view.setTypeface(((MingleApplication) parent.getApplication()).koreanTypeFace);
 		return rootView;
 	}
 	

@@ -20,7 +20,7 @@
        android:layout_alignParentLeft="true"
        android:layout_alignParentStart="true"
        android:layout_alignParentTop="true"
-       android:background="@drawable/icon_tiny" />
+       android:background="@drawable/themelike" />
 
     <LinearLayout 
 	    android:layout_width="wrap_content"
@@ -28,7 +28,7 @@
 	    android:baselineAligned="false"
 	    android:layout_marginLeft="@dimen/small_margin"
 	   
-	    android:background="@color/photobackgroundcolor"
+	    android:background="@drawable/votecomment"
 	    android:layout_toRightOf="@+id/daily_question_logo"
 	 	android:layout_alignTop="@+id/daily_question_logo"
 		android:layout_alignBottom="@+id/daily_question_logo"
