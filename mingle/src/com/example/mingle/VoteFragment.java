@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class VoteFragment extends Fragment{
 
@@ -20,7 +22,7 @@ public class VoteFragment extends Fragment{
 	private ImageView not_vote_time_view;
 	private ImageView female_top_logo_view;
 	private ImageView male_top_logo_view;
-	
+	private RelativeLayout question_wrapper;
 	private Activity parent; 
 	
 	@Override
@@ -50,7 +52,10 @@ public class VoteFragment extends Fragment{
     	male_top_logo_view.setVisibility(View.GONE);
     	top_list_view.setVisibility(View.GONE);
     	not_vote_time_view.setVisibility(View.GONE);
-	    
+	    question_wrapper = (RelativeLayout) rootView.findViewById(R.id.question_wrapper);
+    	TextView question_text_view = (TextView)rootView.findViewById(R.id.daily_question_vote);
+    	question_text_view.setText(((MingleApplication) parent.getApplication()).getQuestionToday());
+    	question_text_view.setTypeface(((MingleApplication) parent.getApplication()).koreanTypeFace);
 		return rootView;
 	}
 	
@@ -58,10 +63,12 @@ public class VoteFragment extends Fragment{
 		female_top_logo_view.setVisibility(View.GONE);
     	male_top_logo_view.setVisibility(View.GONE);
     	top_list_view.setVisibility(View.GONE);
+    	question_wrapper.setVisibility(View.GONE);
     	not_vote_time_view.setVisibility(View.VISIBLE);
 	}
 
 	public void showPopList(){
+		question_wrapper.setVisibility(View.VISIBLE);
 		female_top_logo_view.setVisibility(View.VISIBLE);
     	male_top_logo_view.setVisibility(View.VISIBLE);
     	top_list_view.setVisibility(View.VISIBLE);

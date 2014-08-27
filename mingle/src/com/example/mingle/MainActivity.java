@@ -49,6 +49,7 @@ import android.graphics.Canvas;
 import android.graphics.Movie;
 import android.graphics.drawable.AnimationDrawable;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 
 import com.example.mingle.HttpHelper;
 
@@ -214,6 +215,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     private void initializeUIViews() {
     	ActionbarController.customizeActionBar(R.layout.custom_actionbar, this, -30, 0);
     	
+    	TextView theme_text_view = (TextView)findViewById(R.id.daily_theme_individual);
+    	theme_text_view.setText(app.getThemeToday());
+        theme_text_view.setTypeface(app.koreanTypeFace);
+        
+    	
     	//Set Default Values
     	if(type.equals("new")){
     		name = "";
@@ -234,7 +240,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         for(ImageView view : photoViewArr ) {
         	view.setOnClickListener(new MinglePhotoClickListener( this, photoViewArr));
         }
-        if(type.equals("update")){
+        if(type.equals("update")) {
         	
 			for (int i = 0; i < app.getMyUser().getPhotoNum(); i++){
         		FindAppropriateImageView().setImageDrawable(app.getMyUser().getPic(i));
@@ -242,7 +248,20 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         } 
  
         EditText editText = (EditText) findViewById(R.id.nicknameTextView);
+        
         if(type.equals("update")) editText.setText(name);
+        editText.setOnEditorActionListener(new OnEditorActionListener() {
+
+			@Override
+			public boolean onEditorAction(TextView v, int actionId,
+					KeyEvent event) {
+				//System.out.println()
+				if(actionId == EditorInfo.IME_ACTION_DONE ) 
+					editName();
+				return false;
+			}
+        	
+        });
         
         //Set Sex Button
         Button manButton = (Button) findViewById(R.id.manbutton);
@@ -281,6 +300,9 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
             preview_button.setVisibility(View.GONE);
         }
        KeyboardDismisser.setupKeyboardDismiss(findViewById(R.id.main_parent), this);
+       
+       
+       
     }
     
 
@@ -296,13 +318,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
             prefs.edit().putBoolean("firstrun", false).commit();
         }
         
-        //check if custom title is supported BEFORE setting the content view!
-        //boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-       
         setContentView(R.layout.activity_main);
         
-        //if(customTitleSupported) getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title_bar);
-
         context = (Context)this;
 
         Intent intent = getIntent();
@@ -337,8 +354,18 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     	}
     }
     
+    public void editName() {
+    	EditText nickNameInput = (EditText) findViewById(R.id.nicknameTextView);
+    	name =nickNameInput.getText().toString();
+    	if(name.length() == 6) {
+    		name = name.substring(0, 5);
+    	}
+    	nickNameInput.setText(name);
+    }
+    
     public void modifyUserData(View view){
-    	name =((EditText) findViewById(R.id.nicknameTextView)).getText().toString();
+    	
+    	editName();
     	//Check validity of user input and send user update request to server
     	String valid_message = app.isValid(name);
     	if(valid_message == null){

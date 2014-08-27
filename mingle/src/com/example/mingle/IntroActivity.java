@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,15 +26,18 @@ public class IntroActivity extends Activity {
 	private ArrayList<Integer> intro_arr;
     private float lastX;
     private Button startButton;
+	
     
     private ArrayList<Bitmap> intro_bitmaps;
 	
+	private int current_viewing_pic_index;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_intro);
 		
 	    viewFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
+	    
 	    
 	    intro_arr = new ArrayList<Integer>();
 	    intro_arr.add(R.drawable.intro1);
@@ -44,17 +48,18 @@ public class IntroActivity extends Activity {
 	    intro_bitmaps = new ArrayList<Bitmap>();
 	}
 	
-	public void removeGuide(View view){
-		finish();
-	}
-	
 	@Override
 	public void onResume(){
 		super.onResume();
 		LayoutInflater inflater = getLayoutInflater();
 		final BitmapFactory.Options options = new BitmapFactory.Options();
        	
+       	current_viewing_pic_index = 0;
+	    LinearLayout indicatorWrapper = (LinearLayout) findViewById(R.id.intro_indicators);
+       	
+       	
        	for(int i = 0; i < intro_arr.size(); i++){
+       		addIndicator(i, indicatorWrapper);
        		RelativeLayout single_photo_layout = (RelativeLayout)inflater.inflate(R.layout.single_intro, null);
        		ImageView photo_view = (ImageView) single_photo_layout.findViewById(R.id.introImage);
        		options.inJustDecodeBounds = true;
@@ -72,7 +77,7 @@ public class IntroActivity extends Activity {
        		viewFlipper.addView(single_photo_layout);
        	}
 	}
-	
+
 	@Override
 	public void onPause(){
 		for(int i = 0; i < intro_bitmaps.size(); i++){
@@ -80,6 +85,34 @@ public class IntroActivity extends Activity {
 		}
 		intro_bitmaps.clear();
 		super.onPause();
+	}
+	private void updatePhotoIndicators(int changeInIndex) {
+		if(changeInIndex == 0) return; 
+		LinearLayout indicatorWrapper = (LinearLayout) findViewById(R.id.intro_indicators);
+		ImageView curIndicator = (ImageView) indicatorWrapper.getChildAt(current_viewing_pic_index);
+		ImageView newIndicator = (ImageView) indicatorWrapper.getChildAt(current_viewing_pic_index + changeInIndex);
+		curIndicator.setImageResource(R.drawable.profile_photo_notcurrent);
+		newIndicator.setImageResource(R.drawable.profile_photo_current);
+		current_viewing_pic_index += changeInIndex;
+	}
+	
+	private void addIndicator(int i, LinearLayout indicatorWrapper) {
+		ImageView indicator = new ImageView(this);
+        int height = (int) getResources().getDimension(R.dimen.indicator_size);
+        int width = (int) getResources().getDimension(R.dimen.indicator_size);
+        indicator.setLayoutParams(new ViewGroup.LayoutParams(width, height));
+        
+        indicator.setPadding(8, 0, 8, 0);
+        if(i == current_viewing_pic_index) {
+        	indicator.setImageResource(R.drawable.profile_photo_current);
+        } else {
+        	indicator.setImageResource(R.drawable.profile_photo_notcurrent);
+        }
+        indicatorWrapper.addView(indicator);
+	}
+	
+	public void removeGuide(View view){
+		finish();
 	}
 	
 	// Method to handle touch event like left to right swap and right to left swap
@@ -104,7 +137,8 @@ public class IntroActivity extends Activity {
                             	 if (curr_pos == intro_arr.size()-1) startButton.setVisibility(View.GONE);
                                  if (curr_pos == 0)
                                      break;
-                                 
+                            	 updatePhotoIndicators(-1);
+
                                  // set the required Animation type to ViewFlipper
                                  // The Next screen will come in form Left and current Screen will go OUT from Right 
                                  viewFlipper.setInAnimation(this, R.anim.in_from_left);
@@ -121,6 +155,7 @@ public class IntroActivity extends Activity {
                             	 if (curr_pos == intro_arr.size()-2) startButton.setVisibility(View.VISIBLE);
                                  if (curr_pos == intro_arr.size()-1)
                                      break;
+                            	 updatePhotoIndicators(1);
                                  // set the required Animation type to ViewFlipper
                                  // The Next screen will come in form Right and current Screen will go OUT from Left 
                                  viewFlipper.setInAnimation(this, R.anim.in_from_right);

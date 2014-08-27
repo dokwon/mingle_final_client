@@ -6,8 +6,17 @@
 
 	<ViewFlipper
 	    android:id="@+id/view_flipper"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" >
-    </ViewFlipper>
-
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" />
+		
+	<LinearLayout
+			 		android:id="@+id/intro_indicators"
+			 		android:orientation="horizontal"
+			 		android:layout_width="wrap_content"
+			 		android:layout_gravity="center"
+			 		android:layout_alignParentBottom="true"
+			 		android:layout_centerInParent="true"
+			 		android:layout_marginBottom="80dp"
+			 		android:layout_height="wrap_content"/> 
+	
 </RelativeLayout>

@@ -93,11 +93,12 @@ public class VoteAdapter extends ArrayAdapter {
         ArrayList<String> rank_list = (ArrayList<String>) data.get(position);
         String female_uid = rank_list.get(0);
         String male_uid = rank_list.get(1);
-        
+        int corner_round = parent.getResources().getDimensionPixelSize(R.dimen.vote_corner_round);
         if(!female_uid.equals("")){
         	MingleUser female_pop = app.getMingleUser(female_uid);
         	holder.female_name.setText(female_pop.getName());
-        	holder.female_pic.setImageDrawable(female_pop.getPic(-1));
+        	holder.female_pic.setImageDrawable(ImageRounder.getVoteRoundedDrawable((Activity) context, female_pop.getPic(-1), corner_round, 60, 67));
+        	
         	final String profile_uid = female_uid;
         	holder.female_layout.setOnClickListener(new OnClickListener()
             {
@@ -115,7 +116,7 @@ public class VoteAdapter extends ArrayAdapter {
         if(!male_uid.equals("")){
         	MingleUser male_pop = app.getMingleUser(male_uid);
         	holder.male_name.setText(male_pop.getName());
-        	holder.male_pic.setImageDrawable(male_pop.getPic(-1));
+        	holder.male_pic.setImageDrawable(ImageRounder.getVoteRoundedDrawable((Activity) context, male_pop.getPic(-1), corner_round, 60, 67));
         	final String profile_uid = male_uid;
         	holder.male_layout.setOnClickListener(new OnClickListener()
             {

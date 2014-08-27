@@ -12,7 +12,7 @@
             android:orientation="vertical"
             android:id="@+id/female_vote_rl"
             android:background="@drawable/vote_profile"
-            
+            android:layout_marginLeft="@dimen/small_margin"
             android:tag="front"
             style="@style/MyListFrontContent">
 		    	
@@ -37,6 +37,7 @@
         <FrameLayout
             android:orientation="vertical"
             android:id="@+id/male_vote_rl"
+            android:layout_marginRight="@dimen/small_margin"
             android:background="@drawable/vote_profile"
             android:tag="front"
             style="@style/MyListFrontContent">

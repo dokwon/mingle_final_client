@@ -140,6 +140,7 @@ public class MingleApplication extends Application {
     	koreanBoldTypeFace = Typeface.createFromAsset(getAssets(), "fonts/mingle-font-bold.otf");
     	blankProfileImage = R.drawable.blankprofilelarge;
     	blankProfileImageSmall = R.drawable.blankprofile;
+    	dist_lim = 30;
     }
 
    
@@ -179,7 +180,7 @@ public class MingleApplication extends Application {
    }
    
    public String getThemeToday(){
-	   return question_of_the_day;
+	   return theme_of_the_day;
    }
    
    public void setQuestionToday(String question){
@@ -554,7 +555,7 @@ public class MingleApplication extends Application {
 
         notification_on = true;
         for(int i = 0 ; i < 5 ; i++) groupNumFilter[i] = true;
-        dist_lim = 3;
+        dist_lim = 30;
 
         System.out.println("5");
     }
@@ -567,6 +568,9 @@ public class MingleApplication extends Application {
     	
     	int rval = -1; 
     	switch(numOfMembers) {
+	    	case 1:
+	    		rval = R.drawable.membercount1;
+	    		break;
 	    	case 2:
 	    		rval = R.drawable.membercount2;
 	    		break;

@@ -103,7 +103,7 @@ public class CandidateAdapter extends ArrayAdapter {
         else holder.user_dist.setText(Float.toString(candidate.getDistance())+"km");
         Drawable main_drawable = candidate.getPic(0);
         
-        holder.user_pic.setImageDrawable(ImageRounder.getRoundedDrawable((Activity)context,
+        holder.user_pic.setImageDrawable(ImageRounder.getProfileRoundedDrawable((Activity)context,
         		main_drawable, 13));
         
         //If user's pic is clicked, show his profile

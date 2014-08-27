@@ -42,7 +42,7 @@ public class PhotoPoster {
 			
 			BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
 			
-            //btmapOptions.inSampleSize = MingleApplication.PHOTO_COMPRESS_FACTOR;;
+            //btmapOptions.inSampleSize = MingleApplication.PHOTO_COMPRESS_FACTOR;
             String photoPath = photoPaths.get(i);
 			Bitmap bm = app.rotatedBitmap(BitmapFactory.decodeFile(photoPath, btmapOptions), photoPath);
 			ByteArrayOutputStream bos = new ByteArrayOutputStream(); 

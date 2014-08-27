@@ -26,16 +26,31 @@ import android.view.Gravity;
 public class ImageRounder{
 	
 	
-	public static Drawable getRoundedDrawable(Activity context, Drawable drawable, int pixels) {
+	public static Drawable getProfileRoundedDrawable(Activity context, Drawable drawable, int pixels) {
 		final int img_size = ImageRounder.getScreenWidth(context);
         Bitmap scaled = Bitmap.createScaledBitmap(((BitmapDrawable)drawable).getBitmap(),
         		img_size, img_size,
         		true);
-        Bitmap rounded = getRoundedCornerBitmap(scaled, pixels);
+        final Rect topRect = new Rect(0, 0, scaled.getWidth(), scaled.getHeight() - pixels);
+        final Rect bottomRect = new Rect(0, pixels,scaled.getWidth(), scaled.getHeight());
+        Bitmap rounded = getRoundedCornerBitmap(scaled, pixels, bottomRect, topRect);
         return new BitmapDrawable(context.getResources(), rounded);
         
 	}
-	private static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
+	
+	public static Drawable getVoteRoundedDrawable(Activity context, Drawable drawable, int pixels, int width, int height) {
+		
+        Bitmap scaled = Bitmap.createScaledBitmap(((BitmapDrawable)drawable).getBitmap(),
+        		width, height,
+        		true);
+        final Rect rightRect = new Rect(pixels, 0, width, height);
+        final Rect leftRect = new Rect(0, 0, pixels + 40 , height);
+        Bitmap rounded = getRoundedCornerBitmap(scaled, pixels,  rightRect,leftRect);
+        return new BitmapDrawable(context.getResources(), rounded);
+        
+	}
+	
+	private static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels, final Rect fillRect, final Rect roundRect) {
         Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
                 .getHeight(), Config.ARGB_8888);
         
@@ -43,10 +58,10 @@ public class ImageRounder{
 
         final int color = 0xff424242;
         final Paint paint = new Paint();
-        final Rect topRect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight() - pixels);
-        final RectF topRectF = new RectF(topRect);
-        final Rect bottomRect = new Rect(0, pixels, bitmap.getWidth(), bitmap.getHeight());
-        final RectF bottomRectF = new RectF(bottomRect);
+       
+        final RectF topRectF = new RectF(roundRect);
+       
+        final RectF bottomRectF = new RectF(fillRect);
         final float roundPx = pixels;
 
         paint.setAntiAlias(true);
@@ -56,8 +71,8 @@ public class ImageRounder{
         canvas.drawRoundRect(topRectF, roundPx, roundPx, paint);
 
         paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, bottomRect, bottomRect, paint);
-        canvas.drawBitmap(bitmap, topRect, topRect, paint);
+        canvas.drawBitmap(bitmap, fillRect,fillRect, paint);
+        canvas.drawBitmap(bitmap, roundRect, roundRect, paint);
 
         return output;
     }

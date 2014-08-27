@@ -75,4 +75,7 @@
     <string name="location_error">현재 위치를 파악할 수 없습니다.</string>
     <string name="location_error_title">GPS 위치 정보</string>
     
+    <string name="vote_time_notif">투표시간 18:00 ~ 01:00</string>
+    
+    
 </resources>

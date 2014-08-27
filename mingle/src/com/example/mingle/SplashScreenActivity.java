@@ -110,7 +110,11 @@ public class SplashScreenActivity extends Activity {
 	@Override
 	protected void onResume(){
 		super.onResume();
-		
+
+        app.connectHelper.getInitInfo();
+	}
+	
+	private void buildApplication(){
 		if(AppOnFirstTime()) {
 			if(!app.isLocationEnabled()) {
 				AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
@@ -198,7 +202,12 @@ public class SplashScreenActivity extends Activity {
     			    		app.setLong((float)location.getLongitude());	
     			    	}
     				}
-    				if(!checkLocationError(app.getLat(), app.getLong())) app.connectHelper.getInitInfo();
+    				if(!checkLocationError(app.getLat(), app.getLong())) {
+    					Intent i = new Intent(context, MainActivity.class);
+           	         	i.putExtra(MainActivity.MAIN_TYPE, "new");  
+           	         	startActivity(i);
+           	         	finish();
+    				}
     				break;
     				
     			default:
@@ -274,10 +283,7 @@ public class SplashScreenActivity extends Activity {
     			} else {
     				app.setThemeToday(init_info_obj.getString("THEME"));
     				app.setQuestionToday(init_info_obj.getString("QUESTION"));
-    				Intent i = new Intent(context, MainActivity.class);
-       	         	i.putExtra(MainActivity.MAIN_TYPE, "new");  
-       	         	startActivity(i);
-       	         	finish();
+    				buildApplication();
     			}
 	    	} catch (JSONException e) {
 	    		e.printStackTrace();
