@@ -38,6 +38,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -183,7 +184,7 @@ public class SplashScreenActivity extends Activity {
     			//After 3seconds, check whether the device finds current location.
     			case MSG_TIME_OUT:
     				locationManager.removeUpdates(locationListener);
-
+    				System.out.println("Step 1");
     				//If not check if whether previous data exists
     				if(!findCurLoc) {
     					Log.i("loc", "use prev loc");
@@ -196,17 +197,37 @@ public class SplashScreenActivity extends Activity {
     			    		app.setLong((float)location.getLongitude());
     			    		
     			    	//If no, kill the app for now. should be modified.
-    			    	} else
-    			    		((Activity)context).finish();
-    				}                	     
-    				app.connectHelper.getInitInfo();
+    			    	} else{
+    			    		checkLocationError(app.getLat(), app.getLong());
+    			    	}
+    				}
+    				else if(!checkLocationError(app.getLat(), app.getLong())) app.connectHelper.getInitInfo();
     				break;
     				
     			default:
+    				checkLocationError(app.getLat(), app.getLong());
     				break;
     		}
     	}
     };
+    
+    private boolean checkLocationError(float loc_lat, float loc_long){
+    	if(Math.abs(loc_lat)+Math.abs(loc_long)<0.1){
+    		new AlertDialog.Builder(this)
+    		.setTitle(getResources().getString(R.string.location_error_title))
+    		.setMessage(getResources().getString(R.string.gps_cannot_find_location))
+    		.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+    			public void onClick(DialogInterface dialog, int which) { 
+                // continue with delete
+    				((Activity)context).finish();
+    			}
+    		}).setIcon(R.drawable.icon_tiny)
+            .show();
+    		return true;
+    	}
+    	else return false;
+        
+    }
     
 	private BroadcastReceiver initInfoReceiver = new BroadcastReceiver() {
     	@Override

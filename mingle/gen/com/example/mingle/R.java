@@ -2124,6 +2124,8 @@ containing a value of this type.
         public static final int hello_world=0x7f070032;
         public static final int invalid_input=0x7f070067;
         public static final int launch=0x7f070048;
+        public static final int location_error=0x7f070073;
+        public static final int location_error_title=0x7f070074;
         public static final int message_error=0x7f07005b;
         public static final int minge_start_button_string=0x7f070045;
         public static final int name_input_invalid=0x7f07006b;
