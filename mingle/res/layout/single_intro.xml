@@ -8,19 +8,20 @@
 
 	<ImageView
         android:id="@+id/introImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
 	
 	<Button 
 		android:layout_weight="1"
-		android:layout_height="50dp" 
+		android:layout_height="45dp" 
+		android:adjustViewBounds="true"
 		android:layout_width="wrap_content" 
 		android:layout_alignBottom="@+id/introImage"
 		android:layout_centerHorizontal="true"
 		android:id="@+id/startButton"
-		android:layout_marginBottom = "100dp"
-		android:layout_marginLeft="30dp"
-		android:layout_marginRight="30dp"
+		android:layout_marginBottom = "110dp"
+		android:layout_marginLeft="35dp"
+		android:layout_marginRight="35dp"
         android:background="@drawable/startkorean"
 		android:onClick="removeGuide"/>
                     

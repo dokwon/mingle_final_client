@@ -290,8 +290,10 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
     public void voteUser(View v){
     	String curr_uid = user.getUid();
     	if(!user.alreadyVoted()){
-    		user.setVoted();
+    		user.setVoted(); 
     		((MingleApplication) this.getApplication()).connectHelper.voteUser(curr_uid);
+    	} else {
+    		Toast.makeText(getApplicationContext(),  getResources().getString(R.string.vote_impossible), Toast.LENGTH_SHORT).show();
     	}
     }
     

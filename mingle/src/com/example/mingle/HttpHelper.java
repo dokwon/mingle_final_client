@@ -3,8 +3,6 @@ package com.example.mingle;
 
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 

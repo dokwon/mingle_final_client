@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -94,6 +95,9 @@ public class VoteAdapter extends ArrayAdapter {
         String female_uid = rank_list.get(0);
         String male_uid = rank_list.get(1);
         int corner_round = parent.getResources().getDimensionPixelSize(R.dimen.vote_corner_round);
+        if(!(Integer.valueOf(android.os.Build.VERSION.SDK_INT) >= 14 && ViewConfiguration.get(parent.getContext()).hasPermanentMenuKey())) 
+        	corner_round = parent.getResources().getDimensionPixelSize(R.dimen.vote_corner_round_small);
+	
         if(!female_uid.equals("")){
         	MingleUser female_pop = app.getMingleUser(female_uid);
         	holder.female_name.setText(female_pop.getName());

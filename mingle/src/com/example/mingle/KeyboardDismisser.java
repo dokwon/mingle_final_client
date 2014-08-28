@@ -30,6 +30,7 @@ public class KeyboardDismisser {
 					
 					if(v instanceof Button) {
 						v.performClick();
+						return false;
 					}
 					if(activity.getCurrentFocus() != null)
 						hideSoftKeyboard(activity);
