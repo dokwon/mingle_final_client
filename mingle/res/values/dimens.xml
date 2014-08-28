@@ -51,5 +51,6 @@
 	<dimen name="question_logo_size">60dp</dimen>
 
 	<dimen name="vote_corner_round">7dp</dimen>
+	<dimen name="vote_corner_round_small">5dp</dimen>
 	<dimen name="vote_cell_width">67dp</dimen>
 </resources>

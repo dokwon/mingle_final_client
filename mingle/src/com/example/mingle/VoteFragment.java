@@ -47,15 +47,18 @@ public class VoteFragment extends Fragment{
 	    
 	    // Set the ArrayAdapter as the ListView's adapter.  
 	    top_list_view.setAdapter(top_adapter);  
-	        
-	    female_top_logo_view.setVisibility(View.GONE);
-    	male_top_logo_view.setVisibility(View.GONE);
-    	top_list_view.setVisibility(View.GONE);
-    	not_vote_time_view.setVisibility(View.GONE);
+	    
 	    question_wrapper = (RelativeLayout) rootView.findViewById(R.id.question_wrapper);
     	TextView question_text_view = (TextView)rootView.findViewById(R.id.daily_question_vote);
     	question_text_view.setText(((MingleApplication) parent.getApplication()).getQuestionToday());
     	question_text_view.setTypeface(((MingleApplication) parent.getApplication()).koreanTypeFace);
+	    
+	    
+	    female_top_logo_view.setVisibility(View.GONE);
+    	male_top_logo_view.setVisibility(View.GONE);
+    	top_list_view.setVisibility(View.GONE);
+    	not_vote_time_view.setVisibility(View.GONE);
+	    question_wrapper.setVisibility(View.GONE);
 		return rootView;
 	}
 	

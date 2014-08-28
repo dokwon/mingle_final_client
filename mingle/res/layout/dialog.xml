@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="35dp"
+    android:layout_height="wrap_content"
     android:background="@color/trans"
     android:orientation="vertical" >
     
 	<com.example.mingle.RoundedImageView
-		style="@style/ChatRoomImage"
+		style="@style/MsgNotifImage"
 	    android:id="@+id/noti_sender_image"/>
 	
 	<TextView
@@ -14,7 +14,6 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/noti_sender_image"
         android:layout_alignTop="@id/noti_sender_image"
-        android:layout_marginTop = "1dp"
         android:layout_marginLeft = "6dp"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -26,6 +25,8 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/noti_sender_image"
         android:layout_alignBottom="@id/noti_sender_image"
+        android:layout_below="@+id/noti_sender_name"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft = "6dp"
         android:layout_marginBottom = "1dp"
         android:textSize="15sp"

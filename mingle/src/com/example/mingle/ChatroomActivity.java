@@ -1,6 +1,5 @@
 package com.example.mingle;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.json.JSONException;
@@ -17,26 +16,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.view.Window;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
@@ -178,7 +167,8 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
     /* Update message list */
     public void updateMessageList(){
     	runOnUiThread(new Runnable() {
-    		public void run() {
+    		@Override
+			public void run() {
     			adapter.notifyDataSetChanged();
     		}
     	});

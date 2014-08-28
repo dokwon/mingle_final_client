@@ -19,6 +19,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -169,6 +170,8 @@ public class GcmIntentService extends IntentService {
 		
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, chat_intent, PendingIntent.FLAG_UPDATE_CURRENT);
         CharSequence tickerTxt = (CharSequence)(send_user.getName() + ": " + data.getString("msg"));
+        
+        
         
 		builder = new NotificationCompat.Builder(this)
 				       .setSmallIcon(R.drawable.icon_tiny)

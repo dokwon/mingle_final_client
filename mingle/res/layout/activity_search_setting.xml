@@ -42,7 +42,7 @@
     <ImageView 
 	    android:layout_width="@dimen/option_label_width" 
 	    android:layout_height="@dimen/option_label_height" 
-	    android:background="@drawable/genderchoice"
+	    android:background="@drawable/pushfull"
 	    android:cropToPadding="true" 
 	    android:contentDescription="@string/photo_description"
 	    android:longClickable="false"  

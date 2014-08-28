@@ -5,63 +5,33 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.Application;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.ProgressDialog;
-import android.app.ActionBar.LayoutParams;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.Typeface;
 
 
-import android.graphics.Bitmap.Config;
-import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.location.Criteria;
-import android.location.Location;
 import android.location.LocationManager;
 import android.media.ExifInterface;
-import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewConfiguration;
-import android.view.WindowManager;
 import android.os.Bundle;
 
 import com.example.mingle.HttpHelper;
-import com.example.mingle.MingleUser.MsgComparator;
 
 /**
  * Created by Tempnote on 2014-06-12.
@@ -403,7 +373,7 @@ public class MingleApplication extends Application {
 			new_user.setName(new_user_data.getString("COMM"));
 			new_user.setNum(new_user_data.getInt("NUM"));
 			for(int i = 0; i < new_user_data.getInt("PHOTO_NUM"); i++){
-				new_user.addBlankPic((Drawable) this.getResources().getDrawable(blankProfileImage));
+				new_user.addBlankPic(this.getResources().getDrawable(blankProfileImage));
 			}
 			new_user.setSex(sex);
 			float distance = this.getDistance(new_user_data.getDouble("LOC_LAT"), new_user_data.getDouble("LOC_LONG"));
@@ -449,7 +419,7 @@ public class MingleApplication extends Application {
 			MingleUser user = this.getMingleUser(chat_user_uid);
 			
 			if(user == null) {
-				user = new MingleUser(chat_user_uid, "", 0, 0, (Drawable) this.getResources().getDrawable(blankProfileImageSmall), "", 0);
+				user = new MingleUser(chat_user_uid, "", 0, 0, this.getResources().getDrawable(blankProfileImageSmall), "", 0);
 				this.addMingleUser(user);
 				this.addChoice(chat_user_uid);
 				connectHelper.getNewUser(chat_user_uid, "choice");
