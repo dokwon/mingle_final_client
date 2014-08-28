@@ -64,44 +64,46 @@ public class GcmIntentService extends IntentService {
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 Log.i(TAG, "Received: " + extras.toString());
                 String type = extras.getString("gcm_type");
-                if(type.equals("vote")){
-                    sendVoteNotification(extras);
-                } else if(type.equals("refresh")) {
-                	app.deactivateApp();
-                	app.setNeedRefreshAccount();
-                } else {
-                	String send_uid = extras.getString("send_uid");
+                if(app.getMyUser() != null && !app.getMyUser().getUid().equals("")){
+                	if(type.equals("vote")){
+                		sendVoteNotification(extras);
+                	} else if(type.equals("refresh")) {
+                		app.deactivateApp();
+                		app.setNeedRefreshAccount();
+                	} else if(type.equals("message")){
+                		String send_uid = extras.getString("send_uid");
                
-                    //If socket is not connected, then update chat list with GCM msg, 
-                    //and reconnect the socket for further use.
-                    if(!app.socketHelper.isSocketConnected() ) {
-                	    JSONObject msg_obj = new JSONObject();
-                	    Set<String> keys = extras.keySet();
-                	    for (String key : keys) {
-                	        try {
-                	            if(key != "android.support.content.wakelockid")
-                	                msg_obj.put(key, extras.getString(key));
-                	            } catch(JSONException e) {
-                	                e.printStackTrace();
-                	            }
-                	        }
+                		//If socket is not connected, then update chat list with GCM msg, 
+                		//and reconnect the socket for further use.
+                		if(!app.socketHelper.isSocketConnected() ) {
+                			JSONObject msg_obj = new JSONObject();
+                			Set<String> keys = extras.keySet();
+                			for (String key : keys) {
+                				try {
+                					if(key != "android.support.content.wakelockid")
+                						msg_obj.put(key, extras.getString(key));
+                	            	} catch(JSONException e) {
+                	            		e.printStackTrace();
+                	            	}
+                	        	}
                 	
-                	    app.handleIncomingMsg(msg_obj);
-                	    app.socketHelper.connectSocket();
-                	}
+                			app.handleIncomingMsg(msg_obj);
+                			app.socketHelper.connectSocket();
+                		}
  
-                    //If the user is looking at the chat room now, we need not show notification.
-                    app.socketHelper.newMsgLock.lock();
-                    if (app.getMingleUser(send_uid) == null)
-                    	app.socketHelper.newMsgFetched.awaitUninterruptibly();
-                    app.socketHelper.newMsgLock.unlock();
+                		//If the user is looking at the chat room now, we need not show notification.
+                		app.socketHelper.newMsgLock.lock();
+                		if (app.getMingleUser(send_uid) == null)
+                			app.socketHelper.newMsgFetched.awaitUninterruptibly();
+                		app.socketHelper.newMsgLock.unlock();
                     
-                    MingleUser sender = app.getMingleUser(send_uid);
-                    if(!sender.isInChat() && app.getNotiFlag()) {
-                        openPopupActivity(extras);
-                        sendNotification(extras);
-                    }
-                }
+                		MingleUser sender = app.getMingleUser(send_uid);
+                		if(!sender.isInChat() && app.getNotiFlag()) {
+                			openPopupActivity(extras);
+                			sendNotification(extras);
+                		}	
+                	}
+                }    
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.

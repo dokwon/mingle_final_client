@@ -65,6 +65,7 @@ public class SplashScreenActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		System.out.println("ssa create");
 		setContentView(R.layout.activity_splash_screen);
 		
         app = ((MingleApplication) this.getApplication());
@@ -110,7 +111,7 @@ public class SplashScreenActivity extends Activity {
 	@Override
 	protected void onResume(){
 		super.onResume();
-
+		System.out.println("ssa resume");
         app.connectHelper.getInitInfo();
 	}
 	
