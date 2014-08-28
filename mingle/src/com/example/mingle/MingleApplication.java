@@ -118,10 +118,6 @@ public class MingleApplication extends Application {
 		  public void onActivityResumed(Activity activity) {
 			  	if(needRefresh) {
 			  		needRefresh = false;
-			  		System.out.println(my_user);
-			  		System.out.println(my_user);
-			  		System.out.println(my_user);
-			  		System.out.println(my_user);
 			  		Intent start = new Intent(activity, SplashScreenActivity.class);
 			  		start.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 			  		startActivity(start);

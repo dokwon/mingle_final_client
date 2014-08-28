@@ -120,12 +120,17 @@ public class Socket extends AsyncTask<String, MingleApplication, Integer>  {
     					//and send confirmation to server so that it knows client received the message
     				} else if(event.equals("msg_to_user")){
     					JSONObject get_msg_obj = (JSONObject) args[0];
-    					
-    					newMsgLock.lock();
-    					app.handleIncomingMsg(get_msg_obj);
-    					newMsgFetched.signal();
-    					newMsgLock.unlock();
-    					
+    					try {
+							if(app.getMyUser().getUid().equals(get_msg_obj.getString("recv_uid"))){
+								newMsgLock.lock();
+								app.handleIncomingMsg(get_msg_obj);
+								newMsgFetched.signal();
+								newMsgLock.unlock();
+							}
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
     					socket.emit("msg_to_user_conf");
     				} else if(event.equals("no_user_exist")){				
 						Intent dispatcher = new Intent(app, ChatroomActivity.class);

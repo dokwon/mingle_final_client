@@ -64,7 +64,7 @@ public class GcmIntentService extends IntentService {
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 Log.i(TAG, "Received: " + extras.toString());
                 String type = extras.getString("gcm_type");
-                if(app.getMyUser() != null && !app.getMyUser().getUid().equals("")){
+                if(app.getMyUser() != null && app.getMyUser().getUid().equals(extras.getString("recv_uid"))){
                 	if(type.equals("vote")){
                 		sendVoteNotification(extras);
                 	} else if(type.equals("refresh")) {
