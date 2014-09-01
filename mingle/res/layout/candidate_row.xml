@@ -22,7 +22,7 @@
  		 <FrameLayout 
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content">
-			        <com.example.mingle.ResizableImageView
+			        <ly.nativeapp.mingle.ResizableImageView
 			                style="@style/UserListImage"
 			                android:id="@+id/user_pic"/>
 			        

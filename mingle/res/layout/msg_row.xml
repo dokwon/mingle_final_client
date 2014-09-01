@@ -4,8 +4,8 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
  
-    	<com.example.mingle.RoundedImageView
-    	    	style="@style/ChatRoomImage"
+    	<ly.nativeapp.mingle.RoundedImageView
+    	    	style="@style/MsgRowImage"
                 android:id="@+id/sender_image"/>
 
         <TextView

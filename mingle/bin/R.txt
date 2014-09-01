@@ -861,19 +861,20 @@ int string wallet_buy_button_place_holder 0x7f07001f
 int style AppBaseTheme 0x7f090092
 int style AppTheme 0x7f090093
 int style ChatRoomImage 0x7f0900a0
-int style ChatRoomRank 0x7f0900a4
+int style ChatRoomRank 0x7f0900a5
 int style ChatRoomTheme 0x7f090095
-int style ChatSnippetTitle 0x7f0900a1
-int style ChatroomTitle 0x7f0900a2
+int style ChatSnippetTitle 0x7f0900a2
+int style ChatroomTitle 0x7f0900a3
 int style CustomActionBarTheme 0x7f090090
 int style MainTheme 0x7f090094
 int style MsgNotifImage 0x7f09009f
-int style MsgStyle 0x7f0900a6
+int style MsgRowImage 0x7f0900a1
+int style MsgStyle 0x7f0900a7
 int style MyActionBarTabs 0x7f090091
 int style MyListBackContent 0x7f090098
 int style MyListButtonAction 0x7f09009b
 int style MyListFrontContent 0x7f090099
-int style MyListTitle 0x7f0900a3
+int style MyListTitle 0x7f0900a4
 int style PictureViewTheme 0x7f090096
 int style ProfileListContent 0x7f09009a
 int style TextAppearance_AppCompat_Base_CompactMenu_Dialog 0x7f090067
@@ -937,9 +938,9 @@ int style Theme_Base_AppCompat_Light_DarkActionBar 0x7f090086
 int style Theme_Base_AppCompat_Light_DialogWhenLarge 0x7f09008a
 int style Theme_Base_AppCompat_Light_DialogWhenLarge_Base 0x7f09008e
 int style Theme_Base_Light 0x7f090083
-int style Theme_Intro 0x7f0900a8
-int style Theme_SplashScreen 0x7f0900a9
-int style Theme_Transparent 0x7f0900a5
+int style Theme_Intro 0x7f0900a9
+int style Theme_SplashScreen 0x7f0900aa
+int style Theme_Transparent 0x7f0900a6
 int style UserListImage 0x7f09009c
 int style VoteProfileBackground 0x7f09009d
 int style VoteProfileImage 0x7f09009e
@@ -1026,7 +1027,7 @@ int style Widget_AppCompat_ProgressBar 0x7f09000e
 int style Widget_AppCompat_ProgressBar_Horizontal 0x7f09000d
 int style Widget_AppCompat_Spinner_DropDown_ActionBar 0x7f090026
 int style WindowTitleBackground 0x7f090097
-int style newMsgNumStyle 0x7f0900a7
+int style newMsgNumStyle 0x7f0900a8
 int style thin_ab_style 0x7f09008f
 int[] styleable ActionBar { 0x7f010051, 0x7f010052, 0x7f010053, 0x7f010054, 0x7f010055, 0x7f010056, 0x7f010057, 0x7f010058, 0x7f010059, 0x7f01005a, 0x7f01005b, 0x7f01005c, 0x7f01005d, 0x7f01005e, 0x7f01005f, 0x7f010060, 0x7f010061, 0x7f010062, 0x7f010063 }
 int styleable ActionBar_background 10

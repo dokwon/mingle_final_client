@@ -11,7 +11,7 @@
             android:background="@color/titlebackgroundcolor"
             style="@style/MyListFrontContent">
  		
-	    <com.example.mingle.RoundedImageView
+	    <ly.nativeapp.mingle.RoundedImageView
 	            style="@style/ChatRoomImage"
 	            android:id="@+id/sender_image"/>
 	    

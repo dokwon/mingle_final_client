@@ -5,7 +5,7 @@
     android:gravity="center"
     android:orientation="vertical" >
 
-	<com.example.mingle.ResizableImageView
+	<ly.nativeapp.mingle.ResizableImageView
     	android:layout_marginTop="15dp"
         android:id="@+id/photoView"
         android:layout_width="wrap_content"

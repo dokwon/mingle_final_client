@@ -5,7 +5,7 @@
     android:background="@color/trans"
     android:orientation="vertical" >
     
-	<com.example.mingle.RoundedImageView
+	<ly.nativeapp.mingle.RoundedImageView
 		style="@style/MsgNotifImage"
 	    android:id="@+id/noti_sender_image"/>
 	
