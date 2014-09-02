@@ -41,7 +41,7 @@ import android.widget.Toast;
 
 public class SplashScreenActivity extends Activity {
 	private MingleApplication app;
-	private static final String server_url = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080";
+	private static final String server_url = "http://ec2-54-64-20-181.ap-northeast-1.compute.amazonaws.com:8080";
 	
 	//For GCM below
 	public static final String EXTRA_MESSAGE = "message";
@@ -166,7 +166,7 @@ public class SplashScreenActivity extends Activity {
     	Criteria criteria = new Criteria();
     	String provider = app.getLocationProvider();
     	locationManager.requestLocationUpdates(provider, 1000, 0, locationListener);
-        initHandler.sendEmptyMessageDelayed(MSG_TIME_OUT, 3*1000);
+        initHandler.sendEmptyMessageDelayed(MSG_TIME_OUT, 4*1000);
     }
     
 	private LocationListener locationListener = new LocationListener() {
