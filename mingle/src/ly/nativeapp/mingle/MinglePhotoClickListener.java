@@ -75,9 +75,12 @@ public class MinglePhotoClickListener implements OnClickListener{
 		    public void onClick(DialogInterface dialog, int item) {
 		        if (items[item].equals(items[0])) {
 		        	RemovePhoto(targetView);
+		        	 
 		        }  else if (items[item].equals(items[1])) {
-		            dialog.dismiss();
+		        	dialog.dismiss();
 		        }
+		        System.out.println("Will not fucking dismiss");
+		        
 		    }
 		});
 		deleteDialog = builder.create();

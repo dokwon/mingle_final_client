@@ -1,6 +1,7 @@
 package ly.nativeapp.mingle;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;

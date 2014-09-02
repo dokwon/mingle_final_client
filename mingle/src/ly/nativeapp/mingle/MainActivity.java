@@ -3,18 +3,22 @@ package ly.nativeapp.mingle;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.MotionEventCompat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.WindowManager;
+
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import ly.nativeapp.mingle.R;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
@@ -35,11 +39,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Movie;
+import android.graphics.Rect;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import android.widget.ImageView.ScaleType;
 import android.widget.TextView.OnEditorActionListener;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -281,10 +288,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
             enter_button.setVisibility(View.GONE);
             preview_button.setVisibility(View.GONE);
         }
-       KeyboardDismisser.setupKeyboardDismiss(findViewById(R.id.main_parent), this);
-       
-       
-       
+        KeyboardDismisser.setupKeyboardDismiss(findViewById(R.id.main_parent), this);
     }
     
 
@@ -616,6 +620,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		  super.onDestroy();
 	  }
 
+	 
+	  
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
 		// TODO Auto-generated method stub
