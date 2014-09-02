@@ -3,6 +3,7 @@ package ly.nativeapp.mingle;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import java.net.*;
 import java.util.ArrayList;
@@ -18,10 +19,10 @@ import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.*;
-
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -47,10 +48,14 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     private String server_url;				//URL of server
     private MingleApplication app;
     
+    private Lock initLock = new ReentrantLock();
+    private Condition initDataFetched = initLock.newCondition();
     private Lock newUserLock = new ReentrantLock();
     private Condition newUserFetched = newUserLock.newCondition();
     private Lock deactLock = new ReentrantLock();
     private Condition deactResult = deactLock.newCondition();
+    private Lock uidLock = new ReentrantLock();
+    private Condition uidChecked = uidLock.newCondition();
     
     /* Constructor for HttpHelper */
     public HttpHelper(String url, MingleApplication curApp){
@@ -99,12 +104,14 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     
     /* Get vote question of the day*/
     public void getInitInfo() {
+    	initLock.lock();
         String baseURL = server_url;
     	baseURL += "get_init_info";
     	
     	final String cps = baseURL;       
     	new Thread(new Runnable() {
     		public void run() {
+    			initLock.lock();
     			HttpClient client = new DefaultHttpClient();
     	        HttpGet poster = new HttpGet(cps);
     	        HttpResponse response = null;
@@ -133,9 +140,13 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+				initDataFetched.signal();
+				initLock.unlock();
     		}
     	}).start();
+    	
+    	initDataFetched.awaitUninterruptibly();
+    	initLock.unlock();
     }
    
     /* Send login info along to the server, and receive UID */
@@ -419,6 +430,42 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     	newUserFetched.awaitUninterruptibly();
     	newUserLock.unlock();
     }
+    
+    public void checkUidValidity(String uid) {
+    	uidLock.lock();
+    	String baseURL = server_url;
+    	baseURL += "check_validity?";
+    	baseURL += "uid=" + uid;
+    	
+    	final String checkValidityURL = baseURL;
+    	new Thread(new Runnable() {
+    		public void run() {
+    			uidLock.lock();
+    			HttpClient client = new DefaultHttpClient();
+    	        HttpGet poster = new HttpGet(checkValidityURL);
+    	        HttpResponse response = null;
+    	        
+				try {
+					response = client.execute(poster);
+					String responseString = HttpResponseBody(response);
+					if(responseString.equals("false")) {
+						app.deactivateApp();
+						app.setNeedRefreshAccount();
+					}
+						
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				uidChecked.signal();
+    			uidLock.unlock();
+    		}
+    	}).start();	
+    	uidChecked.awaitUninterruptibly();
+    	uidLock.unlock();
+    }
+    
     
     //@Override
     protected Integer doInBackground(String... urls) {
