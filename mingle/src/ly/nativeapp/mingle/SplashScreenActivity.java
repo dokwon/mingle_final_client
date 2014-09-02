@@ -204,7 +204,7 @@ public class SplashScreenActivity extends Activity {
     };
     
     private boolean checkLocationError(float loc_lat, float loc_long){
-    	if(Math.abs(loc_lat)+Math.abs(loc_long)<0.1){
+    	/*if(Math.abs(loc_lat)+Math.abs(loc_long)<0.1){
     		new AlertDialog.Builder(this)
     		.setTitle(getResources().getString(R.string.location_error_title))
     		.setMessage(getResources().getString(R.string.gps_cannot_find_location))
@@ -217,7 +217,7 @@ public class SplashScreenActivity extends Activity {
             .show();
     		return true;
     	}
-    	else return false;
+    	else */return false;
         
     }
     
