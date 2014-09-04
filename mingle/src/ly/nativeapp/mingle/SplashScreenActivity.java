@@ -36,7 +36,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.widget.Toast;
 
 public class SplashScreenActivity extends Activity {
@@ -163,7 +162,6 @@ public class SplashScreenActivity extends Activity {
 	
 	// Get the users one-time location. Code available below to register for updates
     private void getCurrentLocation() {
-    	Criteria criteria = new Criteria();
     	String provider = app.getLocationProvider();
     	locationManager.requestLocationUpdates(provider, 1000, 0, locationListener);
         initHandler.sendEmptyMessageDelayed(MSG_TIME_OUT, 4*1000);
@@ -314,6 +312,8 @@ public class SplashScreenActivity extends Activity {
 	   		}
 	   		app.setMyUser(user_data.getString("UID"), user_data.getString("COMM"), 
 										user_data.getInt("NUM"), user_data.getString("SEX"));
+	   		app.setLat(Float.valueOf(user_data.getString("LOC_LAT")));
+	   		app.setLong(Float.valueOf(user_data.getString("LOC_LONG")));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

@@ -275,7 +275,6 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
     public void voteUser(View v){
     	String curr_uid = user.getUid();
     	if(!user.alreadyVoted()){
-    		user.setVoted(); 
     		((MingleApplication) this.getApplication()).connectHelper.voteUser(curr_uid);
     	} else {
     		Toast.makeText(getApplicationContext(),  getResources().getString(R.string.vote_impossible), Toast.LENGTH_SHORT).show();
@@ -311,6 +310,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 	    	public void onReceive(Context context, Intent intent) {
 	    		String result = intent.getExtras().getString(HttpHelper.VOTE_RESULT);
 	    		if(result.equals("success")){
+	        		user.setVoted(); 
 		    		Toast.makeText(getApplicationContext(),  getResources().getString(R.string.vote_success), Toast.LENGTH_SHORT).show();
 	    		} else {
 		    		Toast.makeText(getApplicationContext(),  getResources().getString(R.string.vote_fail), Toast.LENGTH_SHORT).show();
@@ -341,6 +341,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 	  public void onDestroy(){
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(imageUpdateReceiver);
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(httpErrorReceiver);
+		  LocalBroadcastManager.getInstance(this).unregisterReceiver(voteResultReceiver);
 		  
 		  super.onDestroy();
 	  }

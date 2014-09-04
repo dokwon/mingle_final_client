@@ -2151,6 +2151,8 @@ containing a value of this type.
         public static final int name_input_wrong_length=0x7f0a006c;
         public static final int network_error=0x7f0a0067;
         public static final int nickname_placeholder=0x7f0a0047;
+        public static final int no_face_recognized_msg=0x7f0a0078;
+        public static final int no_face_recognized_title=0x7f0a0079;
         public static final int no_more_candidates=0x7f0a0068;
         public static final int no_photo_input=0x7f0a006a;
         public static final int not_event_time=0x7f0a0066;

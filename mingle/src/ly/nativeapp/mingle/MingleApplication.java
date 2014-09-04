@@ -589,18 +589,16 @@ public class MingleApplication extends Application {
     	return rval; 
     }
  
- 	public float getDistance(double double_lat, double double_long){
+    public float getDistance(double double_lat, double double_long){
  		float latitude = (float)double_lat;
  		float longitude = (float)double_long;
  		
- 		float theta = this.longitude - longitude;
- 		float dist = (float) (Math.sin(deg2rad(this.latitude)) * Math.sin(deg2rad(latitude)) 
- 				+ Math.cos(deg2rad(this.latitude)) * Math.cos(deg2rad(latitude) * Math.cos(deg2rad(theta))));
- 		
- 		dist = (float)Math.acos(dist);
- 		dist = rad2deg(dist);
- 		dist = dist * 60 * (float)1.1515;
- 		dist = dist * (float)1.609344;
+ 		float dLat = deg2rad(latitude-this.latitude);
+ 		float dLng = deg2rad(longitude-this.longitude);
+ 		float a = (float)(Math.sin(dLat/2) * Math.sin(dLat/2) + 
+ 						  Math.cos(deg2rad(latitude)) * Math.cos(deg2rad(this.latitude))*
+ 						  Math.sin(dLng/2) * Math.sin(dLng/2));
+ 		float dist = (float) (2* Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 6369);
  		
  		if((dist*10 - (int)(dist*10)) < 0.5) return (int)(dist *10)/(float)10.0;
  		else return (int)(dist*10 + 1)/(float)10.0;

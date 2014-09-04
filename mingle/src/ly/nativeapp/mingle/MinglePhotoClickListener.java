@@ -69,7 +69,7 @@ public class MinglePhotoClickListener implements OnClickListener{
 				(String) mainActivity.getResources().getText(R.string.cancel) };
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-		builder.setTitle((String) mainActivity.getResources().getText(R.string.photo_delete)).setIcon(R.drawable.icon_tiny);
+		builder.setTitle(R.string.photo_delete).setIcon(R.drawable.icon_tiny);
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 		    @Override
 		    public void onClick(DialogInterface dialog, int item) {
@@ -79,8 +79,6 @@ public class MinglePhotoClickListener implements OnClickListener{
 		        }  else if (items[item].equals(items[1])) {
 		        	dialog.dismiss();
 		        }
-		        System.out.println("Will not fucking dismiss");
-		        
 		    }
 		});
 		deleteDialog = builder.create();
