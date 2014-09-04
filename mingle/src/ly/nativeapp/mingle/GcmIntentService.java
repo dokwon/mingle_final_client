@@ -18,7 +18,9 @@ import android.support.v4.app.NotificationCompat;
 
 
 
+import android.util.Log;
 import ly.nativeapp.mingle.R;
+
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 public class GcmIntentService extends IntentService {
