@@ -58,6 +58,8 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     private Condition uidChecked = uidLock.newCondition();
     private Lock voteLock = new ReentrantLock();
     private Condition voteResult = voteLock.newCondition();
+    private Lock voteListLock = new ReentrantLock();
+    private Condition voteListResult = voteListLock.newCondition();
     
     /* Constructor for HttpHelper */
     public HttpHelper(String url, MingleApplication curApp){
@@ -335,6 +337,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
     
     /* Request list of popular users from the server */
     public void requestVoteList() {
+    	voteListLock.lock();
 	 	String baseURL = server_url;
     	baseURL += "get_vote";
         
@@ -342,6 +345,7 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
        
     	new Thread(new Runnable() {
     		public void run() {
+    			voteListLock.lock();
     			HttpClient client = new DefaultHttpClient();
     	        HttpGet poster = new HttpGet(getVoteURL);
     	        HttpResponse response = null;
@@ -369,8 +373,12 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				voteListResult.signal();
+				voteListLock.unlock();
     		}
     	}).start();
+    	voteListResult.awaitUninterruptibly();
+    	voteListLock.unlock();
     }
     
     /* Request user's deactivation to the server */

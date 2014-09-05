@@ -500,7 +500,7 @@ int id action_context_bar 0x7f050035
 int id action_menu_divider 0x7f050016
 int id action_menu_presenter 0x7f050017
 int id action_mode_close_button 0x7f05003c
-int id action_settings 0x7f0500bd
+int id action_settings 0x7f0500b6
 int id activity_chooser_view_content 0x7f05003d
 int id add1 0x7f050061
 int id add2 0x7f050062
@@ -544,8 +544,6 @@ int id enter_button 0x7f050071
 int id error_message 0x7f0500a3
 int id expand_activities_button 0x7f05003e
 int id expanded_menu 0x7f050044
-int id femaleTopLogo 0x7f0500b1
-int id female_vote_rl 0x7f0500b5
 int id fragment_container 0x7f050058
 int id front 0x7f050086
 int id grayscale 0x7f050030
@@ -568,8 +566,6 @@ int id llout 0x7f050055
 int id load_more_footer 0x7f05009f
 int id load_more_progressBar 0x7f0500a1
 int id main_parent 0x7f05005b
-int id maleTopLogo 0x7f0500b2
-int id male_vote_rl 0x7f0500b9
 int id manbutton 0x7f050068
 int id match_parent 0x7f05002a
 int id member_1 0x7f05006b
@@ -605,6 +601,10 @@ int id photoView1 0x7f05005f
 int id photoView2 0x7f050060
 int id photoView3 0x7f05005d
 int id photo_indicators 0x7f050075
+int id pop_user_image 0x7f0500b3
+int id pop_user_name 0x7f0500b5
+int id pop_user_rank 0x7f0500b4
+int id pop_user_rl 0x7f0500b2
 int id preview_button 0x7f05009a
 int id production 0x7f050025
 int id profileCustomTitleLayout 0x7f0500a6
@@ -641,9 +641,9 @@ int id sender_image 0x7f050090
 int id sender_name 0x7f050092
 int id setting_list 0x7f0500a9
 int id setting_option 0x7f0500aa
-int id setting_option_delete 0x7f0500c0
-int id setting_option_profile 0x7f0500be
-int id setting_option_search 0x7f0500bf
+int id setting_option_delete 0x7f0500b9
+int id setting_option_profile 0x7f0500b7
+int id setting_option_search 0x7f0500b8
 int id sexlabel 0x7f050066
 int id shadow_wrapper 0x7f050073
 int id shortcut 0x7f050046
@@ -660,14 +660,8 @@ int id title 0x7f050043
 int id titleLogo 0x7f050099
 int id title_icon 0x7f0500a2
 int id top_action_bar 0x7f050038
-int id top_female_image 0x7f0500b6
-int id top_female_name 0x7f0500b8
-int id top_female_rank 0x7f0500b7
 int id top_line 0x7f0500a0
-int id top_list 0x7f0500b4
-int id top_male_image 0x7f0500ba
-int id top_male_name 0x7f0500bc
-int id top_male_rank 0x7f0500bb
+int id top_list 0x7f0500b1
 int id txt_inputText 0x7f050056
 int id up 0x7f050039
 int id useLogo 0x7f050003
@@ -676,7 +670,6 @@ int id user_name 0x7f050089
 int id user_pic 0x7f050088
 int id view_flipper 0x7f050059
 int id vote_button 0x7f05007a
-int id vote_error_page 0x7f0500b3
 int id withText 0x7f05000c
 int id womanbutton 0x7f050067
 int id wrap_content 0x7f05002b

@@ -46,7 +46,7 @@
 			 	android:ellipsize="end"
 			 	android:maxLines="1"
 			 	/>
-		    <TextView
+		    <!-- <TextView
 		        android:layout_height="wrap_content" 
 			 	android:layout_width="wrap_content"
 			 	android:layout_marginRight="30dp"
@@ -58,7 +58,7 @@
 			 	android:textColor="#FF4444"
        			android:ellipsize="end"
 			 	android:text="@string/vote_time_notif"
-			 	/>
+			 	/>-->
   	</LinearLayout>
 		
 	<!-- 

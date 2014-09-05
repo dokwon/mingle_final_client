@@ -10,7 +10,7 @@
         android:layout_width="fill_parent" android:layout_margin="@dimen/small_margin">
         <FrameLayout
             android:orientation="vertical"
-            android:id="@+id/female_vote_rl"
+            android:id="@+id/pop_user_rl"
             android:background="@drawable/vote_profile"
             android:layout_marginLeft="@dimen/small_margin"
             android:tag="front"
@@ -18,21 +18,21 @@
 		    	
 		    	<ImageView
 		                style="@style/VoteProfileImage"
-		                android:id="@+id/top_female_image"/>
+		                android:id="@+id/pop_user_image"/>
 		    	<ImageView
 		                style="@style/ChatRoomRank"
-		                android:id="@+id/top_female_rank"/>
+		                android:id="@+id/pop_user_rank"/>
 		        
 		        <TextView
 		                android:layout_width="fill_parent"
 		                android:layout_height="wrap_content"
-		                android:layout_toRightOf="@id/top_female_image"
+		                android:layout_toRightOf="@+id/pop_user_image"
 		                android:layout_marginLeft="70dp"
 		                style="@style/MyListTitle"
-		                android:id="@+id/top_female_name"/>
+		                android:id="@+id/pop_user_name"/>
         </FrameLayout>
     </LinearLayout>
-    <LinearLayout android:layout_weight="1" 
+    <!-- <LinearLayout android:layout_weight="1" 
         android:layout_height="60dp" android:layout_width="fill_parent" android:layout_margin="@dimen/small_margin">
         <FrameLayout
             android:orientation="vertical"
@@ -57,5 +57,5 @@
 			                android:id="@+id/top_male_name"/>
         </FrameLayout>
     </LinearLayout>
-
+-->
 </LinearLayout>

@@ -62,6 +62,7 @@ public class MingleApplication extends Application {
     private int dist_lim;
     private int first_match_num = 10;
     private int extra_match_num = 5;
+    private boolean can_get_more_pop_list = true;
     private boolean can_get_more_candidate = true;
     private boolean notification_on = true;
     private boolean needRefresh = false;
@@ -70,7 +71,8 @@ public class MingleApplication extends Application {
     
     private ArrayList<String> candidates = new ArrayList<String>();
     private ArrayList<String> choices = new ArrayList<String>();
-    private ArrayList<ArrayList<String>> pop_users = new ArrayList<ArrayList<String>>();
+    private ArrayList<String> pop_users = new ArrayList<String>();
+    //private ArrayList<ArrayList<String>> pop_users = new ArrayList<ArrayList<String>>();
 
     private Timer mActivityTransitionTimer;
     private TimerTask mActivityTransitionTimerTask;
@@ -143,7 +145,7 @@ public class MingleApplication extends Application {
 
    
    public void createDefaultMyUser(){
-   		my_user = new MingleUser("", "", 0, 0, null, "", 0);
+   		my_user = new MingleUser("", "", 0, 0, null, "", 0, 0);
    }
    
    public Bitmap rotatedBitmap(Bitmap source, String photoPath) {
@@ -239,6 +241,18 @@ public class MingleApplication extends Application {
     
     public void moreCandidate(){
     	can_get_more_candidate = true;
+    }
+    
+    public boolean canGetMorePopList(){
+    	return can_get_more_pop_list;
+    }
+    
+    public void noMorePopList(){
+    	can_get_more_pop_list = false;
+    }
+    
+    public void morePopList(){
+    	can_get_more_pop_list = true;
     }
     
     public void removePhotoPathAtIndex(int index) {
@@ -375,7 +389,15 @@ public class MingleApplication extends Application {
     	candidates.remove(index);
     }
     
-    public ArrayList<ArrayList<String>> getPopList(){
+    public ArrayList<String> getPopList(){
+    	return pop_users;
+    }
+    
+    public void addPopUser(String pop_uid){
+    	pop_users.add(pop_uid);
+    }
+    
+    /*public ArrayList<ArrayList<String>> getPopList(){
     	return pop_users;
     }
     
@@ -384,7 +406,7 @@ public class MingleApplication extends Application {
     	rank_list.add(female_uid);
     	rank_list.add(male_uid);
     	pop_users.add(rank_list);
-    }
+    }*/
     
     public void emptyPopList(){
     	pop_users.clear();
@@ -403,6 +425,7 @@ public class MingleApplication extends Application {
 			new_user.setSex(sex);
 			float distance = this.getDistance(new_user_data.getDouble("LOC_LAT"), new_user_data.getDouble("LOC_LONG"));
 			new_user.setDistance(distance);
+			new_user.setRank(Integer.valueOf(new_user_data.getString("RANK")));
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -444,7 +467,7 @@ public class MingleApplication extends Application {
 			MingleUser user = this.getMingleUser(chat_user_uid);
 			
 			if(user == null) {
-				user = new MingleUser(chat_user_uid, "", 0, 0, this.getResources().getDrawable(blankProfileImageSmall), "", 0);
+				user = new MingleUser(chat_user_uid, "", 0, 0, this.getResources().getDrawable(blankProfileImageSmall), "", 0, 0);
 				this.addMingleUser(user);
 				this.addChoice(chat_user_uid);
 				connectHelper.getNewUser(chat_user_uid, "choice");

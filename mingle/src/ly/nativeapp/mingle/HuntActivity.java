@@ -291,13 +291,13 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    	   
 	    	   try {
 	    		   JSONObject pop_result = new JSONObject(data);
-	    		   if(pop_result.getString("RESULT").equals("success")){
+	    		   //if(pop_result.getString("RESULT").equals("success")){
 	    			   JSONArray pop_list_arr = new JSONArray(pop_result.getString("POP_LIST"));
 	    			   handlePopList(pop_list_arr);
-	    			   voteFragment.showPopList();
+	    			/*   voteFragment.showPopList();
 	    		   } else {
 	    			   voteFragment.noPopList();
-	    		   }
+	    		   }*/
 	    	   } catch (JSONException e) {
 	    		   // TODO Auto-generated catch block
 	    		   e.printStackTrace();
@@ -307,17 +307,20 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    };
 
 	  /* TimerTask for load more when the server doesn't have more candidates */
-	  class CandidateTimerTask extends TimerTask {
+	  class RequestTimerTask extends TimerTask {
 		  MingleApplication ma;
-		  public CandidateTimerTask(MingleApplication ma){
+		  String option;
+		  public RequestTimerTask(MingleApplication ma, String option){
 			  this.ma = ma;
+			  this.option = option;
 		  }
 		  @Override
 		  public void run() {
 			  runOnUiThread(new Runnable(){
 				  @Override
 				  public void run() {
-					  ma.moreCandidate();
+					  if(option.equals("candidate")) ma.moreCandidate();
+					  else if(option.equals("vote")) ma.morePopList();
 				  }
 			  });
 		  }
@@ -335,7 +338,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 		MingleApplication app = ((MingleApplication) this.getApplicationContext());
 		if(list_of_users.length() == 0){
 			app.noMoreCandidate();
-			CandidateTimerTask ctt = new CandidateTimerTask(app);
+			RequestTimerTask ctt = new RequestTimerTask(app, "candidate");
 			new Timer().schedule(ctt, 30000);
 		} else {
 			if(candidateFragment != null) candidateFragment.removeNoCandidateError();
@@ -353,7 +356,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 								Integer.valueOf(shownUser.getString("NUM")), 
 								Integer.valueOf(shownUser.getString("PHOTO_NUM")), 
 								this.getResources().getDrawable(app.blankProfileImage),
-								sex_var, distance);
+								sex_var, distance, Integer.valueOf(shownUser.getString("RANK")));
 						app.addMingleUser(candidate);
 					}
 					if(!candidate.isPicAvail(0)) new ImageDownloader(this.getApplicationContext(), candidate.getUid(), 0).execute();
@@ -374,7 +377,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 		MingleApplication app = ((MingleApplication) this.getApplicationContext());
 		    
 		//get female and male popular list
-	    ArrayList<String> female_list = new ArrayList<String>();
+	    /*ArrayList<String> female_list = new ArrayList<String>();
 	    ArrayList<String> male_list = new ArrayList<String>();
 	    for(int i = 0 ; i < list_of_top.length(); i++) {
 	    	try {
@@ -398,12 +401,39 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    	} catch (JSONException e){
 	    		e.printStackTrace();
 	    	}
-	    }
+	    }*/
+		
+		app.noMorePopList();
+		RequestTimerTask ctt = new RequestTimerTask(app, "vote");
+		new Timer().schedule(ctt, 10*60*1000);
 	    		
 	    app.emptyPopList();
 	    
+		for(int i = 0 ; i < list_of_top.length(); i++){
+			try {
+				JSONObject shownUser = list_of_top.getJSONObject(i);
+	    		MingleUser pop_user = app.getMingleUser(shownUser.getString("UID"));
+	    		if(pop_user == null){
+	    			float distance = app.getDistance(shownUser.getDouble("LOC_LAT"), shownUser.getDouble("LOC_LONG"));
+	    			pop_user = new MingleUser(shownUser.getString("UID"), 
+	    					shownUser.getString("COMM"), 
+	    					Integer.valueOf(shownUser.getString("NUM")), 
+	    					Integer.valueOf(shownUser.getString("PHOTO_NUM")), 
+	    					this.getResources().getDrawable(app.blankProfileImage),
+	    					shownUser.getString("SEX"), distance, i+1);	    			
+					app.addMingleUser(pop_user);
+	    		}
+	    		if(!pop_user.isPicAvail(-1)) 
+	    			new ImageDownloader(this.getApplicationContext(), pop_user.getUid(), -1).execute();
+	    		app.addPopUser(shownUser.getString("UID"));
+			} catch (JSONException e){
+	    		e.printStackTrace();
+	    	}
+		}
+		
+	    
 	  //add female and male pop users to list
-	    for(int i = 0; i < female_list.size() || i < male_list.size(); i++){
+	  /*  for(int i = 0; i < female_list.size() || i < male_list.size(); i++){
 	    	String female_uid = "";
 	    	String male_uid = "";
 	    	if(i < female_list.size()){
@@ -413,7 +443,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    		male_uid = male_list.get(i);
 	    	}
 	    	app.addPopUsers(female_uid, male_uid);
-	    }
+	    }*/
 	    	
 	    popListUpdate();
 	  }

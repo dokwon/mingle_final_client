@@ -38,6 +38,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
     private int photo_num;
     private MingleUser user;
     private Typeface koreanTypeFace;
+    private boolean is_voting;
     
     @Override
     protected void onNewIntent(Intent intent) {
@@ -145,9 +146,9 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
         } else {
        	 getNewImage(0);
         }
-        if (type.equals("popular")) {
+        /*if (type.equals("popular")) {
        	 vote_button.setVisibility(View.GONE);
-        }
+        }*/
         if(!type.equals("candidate") || type.equals("choice")){
        	 chat_button.setVisibility(View.GONE);
         }
@@ -161,6 +162,8 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 	    if(((ViewGroup)photoCounterWrapper).getChildCount() != 0)
 	      	 ((ViewGroup) findViewById(R.id.photo_indicators)).removeAllViews();
 	    initializePhotoIndicators();
+	    
+	    is_voting = false;
 	}
 	
 	private int current_viewing_pic_index = 0;
@@ -275,6 +278,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
     public void voteUser(View v){
     	String curr_uid = user.getUid();
     	if(!user.alreadyVoted()){
+    		user.setVoted(true);
     		((MingleApplication) this.getApplication()).connectHelper.voteUser(curr_uid);
     	} else {
     		Toast.makeText(getApplicationContext(),  getResources().getString(R.string.vote_impossible), Toast.LENGTH_SHORT).show();
@@ -310,9 +314,9 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 	    	public void onReceive(Context context, Intent intent) {
 	    		String result = intent.getExtras().getString(HttpHelper.VOTE_RESULT);
 	    		if(result.equals("success")){
-	        		user.setVoted(); 
 		    		Toast.makeText(getApplicationContext(),  getResources().getString(R.string.vote_success), Toast.LENGTH_SHORT).show();
 	    		} else {
+	    			user.setVoted(false);
 		    		Toast.makeText(getApplicationContext(),  getResources().getString(R.string.vote_fail), Toast.LENGTH_SHORT).show();
 	    		}
 	    	}
@@ -322,6 +326,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 	  private BroadcastReceiver httpErrorReceiver = new BroadcastReceiver() {
 	    	@Override
 	    	public void onReceive(Context context, Intent intent) {
+	    		user.setVoted(false);
 	    		Toast.makeText(getApplicationContext(), getResources().getString(R.string.network_error), Toast.LENGTH_SHORT).show();
 	    	}
 	  };

@@ -40,7 +40,7 @@ import android.widget.Toast;
 
 public class SplashScreenActivity extends Activity {
 	private MingleApplication app;
-	private static final String server_url = "http://ec2-54-64-20-181.ap-northeast-1.compute.amazonaws.com:8080";
+	private static final String server_url = "http://ec2-54-64-20-181.ap-northeast-1.compute.amazonaws.com:8000";
 	
 	//For GCM below
 	public static final String EXTRA_MESSAGE = "message";
@@ -329,7 +329,7 @@ public class SplashScreenActivity extends Activity {
 	   				(int) chatters.get(i).getAsInteger("NUM"),
 	   				1,
 	   				app.getResources().getDrawable(app.blankProfileImage),
-	   				sex_var, (int) chatters.get(i).getAsInteger("DIST"));
+	   				sex_var, (int) chatters.get(i).getAsInteger("DIST"), 0);
 	   		if(app.getChoicePos(newUser.getUid())==-1) {
 	   			app.addMingleUser(newUser);
 	   			app.addChoice(newUser.getUid());

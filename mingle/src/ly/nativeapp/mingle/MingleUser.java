@@ -23,8 +23,10 @@ public class MingleUser {
 	int new_msg_num;
     boolean inChat;
     float distance;
+    
+    int rank;
 
-    public MingleUser(String uid, String name, int num, int photo_num, Drawable drawable, String sex, float distance) {
+    public MingleUser(String uid, String name, int num, int photo_num, Drawable drawable, String sex, float distance, int rank) {
           super();
           this.uid = uid;
           this.name = name;
@@ -44,6 +46,7 @@ public class MingleUser {
           }
           this.distance = distance;
           this.new_msg_num = 0;
+          this.rank = rank;
     }
 
     public void setDistance(float dist){
@@ -94,12 +97,20 @@ public class MingleUser {
     	this.sex = sex;
     }
     
+    public int getRank(){
+    	return rank;
+    }
+    
+    public void setRank(int rank){
+    	this.rank = rank;
+    }
+    
     public boolean alreadyVoted(){
     	return voted;
     }
     
-    public void setVoted(){
-    	voted = true;
+    public void setVoted(boolean voted){
+    	this.voted = voted;
     }
   
     public int getPhotoNum(){

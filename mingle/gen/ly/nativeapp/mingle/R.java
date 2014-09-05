@@ -1721,7 +1721,7 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f05003c;
-        public static final int action_settings=0x7f0500bd;
+        public static final int action_settings=0x7f0500b6;
         public static final int activity_chooser_view_content=0x7f05003d;
         public static final int add1=0x7f050061;
         public static final int add2=0x7f050062;
@@ -1765,8 +1765,6 @@ containing a value of this type.
         public static final int error_message=0x7f0500a3;
         public static final int expand_activities_button=0x7f05003e;
         public static final int expanded_menu=0x7f050044;
-        public static final int femaleTopLogo=0x7f0500b1;
-        public static final int female_vote_rl=0x7f0500b5;
         public static final int fragment_container=0x7f050058;
         public static final int front=0x7f050086;
         public static final int grayscale=0x7f050030;
@@ -1789,8 +1787,6 @@ containing a value of this type.
         public static final int load_more_footer=0x7f05009f;
         public static final int load_more_progressBar=0x7f0500a1;
         public static final int main_parent=0x7f05005b;
-        public static final int maleTopLogo=0x7f0500b2;
-        public static final int male_vote_rl=0x7f0500b9;
         public static final int manbutton=0x7f050068;
         public static final int match_parent=0x7f05002a;
         public static final int member_1=0x7f05006b;
@@ -1826,6 +1822,10 @@ containing a value of this type.
         public static final int photoView2=0x7f050060;
         public static final int photoView3=0x7f05005d;
         public static final int photo_indicators=0x7f050075;
+        public static final int pop_user_image=0x7f0500b3;
+        public static final int pop_user_name=0x7f0500b5;
+        public static final int pop_user_rank=0x7f0500b4;
+        public static final int pop_user_rl=0x7f0500b2;
         public static final int preview_button=0x7f05009a;
         public static final int production=0x7f050025;
         public static final int profileCustomTitleLayout=0x7f0500a6;
@@ -1862,9 +1862,9 @@ containing a value of this type.
         public static final int sender_name=0x7f050092;
         public static final int setting_list=0x7f0500a9;
         public static final int setting_option=0x7f0500aa;
-        public static final int setting_option_delete=0x7f0500c0;
-        public static final int setting_option_profile=0x7f0500be;
-        public static final int setting_option_search=0x7f0500bf;
+        public static final int setting_option_delete=0x7f0500b9;
+        public static final int setting_option_profile=0x7f0500b7;
+        public static final int setting_option_search=0x7f0500b8;
         public static final int sexlabel=0x7f050066;
         public static final int shadow_wrapper=0x7f050073;
         public static final int shortcut=0x7f050046;
@@ -1881,14 +1881,8 @@ containing a value of this type.
         public static final int titleLogo=0x7f050099;
         public static final int title_icon=0x7f0500a2;
         public static final int top_action_bar=0x7f050038;
-        public static final int top_female_image=0x7f0500b6;
-        public static final int top_female_name=0x7f0500b8;
-        public static final int top_female_rank=0x7f0500b7;
         public static final int top_line=0x7f0500a0;
-        public static final int top_list=0x7f0500b4;
-        public static final int top_male_image=0x7f0500ba;
-        public static final int top_male_name=0x7f0500bc;
-        public static final int top_male_rank=0x7f0500bb;
+        public static final int top_list=0x7f0500b1;
         public static final int txt_inputText=0x7f050056;
         public static final int up=0x7f050039;
         public static final int useLogo=0x7f050003;
@@ -1897,7 +1891,6 @@ containing a value of this type.
         public static final int user_pic=0x7f050088;
         public static final int view_flipper=0x7f050059;
         public static final int vote_button=0x7f05007a;
-        public static final int vote_error_page=0x7f0500b3;
         public static final int withText=0x7f05000c;
         public static final int womanbutton=0x7f050067;
         public static final int wrap_content=0x7f05002b;

@@ -115,7 +115,7 @@ public class GcmIntentService extends IntentService {
         String voter_uid = data.getString("voter_uid");
         MingleUser user = app.getMingleUser(voter_uid);
 		if(user == null) {
-			user = new MingleUser(voter_uid, "", 0, 0, (Drawable) app.getResources().getDrawable(app.blankProfileImageSmall), "", 0);
+			user = new MingleUser(voter_uid, "", 0, 0, (Drawable) app.getResources().getDrawable(app.blankProfileImageSmall), "", 0, 0);
 			app.addMingleUser(user);
 			app.addCandidate(voter_uid);
 			app.connectHelper.getNewUser(voter_uid, "candidate");

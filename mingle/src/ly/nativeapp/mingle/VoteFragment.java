@@ -16,27 +16,27 @@ public class VoteFragment extends Fragment{
 	public ListView top_list_view;
 	private VoteAdapter top_adapter;
 	
-	private ImageView not_vote_time_view;
+	/*private ImageView not_vote_time_view;
 	private ImageView female_top_logo_view;
-	private ImageView male_top_logo_view;
+	private ImageView male_top_logo_view;*/
 	private RelativeLayout question_wrapper;
 	private Activity parent; 
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 		parent = getActivity();
-		
+		MingleApplication ma = (MingleApplication) parent.getApplication();
 		View rootView = inflater.inflate(R.layout.vote_fragment, container, false);
 		
 		top_list_view = (ListView)(rootView.findViewById(R.id.top_list));
 		
-		not_vote_time_view = (ImageView)(rootView.findViewById(R.id.vote_error_page));
+		/*not_vote_time_view = (ImageView)(rootView.findViewById(R.id.vote_error_page));
 		female_top_logo_view = (ImageView)(rootView.findViewById(R.id.femaleTopLogo));
 		male_top_logo_view = (ImageView)(rootView.findViewById(R.id.maleTopLogo));
+		*/
 		
-		
-	    // Stores 
-	    ((MingleApplication) parent.getApplication()).connectHelper.requestVoteList();
+	    // Stores
+	    if(ma.canGetMorePopList()) ma.connectHelper.requestVoteList();
 
 	    top_adapter = new VoteAdapter(parent, R.layout.vote_row, ((MingleApplication) parent.getApplication()).getPopList(), (MingleApplication) parent.getApplicationContext());
 	    top_adapter.notifyDataSetChanged();
@@ -51,14 +51,14 @@ public class VoteFragment extends Fragment{
     	question_text_view.setTypeface(((MingleApplication) parent.getApplication()).koreanTypeFace);
 	    
 	    
-	    female_top_logo_view.setVisibility(View.GONE);
+	    /*female_top_logo_view.setVisibility(View.GONE);
     	male_top_logo_view.setVisibility(View.GONE);
     	top_list_view.setVisibility(View.GONE);
     	not_vote_time_view.setVisibility(View.GONE);
-	    question_wrapper.setVisibility(View.GONE);
+	    question_wrapper.setVisibility(View.GONE);*/
 		return rootView;
 	}
-	
+	/*
 	public void noPopList(){
 		female_top_logo_view.setVisibility(View.GONE);
     	male_top_logo_view.setVisibility(View.GONE);
@@ -73,7 +73,7 @@ public class VoteFragment extends Fragment{
     	male_top_logo_view.setVisibility(View.VISIBLE);
     	top_list_view.setVisibility(View.VISIBLE);
     	not_vote_time_view.setVisibility(View.GONE);
-	}
+	}*/
 	
 	  public void listDataChanged(){
 		  parent.runOnUiThread(new Runnable() {

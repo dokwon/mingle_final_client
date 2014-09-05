@@ -36,28 +36,28 @@ public class VoteAdapter extends ArrayAdapter {
 
     private void setRankNumberView(int position, View row, NewsHolder holder) {
     
-    	holder.female_rank = (ImageView) row.findViewById(R.id.top_female_rank);
-    	holder.male_rank = (ImageView) row.findViewById(R.id.top_male_rank);
+    	holder.user_rank = (ImageView) row.findViewById(R.id.pop_user_rank);
+    	//holder.male_rank = (ImageView) row.findViewById(R.id.top_male_rank);
     	switch (position) {
     		case 0:
-    			holder.female_rank.setImageResource(R.drawable.female_ranking_number1);
-    			holder.male_rank.setImageResource(R.drawable.male_ranking_number_1);
+    			holder.user_rank.setImageResource(R.drawable.female_ranking_number1);
+    			//holder.male_rank.setImageResource(R.drawable.male_ranking_number_1);
     			break;
     		case 1:
-    			holder.female_rank.setImageResource(R.drawable.female_ranking_number2);
-    			holder.male_rank.setImageResource(R.drawable.male_ranking_number_2);
+    			holder.user_rank.setImageResource(R.drawable.female_ranking_number2);
+    			//holder.male_rank.setImageResource(R.drawable.male_ranking_number_2);
     			break;
     		case 2:
-    			holder.female_rank.setImageResource(R.drawable.female_ranking_number3);
-    			holder.male_rank.setImageResource(R.drawable.male_ranking_number_3);
+    			holder.user_rank.setImageResource(R.drawable.female_ranking_number3);
+    			//holder.male_rank.setImageResource(R.drawable.male_ranking_number_3);
     			break;
     		case 3:
-    			holder.female_rank.setImageResource(R.drawable.female_ranking_number4);
-    			holder.male_rank.setImageResource(R.drawable.male_ranking_number_4);
+    			holder.user_rank.setImageResource(R.drawable.female_ranking_number4);
+    			//holder.male_rank.setImageResource(R.drawable.male_ranking_number_4);
     			break;
     		case 4:
-    			holder.female_rank.setImageResource(R.drawable.female_ranking_number5);
-    			holder.male_rank.setImageResource(R.drawable.male_ranking_number_5);
+    			holder.user_rank.setImageResource(R.drawable.female_ranking_number5);
+    			//holder.male_rank.setImageResource(R.drawable.male_ranking_number_5);
     			break;
     	}
     }
@@ -75,22 +75,44 @@ public class VoteAdapter extends ArrayAdapter {
 
       	  holder = new NewsHolder();
 
-      	  holder.female_layout = (FrameLayout)row.findViewById(R.id.female_vote_rl);
-      	  holder.female_name = (TextView)row.findViewById(R.id.top_female_name);
-      	  holder.female_name.setTypeface(app.koreanTypeFace);
-    	  holder.female_pic=(ImageView)row.findViewById(R.id.top_female_image);
+      	  holder.pop_layout = (FrameLayout)row.findViewById(R.id.pop_user_rl);
+      	  holder.user_name = (TextView)row.findViewById(R.id.pop_user_name);
+      	  holder.user_name.setTypeface(app.koreanTypeFace);
+    	  holder.user_pic=(ImageView)row.findViewById(R.id.pop_user_image);
     	  
-    	  holder.male_layout = (FrameLayout)row.findViewById(R.id.male_vote_rl);
+    	  /*holder.male_layout = (FrameLayout)row.findViewById(R.id.male_vote_rl);
     	  holder.male_name = (TextView)row.findViewById(R.id.top_male_name);
     	  holder.male_name.setTypeface(app.koreanTypeFace);
-      	  holder.male_pic=(ImageView)row.findViewById(R.id.top_male_image);
+      	  holder.male_pic=(ImageView)row.findViewById(R.id.top_male_image);*/
       	  setRankNumberView(position, row, holder);
       	  row.setTag(holder);
         } else {
       	  holder = (NewsHolder)row.getTag();
         }
        
-        ArrayList<String> rank_list = (ArrayList<String>) data.get(position);
+        String pop_user_uid = (String) data.get(position);
+        int corner_round = parent.getResources().getDimensionPixelSize(R.dimen.vote_corner_round);
+        if(!(Integer.valueOf(android.os.Build.VERSION.SDK_INT) >= 14 && ViewConfiguration.get(parent.getContext()).hasPermanentMenuKey())) 
+        	corner_round = parent.getResources().getDimensionPixelSize(R.dimen.vote_corner_round_small);
+        
+        MingleUser pop_user = app.getMingleUser(pop_user_uid);
+    	holder.user_name.setText(pop_user.getName());
+    	holder.user_pic.setImageDrawable(ImageRounder.getVoteRoundedDrawable((Activity) context, pop_user.getPic(-1), corner_round, 60, 67));
+    	
+    	final String profile_uid = pop_user_uid;
+    	holder.pop_layout.setOnClickListener(new OnClickListener()
+        {
+        	@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+        		Intent profile_intent = new Intent(context, ProfileActivity.class);
+                profile_intent.putExtra(ProfileActivity.PROFILE_UID, profile_uid);
+                profile_intent.putExtra(ProfileActivity.PROFILE_TYPE, "popular");
+                context.startActivity(profile_intent);
+			}
+        });
+    	
+        /*ArrayList<String> rank_list = (ArrayList<String>) data.get(position);
         String female_uid = rank_list.get(0);
         String male_uid = rank_list.get(1);
         int corner_round = parent.getResources().getDimensionPixelSize(R.dimen.vote_corner_round);
@@ -133,20 +155,20 @@ public class VoteAdapter extends ArrayAdapter {
                     context.startActivity(profile_intent);
     			}
             });
-        }
+        }*/
         return row;
 
     }
 
     
     static class NewsHolder {
-    	FrameLayout female_layout;
-    	FrameLayout male_layout;
-    	ImageView female_rank;
-    	ImageView male_rank;
-  	  	ImageView female_pic;
-  	  	TextView female_name;
-  	  	ImageView male_pic;
-  	  	TextView male_name;
+    	FrameLayout pop_layout;
+    	//FrameLayout male_layout;
+    	ImageView user_rank;
+    	//ImageView male_rank;
+  	  	ImageView user_pic;
+  	  	TextView user_name;
+  	  	//ImageView male_pic;
+  	  	//TextView male_name;
     }
 }
