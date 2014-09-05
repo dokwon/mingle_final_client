@@ -23,6 +23,7 @@ public class MingleUser {
 	int new_msg_num;
     boolean inChat;
     float distance;
+    int rank;
 
     public MingleUser(String uid, String name, int num, int photo_num, Drawable drawable, String sex, float distance) {
           super();
@@ -44,6 +45,15 @@ public class MingleUser {
           }
           this.distance = distance;
           this.new_msg_num = 0;
+          this.rank = -1;
+    }
+    
+    public void setRank(int rank){
+    	this.rank = rank;
+    }
+    
+    public int getRank(){
+    	return this.rank;
     }
 
     public void setDistance(float dist){

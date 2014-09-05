@@ -1,5 +1,8 @@
 package ly.nativeapp.mingle;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.NotificationManager;
@@ -10,6 +13,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -38,6 +43,8 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
     private int photo_num;
     private MingleUser user;
     private Typeface koreanTypeFace;
+    private String curr_uid;
+    private MingleApplication curr_app;
     
     @Override
     protected void onNewIntent(Intent intent) {
@@ -65,6 +72,9 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
          LocalBroadcastManager.getInstance(this).registerReceiver(httpErrorReceiver,
          		  new IntentFilter(HttpHelper.HANDLE_HTTP_ERROR));
          
+         LocalBroadcastManager.getInstance(this).registerReceiver(rankInfoReceiver,
+         		  new IntentFilter(HttpHelper.SET_RANK_INFO));
+         
          
          final LinearLayout prof_elems = (LinearLayout) findViewById(R.id.profile_elems);
          ViewTreeObserver vto = prof_elems.getViewTreeObserver(); 
@@ -86,8 +96,10 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 		Intent intent = getIntent();
         String uid = intent.getExtras().getString(ProfileActivity.PROFILE_UID);
         String type = intent.getExtras().getString(ProfileActivity.PROFILE_TYPE);
+        curr_uid = uid;
         
         MingleApplication app = ((MingleApplication) this.getApplication());
+        curr_app = app;
         int id = GcmIntentService.getNotificationId(uid);
         if(id != -1)
        	 		((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancel(id);
@@ -96,6 +108,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
         else user = app.getMingleUser(uid);
         photo_num = user.getPhotoNum();
                  
+        app.connectHelper.getRank(uid);
         final LayoutInflater inflater = getLayoutInflater();
         final Activity temp = this;
         viewFlipper.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
@@ -133,6 +146,11 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
         dist_view.setTypeface(koreanTypeFace);
         dist_view.setText(Float.toString(user.getDistance())+"km");
         dist_view.setTextColor(Color.GRAY);
+        TextView rank_view = (TextView) findViewById(R.id.profile_user_rank);
+        rank_view.setTypeface(koreanTypeFace);
+        String rankstr = Integer.valueOf(user.getRank()).toString();
+        if(user.getRank() == -1) rankstr = "";
+        rank_view.setText(rankstr);
         
         
         RelativeLayout vote_button = (RelativeLayout) findViewById(R.id.vote_button);
@@ -263,6 +281,20 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
     	  }
     };
     
+    private BroadcastReceiver rankInfoReceiver = new BroadcastReceiver() {
+    	@Override
+    	public void onReceive(Context context, Intent intent) {
+    		String data = intent.getStringExtra(HttpHelper.RANK_INFO);
+    		MingleUser curr_user = curr_app.getMingleUser(curr_uid);
+    		curr_user.setRank(Integer.parseInt(data));
+    		TextView rank_view = (TextView) findViewById(R.id.profile_user_rank);
+    		rank_view.setTypeface(koreanTypeFace);
+            String rankstr = Integer.valueOf(curr_user.getRank()).toString();
+            if(curr_user.getRank() == -1) rankstr = "";
+    		rank_view.setText(rankstr);
+    	}
+    };
+    
     public void updateView(int index){
     	LinearLayout curr_layout = (LinearLayout) viewFlipper.getCurrentView();
 		ImageView photo_view = (ImageView) curr_layout.findViewById(R.id.photoView);
@@ -341,6 +373,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 	  public void onDestroy(){
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(imageUpdateReceiver);
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(httpErrorReceiver);
+		  LocalBroadcastManager.getInstance(this).unregisterReceiver(rankInfoReceiver);
 		  
 		  super.onDestroy();
 	  }

@@ -27,7 +27,7 @@ public class ImageDownloader extends AsyncTask<Void, Integer, Void> {
   	
   	public ImageDownloader(Context context, String uid, int pic_index) {
   		this.context = context;
-  		String temp_url = "http://ec2-54-178-214-176.ap-northeast-1.compute.amazonaws.com:8080/photos/";
+  		String temp_url = "http://ec2-54-64-20-181.ap-northeast-1.compute.amazonaws.com:8000/photos/";
   		temp_url += uid;
   		if(pic_index < 0) temp_url += "/thumb.png";
   		else temp_url += "/photo_" + String.valueOf(pic_index+1) + ".png";
