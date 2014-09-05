@@ -69,14 +69,15 @@ public class MinglePhotoClickListener implements OnClickListener{
 				(String) mainActivity.getResources().getText(R.string.cancel) };
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-		builder.setTitle((String) mainActivity.getResources().getText(R.string.photo_delete)).setIcon(R.drawable.icon_tiny);
+		builder.setTitle(R.string.photo_delete).setIcon(R.drawable.icon_tiny);
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 		    @Override
 		    public void onClick(DialogInterface dialog, int item) {
 		        if (items[item].equals(items[0])) {
 		        	RemovePhoto(targetView);
+		        	 
 		        }  else if (items[item].equals(items[1])) {
-		            dialog.dismiss();
+		        	dialog.dismiss();
 		        }
 		    }
 		});

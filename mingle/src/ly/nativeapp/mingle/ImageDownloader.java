@@ -56,22 +56,22 @@ public class ImageDownloader extends AsyncTask<Void, Integer, Void> {
 		protected void onPostExecute(Void result) {
 			MingleApplication app= (MingleApplication) context;
 			MingleUser user = app.getMingleUser(uid);
-
-			//Save Image
-			user.setPic(pic_index, (Drawable) new BitmapDrawable(context.getResources(),bm));
-
-			//update lists on complete
-			Intent dispatcher = new Intent(app, HuntActivity.class);
-			dispatcher.putExtra(PIC_INDEX,pic_index);
-			dispatcher.setAction(UPDATE_HUNT);
-			LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
-			
-			//update profile on complete
-			dispatcher = new Intent(app, ProfileActivity.class);
-			dispatcher.putExtra(PIC_INDEX,pic_index);
-			dispatcher.setAction(UPDATE_PROFILE);
-			LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
-			
+			if(user != null){
+				//Save Image
+				user.setPic(pic_index, (Drawable) new BitmapDrawable(context.getResources(),bm));
+	
+				//update lists on complete
+				Intent dispatcher = new Intent(app, HuntActivity.class);
+				dispatcher.putExtra(PIC_INDEX,pic_index);
+				dispatcher.setAction(UPDATE_HUNT);
+				LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
+				
+				//update profile on complete
+				dispatcher = new Intent(app, ProfileActivity.class);
+				dispatcher.putExtra(PIC_INDEX,pic_index);
+				dispatcher.setAction(UPDATE_PROFILE);
+				LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
+			}
 
 			super.onPostExecute(result);
 		}

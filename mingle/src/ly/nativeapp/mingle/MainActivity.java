@@ -3,18 +3,24 @@ package ly.nativeapp.mingle;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.MotionEventCompat;
+import android.media.FaceDetector;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View.OnClickListener;
 import android.view.WindowManager;
+
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import ly.nativeapp.mingle.R;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
@@ -35,14 +41,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Movie;
+import android.graphics.Rect;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import android.widget.ImageView.ScaleType;
 import android.widget.TextView.OnEditorActionListener;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-
 public class MainActivity extends Activity implements ActionBar.TabListener {
 	public final static String MAIN_TYPE = "ly.nativeapp.mingle.MAIN_TYPE";	//Intent data to pass on when new Profile Activity started
 	
@@ -64,36 +72,24 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     private SharedPreferences prefs = null;
    
     private Uri imageUri;
-
+    private ArrayList<ImageView> photoViewOpts;
 	
+    
 	private ImageView FindAppropriateImageView() {
-		
-		ImageView[] views = {(ImageView) findViewById(R.id.photoView1),
-		                   (ImageView) findViewById(R.id.photoView2),
-		                   (ImageView) findViewById(R.id.photoView3)};
-		for (int i = 0; i < views.length; i ++) {
-			ImageView photoView = views[i];
-			
+		for (int i = 0; i < photoViewArr.size(); i ++) {
+			ImageView photoView =  photoViewArr.get(i);
 			if (photoView.getDrawable() == null) {
-				
-				switch(i) {
-					case 0:
-						((ImageView) findViewById(R.id.add1))
-						.setBackgroundResource(R.drawable.photo_delete);
-						break;
-					case 1:
-						((ImageView) findViewById(R.id.add2))
-						.setBackgroundResource(R.drawable.photo_delete);
-						break;
-					default:
-						((ImageView) findViewById(R.id.add3))
-						.setBackgroundResource(R.drawable.photo_delete);
-						
-				}
 				return photoView;
 			}
 		}
 		return null; 
+	}
+	
+	private void updatePhotoViewOpt(ImageView v) {
+		for(int i = 0; i < photoViewArr.size(); i ++) {
+			if(photoViewArr.get(i).equals(v))
+				photoViewOpts.get(i).setBackgroundResource(R.drawable.photo_delete);
+		}
 	}
 	
 	private String photoPath = "";
@@ -140,15 +136,46 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		        }
 		    }
 		    BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
+		    btmapOptions.inPreferredConfig = Bitmap.Config.RGB_565;
 	     	btmapOptions.inSampleSize = inSampleSize;
-	     	return app.rotatedBitmap(BitmapFactory.decodeFile(photoPath, btmapOptions), photoPath);
-		    
+	     	Bitmap temp = app.rotatedBitmap(BitmapFactory.decodeFile(photoPath, btmapOptions), photoPath);
+	     	if(temp.getWidth() % 2 == 1) {
+	     		temp = Bitmap.createScaledBitmap(temp, temp.getWidth() - 1, temp.getHeight(), true);
+	     	} 
+	     	return temp;
     }
+    
+    
+    private void displayFaceNotFoundDialog() {
+		AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
+			.setTitle(R.string.no_face_recognized_title)
+			.setCancelable(false)
+			.setMessage(getResources().getString(R.string.no_face_recognized_msg))
+			.setIcon(R.drawable.icon_tiny)
+			.setNeutralButton(this.getResources().getText(R.string.ok), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.dismiss();
+				}
+			});
+		popupBuilder.show();
+
+    }
+    
     private void addPhotoAndDisplay() {
     	ImageView imageView = FindAppropriateImageView();
 		imageView.setScaleType(ScaleType.FIT_XY);
     	app.addPhotoPath(photoPath);
-     	imageView.setImageBitmap(rescaledBitmap(imageView));
+    	Bitmap rescaled = rescaledBitmap(imageView);
+    	System.out.println("SIZE !!! " + Integer.valueOf(rescaled.getWidth()));
+    	int face_num = findFaces(rescaled);
+    	if(face_num <= 0) {
+    		// No Faces Found
+    		displayFaceNotFoundDialog();
+    	} else {
+    		updatePhotoViewOpt(imageView);
+    		imageView.setImageBitmap(rescaled);
+    	}
     }
     	
     // Helper method to retrieve the filepath of selected image
@@ -178,6 +205,15 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     	}
     }
     
+    private void updateMemberUI(int num_selected) {
+    	num = num_selected;
+    	for(int i = 0; i < num_selected; i++)
+    		memberViewArr.get(i).setBackgroundResource(R.drawable.peoplenumberpicon);
+    	for(int i = num_selected; i < 6; i++)
+    		memberViewArr.get(i).setBackgroundResource(R.drawable.peoplenumberpicoff);
+
+    }
+    
     public void MemberNumberSelected(View v) {
     	int num_selected = 0;
     	for(int i = 0; i < 6; i++){
@@ -185,12 +221,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     			num_selected = i+1;
     		}
     	}
-    	
-    	num = num_selected;
-    	for(int i = 0; i < num_selected; i++)
-    		memberViewArr.get(i).setBackgroundResource(R.drawable.peoplenumberpicon);
-    	for(int i = num_selected; i < 6; i++)
-    		memberViewArr.get(i).setBackgroundResource(R.drawable.peoplenumberpicoff);
+    	updateMemberUI(num_selected);
 
     }
     
@@ -219,18 +250,24 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     	photoViewArr.add((ImageView)findViewById(R.id.photoView1));
     	photoViewArr.add((ImageView)findViewById(R.id.photoView2));
     	photoViewArr.add((ImageView)findViewById(R.id.photoView3));
+    	
+    	
+    	photoViewOpts= new ArrayList<ImageView>();
+    	photoViewOpts.add((ImageView)findViewById(R.id.add1));
+    	photoViewOpts.add((ImageView)findViewById(R.id.add2));
+    	photoViewOpts.add((ImageView)findViewById(R.id.add3));
+    	
 
         for(ImageView view : photoViewArr ) {
         	view.setOnClickListener(new MinglePhotoClickListener( this, photoViewArr));
         }
         if(type.equals("update")) {
-        	
 			for (int i = 0; i < app.getMyUser().getPhotoNum(); i++){
         		FindAppropriateImageView().setImageDrawable(app.getMyUser().getPic(i));
         	}
         } 
  
-        EditText editText = (EditText) findViewById(R.id.nicknameTextView);
+        final EditText editText = (EditText) findViewById(R.id.nicknameTextView);
         
         if(type.equals("update")) editText.setText(name);
         editText.setOnEditorActionListener(new OnEditorActionListener() {
@@ -281,13 +318,44 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
             enter_button.setVisibility(View.GONE);
             preview_button.setVisibility(View.GONE);
         }
-       KeyboardDismisser.setupKeyboardDismiss(findViewById(R.id.main_parent), this);
-       
-       
-       
+        
+        editText.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				editText.setSelection(editText.getText().length());
+				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+				if(editText.isFocused())
+					imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+			}
+        	
+        });
     }
     
 
+    private Rect mRect = new Rect();
+	  @Override
+	  public boolean dispatchTouchEvent(MotionEvent ev) {
+		  editName();
+	      final int action = MotionEventCompat.getActionMasked(ev);
+	      EditText mEditText = (EditText) findViewById(R.id.nicknameTextView);
+	      int[] location = new int[2];
+	      mEditText.getLocationOnScreen(location);
+	      mRect.left = location[0];
+	      mRect.top = location[1];
+	      mRect.right = location[0] + mEditText.getWidth();
+	      mRect.bottom = location[1] + mEditText.getHeight();
+
+	      int x = (int) ev.getX();
+	      int y = (int) ev.getY();
+	      if (action == MotionEvent.ACTION_DOWN && !mRect.contains(x, y) && mEditText.isFocused()) {
+	    	  InputMethodManager input = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+	    	  input.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+	      } 
+	      return super.dispatchTouchEvent(ev);
+	  }
+    
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -514,8 +582,24 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     
     
     private boolean deviceHasCropUtility(int size) { 
-    	
     	return size > 0;
+    }
+    
+    public int findFaces(Bitmap faceBitmap) {
+    	int MAX_FACES = 6;
+    	 FaceDetector fd;
+    	 FaceDetector.Face [] faces = new FaceDetector.Face[MAX_FACES];
+    	 
+    	 int count = 0;
+    	try {
+			fd = new FaceDetector(faceBitmap.getWidth(), faceBitmap.getHeight(), MAX_FACES);
+	    	 count = fd.findFaces(faceBitmap, faces);
+    	 } catch (Exception e) {
+    		 e.printStackTrace();
+	    	 return -1;
+    	 }
+    	System.out.println("Returned!!!!" + Integer.valueOf(count));
+    	return count;
     }
     
     private void performCrop(Uri picUri) {
@@ -634,4 +718,3 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		
 	}
 }
-

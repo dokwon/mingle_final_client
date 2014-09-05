@@ -43,7 +43,6 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
     private int photo_num;
     private MingleUser user;
     private Typeface koreanTypeFace;
-    private String curr_uid;
     private MingleApplication curr_app;
     
     @Override
@@ -96,7 +95,6 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 		Intent intent = getIntent();
         String uid = intent.getExtras().getString(ProfileActivity.PROFILE_UID);
         String type = intent.getExtras().getString(ProfileActivity.PROFILE_TYPE);
-        curr_uid = uid;
         
         MingleApplication app = ((MingleApplication) this.getApplication());
         curr_app = app;
@@ -285,7 +283,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
     	@Override
     	public void onReceive(Context context, Intent intent) {
     		String data = intent.getStringExtra(HttpHelper.RANK_INFO);
-    		MingleUser curr_user = curr_app.getMingleUser(curr_uid);
+    		MingleUser curr_user = curr_app.getMingleUser(user.getUid());
     		curr_user.setRank(Integer.parseInt(data));
     		TextView rank_view = (TextView) findViewById(R.id.profile_user_rank);
     		rank_view.setTypeface(koreanTypeFace);
@@ -307,7 +305,6 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
     public void voteUser(View v){
     	String curr_uid = user.getUid();
     	if(!user.alreadyVoted()){
-    		user.setVoted(); 
     		((MingleApplication) this.getApplication()).connectHelper.voteUser(curr_uid);
     	} else {
     		Toast.makeText(getApplicationContext(),  getResources().getString(R.string.vote_impossible), Toast.LENGTH_SHORT).show();
@@ -343,6 +340,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 	    	public void onReceive(Context context, Intent intent) {
 	    		String result = intent.getExtras().getString(HttpHelper.VOTE_RESULT);
 	    		if(result.equals("success")){
+	        		user.setVoted(); 
 		    		Toast.makeText(getApplicationContext(),  getResources().getString(R.string.vote_success), Toast.LENGTH_SHORT).show();
 	    		} else {
 		    		Toast.makeText(getApplicationContext(),  getResources().getString(R.string.vote_fail), Toast.LENGTH_SHORT).show();
@@ -373,6 +371,7 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 	  public void onDestroy(){
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(imageUpdateReceiver);
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(httpErrorReceiver);
+		  LocalBroadcastManager.getInstance(this).unregisterReceiver(voteResultReceiver);
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(rankInfoReceiver);
 		  
 		  super.onDestroy();

@@ -7,9 +7,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.Application;
 import android.app.NotificationManager;
@@ -26,6 +30,7 @@ import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.os.Bundle;
 
 /**
@@ -67,6 +72,11 @@ public class MingleApplication extends Application {
     private ArrayList<String> choices = new ArrayList<String>();
     private ArrayList<ArrayList<String>> pop_users = new ArrayList<ArrayList<String>>();
 
+    private Timer mActivityTransitionTimer;
+    private TimerTask mActivityTransitionTimerTask;
+    public boolean wasInBackground;
+    public boolean isJustLaunched = false;
+    private final int MAX_ACTIVITY_TRANSITION_TIME_MS = 2000;
     
   @Override
   public void onCreate() {
@@ -79,15 +89,42 @@ public class MingleApplication extends Application {
 		  public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
 		  @Override
 		  public void onActivityResumed(Activity activity) {
-			  	if(needRefresh) {
-			  		needRefresh = false;
-			  		Intent start = new Intent(activity, SplashScreenActivity.class);
-			  		start.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-			  		startActivity(start);
-			  	}
+			  if(wasInBackground){
+
+				  if(my_user != null && my_user.getUid() != null && !my_user.getUid().equals("")) {
+					  connectHelper.checkUidValidity(my_user.getUid());
+				  }
+				  
+				  if(needRefresh) {
+					  needRefresh = false;
+					  if(!isJustLaunched) {
+						  Intent start = new Intent(activity, SplashScreenActivity.class);
+					  	  start.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+					  	  startActivity(start);
+					  } else {
+						  isJustLaunched = false;
+						  Intent start = new Intent(activity, MainActivity.class);
+					  	  start.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+						  start.putExtra(MainActivity.MAIN_TYPE, "new");  
+					  	  startActivity(start);
+					  }
+				  }
+				  isJustLaunched = false;
+			  } 
+			  
+			  stopActivityTransitionTimer();
 		  }
+		  
 		  @Override
-		  public void onActivityPaused(Activity activity) {}
+		  public void onActivityPaused(Activity activity) {
+			  if(!(activity instanceof SplashScreenActivity))
+				  startActivityTransitionTimer();
+			  else {
+				  isJustLaunched = true;
+				  wasInBackground = true;
+			  }
+		  }
+		  
 		  @Override
 		  public void onActivityDestroyed(Activity activity) {}
 		  @Override
@@ -490,6 +527,17 @@ public class MingleApplication extends Application {
         else return true;
     }
     
+    public String getLocationProvider() {
+    	// Acquire a reference to the system Location Manager
+    	LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+    	
+    	if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+    		return LocationManager.NETWORK_PROVIDER;
+    	else if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+    		return LocationManager.GPS_PROVIDER;
+    	else return null;
+    }
+    
     public void deactivateApp(){
     	String uid = this.my_user.getUid();
     	this.connectHelper.requestDeactivation(uid);
@@ -541,18 +589,16 @@ public class MingleApplication extends Application {
     	return rval; 
     }
  
- 	public float getDistance(double double_lat, double double_long){
+    public float getDistance(double double_lat, double double_long){
  		float latitude = (float)double_lat;
  		float longitude = (float)double_long;
  		
- 		float theta = this.longitude - longitude;
- 		float dist = (float) (Math.sin(deg2rad(this.latitude)) * Math.sin(deg2rad(latitude)) 
- 				+ Math.cos(deg2rad(this.latitude)) * Math.cos(deg2rad(latitude) * Math.cos(deg2rad(theta))));
- 		
- 		dist = (float)Math.acos(dist);
- 		dist = rad2deg(dist);
- 		dist = dist * 60 * (float)1.1515;
- 		dist = dist * (float)1.609344;
+ 		float dLat = deg2rad(latitude-this.latitude);
+ 		float dLng = deg2rad(longitude-this.longitude);
+ 		float a = (float)(Math.sin(dLat/2) * Math.sin(dLat/2) + 
+ 						  Math.cos(deg2rad(latitude)) * Math.cos(deg2rad(this.latitude))*
+ 						  Math.sin(dLng/2) * Math.sin(dLng/2));
+ 		float dist = (float) (2* Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 6369);
  		
  		if((dist*10 - (int)(dist*10)) < 0.5) return (int)(dist *10)/(float)10.0;
  		else return (int)(dist*10 + 1)/(float)10.0;
@@ -568,6 +614,27 @@ public class MingleApplication extends Application {
  	
  	public void setNeedRefreshAccount() {
  		this.needRefresh = true;
+ 	}
+
+ 	public void startActivityTransitionTimer() {
+ 		this.mActivityTransitionTimer = new Timer();
+ 		this.mActivityTransitionTimerTask = new TimerTask() {
+ 			public void run () {
+ 				MingleApplication.this.wasInBackground = true;
+ 			}
+ 		};
+ 		
+ 		this.mActivityTransitionTimer.schedule(mActivityTransitionTimerTask, MAX_ACTIVITY_TRANSITION_TIME_MS);
+ 	}
+ 	
+ 	public void stopActivityTransitionTimer() {
+ 		if(this.mActivityTransitionTimerTask != null)
+ 			this.mActivityTransitionTimerTask.cancel();
+ 		
+ 		if(this.mActivityTransitionTimer != null)
+ 			this.mActivityTransitionTimer.cancel();
+ 		
+ 		this.wasInBackground = false;
  	}
 }
 

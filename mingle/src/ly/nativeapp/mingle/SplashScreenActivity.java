@@ -3,12 +3,18 @@ package ly.nativeapp.mingle;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -51,6 +57,9 @@ public class SplashScreenActivity extends Activity {
 	private boolean findCurLoc = false;
 	static final int MSG_TIME_OUT = 0;
 
+	private Lock dataLock = new ReentrantLock();
+    private Condition dataFetched = dataLock.newCondition();
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -94,13 +103,14 @@ public class SplashScreenActivity extends Activity {
         //Now move on to next phase
 		//Create default MyUser object. Will be modified later.
 		app.createDefaultMyUser();
+		app.connectHelper.getInitInfo();
+		
 	}
 	
 	@Override
 	protected void onResume(){
 		super.onResume();
-        app.connectHelper.getInitInfo();
-	}
+    }
 	
 	private void buildApplication(){
 		if(AppOnFirstTime()) {
@@ -152,10 +162,9 @@ public class SplashScreenActivity extends Activity {
 	
 	// Get the users one-time location. Code available below to register for updates
     private void getCurrentLocation() {
-    	Criteria criteria = new Criteria();
-    	String provider = locationManager.getBestProvider(criteria, true);
-        locationManager.requestLocationUpdates(provider, 1000, 0, locationListener);
-        initHandler.sendEmptyMessageDelayed(MSG_TIME_OUT, 3*1000);
+    	String provider = app.getLocationProvider();
+    	locationManager.requestLocationUpdates(provider, 1000, 0, locationListener);
+        initHandler.sendEmptyMessageDelayed(MSG_TIME_OUT, 4*1000);
     }
     
 	private LocationListener locationListener = new LocationListener() {
@@ -204,7 +213,7 @@ public class SplashScreenActivity extends Activity {
     };
     
     private boolean checkLocationError(float loc_lat, float loc_long){
-    	/*if(Math.abs(loc_lat)+Math.abs(loc_long)<0.1){
+    	if(loc_lat == 0.0 && loc_long == 0.0){
     		new AlertDialog.Builder(this)
     		.setTitle(getResources().getString(R.string.location_error_title))
     		.setMessage(getResources().getString(R.string.gps_cannot_find_location))
@@ -217,7 +226,7 @@ public class SplashScreenActivity extends Activity {
             .show();
     		return true;
     	}
-    	else */return false;
+    	else return false;
         
     }
     
@@ -303,6 +312,8 @@ public class SplashScreenActivity extends Activity {
 	   		}
 	   		app.setMyUser(user_data.getString("UID"), user_data.getString("COMM"), 
 										user_data.getInt("NUM"), user_data.getString("SEX"));
+	   		app.setLat(Float.valueOf(user_data.getString("LOC_LAT")));
+	   		app.setLong(Float.valueOf(user_data.getString("LOC_LONG")));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

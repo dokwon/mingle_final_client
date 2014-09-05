@@ -77,7 +77,7 @@
 	    android:theme="@style/PictureViewTheme" 
 	    android:cropToPadding="true" 
 	    android:contentDescription="@string/photo_description"
-	    android:background="@color/photobackgroundcolor"
+	    android:background="@drawable/photo_background"
 	    android:longClickable="false"
 	    android:clickable="true" />
 	
@@ -183,6 +183,7 @@
 	    android:layout_toRightOf="@+id/nicknamelabel"
 	    android:inputType="text"
 	    android:paddingLeft="3dp"
+	    android:paddingRight="0dp"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:background="@color/photobackgroundcolor"

@@ -1,8 +1,12 @@
 package ly.nativeapp.mingle;
 
 import java.util.ArrayList;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+
+
 
 
 import android.app.AlertDialog;
@@ -84,6 +88,8 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
                 recv_user.getMsgList(), recv_user);
         setListAdapter(adapter);
         msg_lv.setSelection(msg_lv.getAdapter().getCount()-1);
+        
+        txtSMS=(EditText) findViewById(R.id.txt_inputText);
     }
     
     @Override
@@ -115,7 +121,6 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
     /* Function to be called when message send button is clicked */
     public void sendSMS(View v){
     	
-    	txtSMS=(EditText) findViewById(R.id.txt_inputText);
 		String SMS=txtSMS.getText().toString();
 		
 		if(SMS.length() == 0) return;
