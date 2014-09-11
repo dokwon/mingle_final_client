@@ -48,7 +48,7 @@
 
 	<dimen name="profile_activity_margin">24px</dimen>
 
-	<dimen name="question_logo_size">30dp</dimen>
+	<dimen name="question_logo_size">40dp</dimen>
 
 	<dimen name="vote_corner_round">7dp</dimen>
 	<dimen name="vote_corner_round_small">5dp</dimen>

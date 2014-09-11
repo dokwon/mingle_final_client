@@ -81,6 +81,6 @@
     <string name="no_face_recognized_msg">얼굴이 인식되지 않습니다. 다른 사진으로 올려주세요.</string>
     <string name="no_face_recognized_title">얼굴 인식 실패</string>
     
-    
+    <string name="chatting_start_string">채팅 시작</string>
     
 </resources>

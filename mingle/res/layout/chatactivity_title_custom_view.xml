@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
    android:layout_gravity="fill_horizontal"
    android:paddingRight="30dp"
+   android:paddingLeft="0dp"
     android:gravity="center"
     android:orientation="horizontal" >
     <TextView
@@ -18,7 +19,6 @@
 		android:layout_marginLeft="5dp"
 		android:paddingTop="3dp"
 		android:paddingBottom="3dp"
-		android:src="@drawable/numberpic"
 		android:id="@+id/member_num_icon_chat"/>        
 	<ImageView
 		android:contentDescription="@string/photo_description"

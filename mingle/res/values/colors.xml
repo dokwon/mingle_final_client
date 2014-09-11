@@ -17,4 +17,9 @@
 	
 	<color name="mingle_button_red">#f05e49</color>
 	
+	<color name="gold">#F0C500</color>
+	<color name="silver">#C0C0C0</color>
+	<color name="bronze">#CD7F32</color>
+	<color name="dark_gray">#4C4C4C</color>
+	
 </resources>

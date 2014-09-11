@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 
 
+
 import android.app.AlertDialog;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
@@ -75,11 +76,14 @@ public class ChatroomActivity extends ListActivity implements ActionBar.TabListe
 		LocalBroadcastManager.getInstance(this).sendBroadcast(dispatcher);
         
         ActionbarController.customizeActionBar(R.layout.chatactivity_title_custom_view, this, 0, 0);
+        ImageView number_icon = (ImageView)findViewById(R.id.member_num_icon_chat);
+        if(recv_user.getSex().equals("M")) number_icon.setImageResource(R.drawable.male_numberpic);
+        else number_icon.setImageResource(R.drawable.female_numberpic);
 	    TextView chatter_name = (TextView)findViewById(R.id.chatter_name_chat);
 	    
 	    chatter_name.setText(recv_user.getName());
 	    ImageView member_num = (ImageView)findViewById(R.id.member_num_chat);
-	    member_num.setImageResource(app.memberNumRsId(recv_user.getNum()));
+	    member_num.setImageResource(app.memberNumRsId(recv_user.getNum(),recv_user.getSex()));
  
 		//Associate this chat room's message list to adapter
         msg_lv = (ListView) findViewById(android.R.id.list);

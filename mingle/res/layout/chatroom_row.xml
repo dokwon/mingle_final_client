@@ -48,7 +48,6 @@
 							android:paddingBottom="3dp"
 							android:adjustViewBounds="true"
 							android:layout_marginLeft="2dp"
-					                android:src="@drawable/numberpic"
 					                android:id="@+id/choice_member_num_icon"/>
 						         <ImageView
 						             android:contentDescription="@string/photo_description"

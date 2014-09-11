@@ -20,13 +20,43 @@
             android:background="@drawable/candidate_cell_border"
             style="@style/ProfileListContent">
 			
-				<ViewFlipper
+	    		<RelativeLayout
+	    		    	android:id="@+id/rank_flipper_wrapper"
+	    		    	android:orientation="vertical"
+	    		    	android:layout_width="wrap_content"
+	    		    	android:layout_height="wrap_content">
+	    		    
+	    			
+					<ViewFlipper
 				    
 				       android:id="@+id/view_flipper"
 				      android:layout_width="wrap_content"
 				      android:layout_height="300dp"/>
-			 			 
-						        
+					<LinearLayout
+					    android:orientation="vertical"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+          				android:id="@+id/rank_wrapper"
+            			android:background="@drawable/profile_rank_border"
+      					android:layout_marginLeft="-1dp"
+      					android:layout_marginTop="-1dp"
+					    >
+					
+					<TextView
+			            android:id="@+id/profile_user_rank"
+			            style="@style/MyListTitle"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+						android:textSize="20sp"
+       					android:textStyle="bold"
+       					android:paddingTop="10dp"
+       					android:paddingBottom="10dp"
+       					android:paddingLeft="15dp"
+       					android:paddingRight="15dp"
+			            android:layout_gravity="center_vertical"/>
+			 		
+			 		</LinearLayout>
+				</RelativeLayout>		        
 			 	<LinearLayout
 			 		android:id="@+id/photo_indicators"
 			 		android:orientation="horizontal"
@@ -37,6 +67,7 @@
 					
 			
 				<RelativeLayout
+				    		android:id="@+id/wrapping_layout"
 				            android:layout_weight="1"
 				            android:layout_width="match_parent"
 				            android:layout_height="30dp"
@@ -50,7 +81,6 @@
 		                android:layout_marginBottom="1dp"
 		                android:layout_alignTop="@+id/profile_user_name"
 		                android:layout_alignBottom="@+id/profile_user_name"
-		                android:src="@drawable/numberpic"
 		                android:id="@+id/profile_member_num_icon"/>
 			        
 			         
@@ -81,6 +111,8 @@
 			            android:layout_gravity="center_vertical"
 			            android:layout_marginRight="5dp"
 			            android:layout_alignParentRight="true" />
+			        
+			        
 				            
 						        
 				 </RelativeLayout>

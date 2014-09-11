@@ -2,9 +2,11 @@ package ly.nativeapp.mingle;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -13,6 +15,7 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class VoteAdapter extends ArrayAdapter {
@@ -36,30 +39,35 @@ public class VoteAdapter extends ArrayAdapter {
 
     private void setRankNumberView(int position, View row, NewsHolder holder) {
     
-    	holder.user_rank = (ImageView) row.findViewById(R.id.pop_user_rank);
-    	//holder.male_rank = (ImageView) row.findViewById(R.id.top_male_rank);
+    	holder.user_rank = (TextView) row.findViewById(R.id.pop_user_rank);
+    	/*//holder.male_rank = (ImageView) row.findViewById(R.id.top_male_rank);
     	switch (position) {
     		case 0:
-    			holder.user_rank.setImageResource(R.drawable.female_ranking_number1);
+    			holder.user_rank.setText("1위");
+    			//holder.user_rank.setImageResource(R.drawable.female_ranking_number1);
     			//holder.male_rank.setImageResource(R.drawable.male_ranking_number_1);
     			break;
     		case 1:
-    			holder.user_rank.setImageResource(R.drawable.female_ranking_number2);
+    			holder.user_rank.setText("2위");
+    			//holder.user_rank.setImageResource(R.drawable.female_ranking_number2);
     			//holder.male_rank.setImageResource(R.drawable.male_ranking_number_2);
     			break;
     		case 2:
-    			holder.user_rank.setImageResource(R.drawable.female_ranking_number3);
+    			holder.user_rank.setText("3위");
+    			//holder.user_rank.setImageResource(R.drawable.female_ranking_number3);
     			//holder.male_rank.setImageResource(R.drawable.male_ranking_number_3);
     			break;
     		case 3:
-    			holder.user_rank.setImageResource(R.drawable.female_ranking_number4);
+    			holder.user_rank.setText("4위");
+    			//holder.user_rank.setImageResource(R.drawable.female_ranking_number4);
     			//holder.male_rank.setImageResource(R.drawable.male_ranking_number_4);
     			break;
     		case 4:
-    			holder.user_rank.setImageResource(R.drawable.female_ranking_number5);
+    			holder.user_rank.setText("5위");
+    			//holder.user_rank.setImageResource(R.drawable.female_ranking_number5);
     			//holder.male_rank.setImageResource(R.drawable.male_ranking_number_5);
     			break;
-    	}
+    	}*/
     }
     
     
@@ -75,10 +83,15 @@ public class VoteAdapter extends ArrayAdapter {
 
       	  holder = new NewsHolder();
 
-      	  holder.pop_layout = (FrameLayout)row.findViewById(R.id.pop_user_rl);
+      	  holder.pop_layout = (RelativeLayout)row.findViewById(R.id.pop_user_rl);
       	  holder.user_name = (TextView)row.findViewById(R.id.pop_user_name);
       	  holder.user_name.setTypeface(app.koreanTypeFace);
     	  holder.user_pic=(ImageView)row.findViewById(R.id.pop_user_image);
+    	  holder.num_pic = (ImageView)row.findViewById(R.id.pop_user_num);
+    	  holder.user_dist=(TextView)row.findViewById(R.id.pop_user_dist);      
+      	  holder.user_dist.setTextColor(Color.GRAY);
+      	  holder.user_dist.setTypeface(app.koreanTypeFace);
+      	  holder.number_icon = (ImageView)row.findViewById(R.id.pop_user_num_icon);
     	  
     	  /*holder.male_layout = (FrameLayout)row.findViewById(R.id.male_vote_rl);
     	  holder.male_name = (TextView)row.findViewById(R.id.top_male_name);
@@ -99,6 +112,14 @@ public class VoteAdapter extends ArrayAdapter {
     	holder.user_name.setText(pop_user.getName());
     	holder.user_pic.setImageDrawable(ImageRounder.getVoteRoundedDrawable((Activity) context, pop_user.getPic(-1), corner_round, 60, 67));
     	
+
+    	int rank = pop_user.getRank();
+    	holder.user_rank.setText(String.valueOf(rank)+"위");
+    	if(rank <= 1) holder.user_rank.setTextColor(app.getResources().getColor(R.color.gold));
+    	else if(rank <= 2) holder.user_rank.setTextColor(app.getResources().getColor(R.color.silver));
+    	else if(rank <= 3) holder.user_rank.setTextColor(app.getResources().getColor(R.color.bronze));
+    	else holder.user_rank.setTextColor(app.getResources().getColor(R.color.dark_gray));
+    	
     	final String profile_uid = pop_user_uid;
     	holder.pop_layout.setOnClickListener(new OnClickListener()
         {
@@ -111,6 +132,11 @@ public class VoteAdapter extends ArrayAdapter {
                 context.startActivity(profile_intent);
 			}
         });
+    	
+    	if(pop_user.getSex().equals("M")) holder.number_icon.setImageResource(R.drawable.male_numberpic);
+        else holder.number_icon.setImageResource(R.drawable.female_numberpic);
+    	holder.num_pic.setImageResource(app.memberNumRsId(pop_user.getNum(),pop_user.getSex()));
+    	holder.user_dist.setText(Float.toString(pop_user.getDistance())+"km");
     	
         /*ArrayList<String> rank_list = (ArrayList<String>) data.get(position);
         String female_uid = rank_list.get(0);
@@ -162,9 +188,12 @@ public class VoteAdapter extends ArrayAdapter {
 
     
     static class NewsHolder {
-    	FrameLayout pop_layout;
+    	ImageView number_icon;
+    	ImageView num_pic;
+    	TextView user_dist;
+    	RelativeLayout pop_layout;
     	//FrameLayout male_layout;
-    	ImageView user_rank;
+    	TextView user_rank;
     	//ImageView male_rank;
   	  	ImageView user_pic;
   	  	TextView user_name;

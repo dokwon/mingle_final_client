@@ -2,6 +2,7 @@ package ly.nativeapp.mingle;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -70,6 +71,7 @@ public class CandidateAdapter extends ArrayAdapter {
       	  holder.user_dist=(TextView)row.findViewById(R.id.user_dist);      
       	  holder.user_dist.setTextColor(Color.GRAY);
       	  holder.user_dist.setTypeface(app.koreanTypeFace);
+      	  holder.number_icon = (ImageView)row.findViewById(R.id.member_num_icon);
       	  row.setTag(holder);
         } else {
       	  holder = (NewsHolder)row.getTag();
@@ -79,12 +81,16 @@ public class CandidateAdapter extends ArrayAdapter {
         String candidate_uid = ((ArrayList<String>)data).get(position);
         MingleUser candidate = app.getMingleUser(candidate_uid);
         
-        final int num_pic_id = app.memberNumRsId(candidate.getNum());
+        final int num_pic_id = app.memberNumRsId(candidate.getNum(),candidate.getSex());
         holder.user_num.setImageResource(num_pic_id);
         holder.user_name.setText(candidate.getName());
         if(app.getLat() == 0.0 || app.getLong() == 0.0) holder.user_dist.setVisibility(View.GONE);
         else holder.user_dist.setText(Float.toString(candidate.getDistance())+"km");
         Drawable main_drawable = candidate.getPic(0);
+        
+
+        if(candidate.getSex().equals("M")) holder.number_icon.setImageResource(R.drawable.male_numberpic);
+        else holder.number_icon.setImageResource(R.drawable.female_numberpic);
         
         holder.user_pic.setImageDrawable(ImageRounder.getProfileRoundedDrawable((Activity)context,
         		main_drawable, 13));
@@ -110,6 +116,7 @@ public class CandidateAdapter extends ArrayAdapter {
 
     
     static class NewsHolder{
+    	ImageView number_icon;
     	ImageView user_num;
     	TextView user_name;
   	  	ImageView user_pic;

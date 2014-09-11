@@ -6,32 +6,74 @@
     android:orientation="horizontal" >
     
 
-    <LinearLayout android:layout_weight="1" android:layout_height="60dp"
-        android:layout_width="fill_parent" android:layout_margin="@dimen/small_margin">
-        <FrameLayout
-            android:orientation="vertical"
-            android:id="@+id/pop_user_rl"
-            android:background="@drawable/vote_profile"
-            android:layout_marginLeft="@dimen/small_margin"
-            android:tag="front"
-            style="@style/MyListFrontContent">
+    <RelativeLayout android:layout_weight="1" android:layout_height="60dp"
+        android:layout_width="fill_parent"
+        android:layout_marginLeft="12dp" android:layout_marginRight="12dp" 
+        android:layout_marginTop="@dimen/small_margin" android:layout_marginBottom="@dimen/small_margin"
+        android:background="@drawable/candidate_cell_border"
+        android:id="@+id/pop_user_rl">
 		    	
 		    	<ImageView
 		                style="@style/VoteProfileImage"
 		                android:id="@+id/pop_user_image"/>
-		    	<ImageView
-		                style="@style/ChatRoomRank"
-		                android:id="@+id/pop_user_rank"/>
+		    	
 		        
-		        <TextView
-		                android:layout_width="fill_parent"
+		        
+		        
+		        <ImageView
+					        android:layout_width="wrap_content"
+		                	android:layout_height="wrap_content"
+							android:layout_toRightOf="@+id/pop_user_image"
+							android:layout_alignTop="@+id/pop_user_name"
+							android:layout_alignBottom="@+id/pop_user_name"
+							android:paddingTop="3dp"
+							android:paddingBottom="3dp"
+							android:adjustViewBounds="true"
+							android:layout_marginLeft="-5dp"
+					        android:id="@+id/pop_user_num_icon"/>
+						 
+				<ImageView
+						    android:contentDescription="@string/photo_description"
+					        android:layout_width="@dimen/member_num_width"
+							android:layout_height="@dimen/member_num_height"
+							android:paddingTop="3dp"
+							android:paddingBottom="3dp"
+							android:adjustViewBounds="true"
+							android:layout_marginLeft="-7dp"
+					        android:layout_toRightOf="@+id/pop_user_num_icon"
+							android:layout_alignBottom="@+id/pop_user_num_icon"
+					        android:id="@+id/pop_user_num"/>
+				
+				<TextView
+		                android:layout_width="wrap_content"
 		                android:layout_height="wrap_content"
-		                android:layout_toRightOf="@+id/pop_user_image"
-		                android:layout_marginLeft="70dp"
+		                android:layout_toRightOf="@+id/pop_user_num"
+		                android:layout_marginLeft="2dp"
+		                android:layout_marginTop="8dp"
 		                style="@style/MyListTitle"
 		                android:id="@+id/pop_user_name"/>
-        </FrameLayout>
-    </LinearLayout>
+				
+				<TextView
+			            android:id="@+id/pop_user_dist"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:layout_toRightOf="@+id/pop_user_image"
+			            android:layout_alignBottom="@+id/pop_user_image"
+			            android:layout_marginBottom="7dp"
+			            android:textSize="14sp"/>
+		        
+		        <TextView
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"
+						android:layout_marginRight="10dp"
+						android:gravity="center_vertical|right"
+						android:textSize="17sp"
+       					android:textStyle="bold"
+						android:id="@+id/pop_user_rank"/>
+		        
+    </RelativeLayout>
+        
+        
     <!-- <LinearLayout android:layout_weight="1" 
         android:layout_height="60dp" android:layout_width="fill_parent" android:layout_margin="@dimen/small_margin">
         <FrameLayout
@@ -58,4 +100,5 @@
         </FrameLayout>
     </LinearLayout>
 -->
+	
 </LinearLayout>

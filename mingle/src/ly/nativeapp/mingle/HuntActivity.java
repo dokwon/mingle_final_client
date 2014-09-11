@@ -356,7 +356,7 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 								Integer.valueOf(shownUser.getString("NUM")), 
 								Integer.valueOf(shownUser.getString("PHOTO_NUM")), 
 								this.getResources().getDrawable(app.blankProfileImage),
-								sex_var, distance, Integer.valueOf(shownUser.getString("RANK")));
+								sex_var, distance, -1);
 						app.addMingleUser(candidate);
 					}
 					if(!candidate.isPicAvail(0)) new ImageDownloader(this.getApplicationContext(), candidate.getUid(), 0).execute();
@@ -422,7 +422,8 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 	    					this.getResources().getDrawable(app.blankProfileImage),
 	    					shownUser.getString("SEX"), distance, i+1);	    			
 					app.addMingleUser(pop_user);
-	    		}
+	    		} else pop_user.setRank(i+1);
+	    		
 	    		if(!pop_user.isPicAvail(-1)) 
 	    			new ImageDownloader(this.getApplicationContext(), pop_user.getUid(), -1).execute();
 	    		app.addPopUser(shownUser.getString("UID"));
@@ -518,7 +519,8 @@ public class HuntActivity extends FragmentActivity implements ActionBar.TabListe
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(userListReceiver);
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(popListReceiver);  
 		  LocalBroadcastManager.getInstance(this).unregisterReceiver(listUpdateReceiver);  
-		  LocalBroadcastManager.getInstance(this).unregisterReceiver(httpErrorReceiver);  
+		  LocalBroadcastManager.getInstance(this).unregisterReceiver(httpErrorReceiver);   
+		  LocalBroadcastManager.getInstance(this).unregisterReceiver(newMessageReceiver);  
 		  super.onDestroy();
 	  }
 }

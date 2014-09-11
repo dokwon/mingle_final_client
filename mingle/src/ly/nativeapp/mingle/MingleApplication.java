@@ -585,27 +585,33 @@ public class MingleApplication extends Application {
 
   
     
-    public int memberNumRsId(int numOfMembers) {
+    public int memberNumRsId(int numOfMembers, String sex) {
     	
     	int rval = -1; 
     	switch(numOfMembers) {
 	    	case 1:
-	    		rval = R.drawable.membercount1;
+	    		if(sex.equals("M")) rval = R.drawable.male_membercount1;
+	    		else rval = R.drawable.female_membercount1;
 	    		break;
 	    	case 2:
-	    		rval = R.drawable.membercount2;
+	    		if(sex.equals("M")) rval = R.drawable.male_membercount2;
+	    		else rval = R.drawable.female_membercount2;
 	    		break;
 	    	case 3: 
-	    		rval = R.drawable.membercount3;
+	    		if(sex.equals("M")) rval = R.drawable.male_membercount3;
+	    		else rval = R.drawable.female_membercount3;
 	    		break;
 	    	case 4: 
-	    		rval = R.drawable.membercount4;
+	    		if(sex.equals("M")) rval = R.drawable.male_membercount4;
+	    		else rval = R.drawable.female_membercount4;
 	    		break;
 	    	case 5:
-	    		rval = R.drawable.membercount5;
+	    		if(sex.equals("M")) rval = R.drawable.male_membercount5;
+	    		else rval = R.drawable.female_membercount5;
 	    		break;
 	    	case 6:
-	    		rval = R.drawable.membercount6;
+	    		if(sex.equals("M")) rval = R.drawable.female_membercount6;
+	    		else rval = R.drawable.female_membercount6;
 	    		break;
     		
     	}

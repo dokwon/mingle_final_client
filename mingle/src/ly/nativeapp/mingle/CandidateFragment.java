@@ -48,23 +48,7 @@ public class CandidateFragment extends Fragment {
       candidatelistview.setSwipeListViewListener(new BaseSwipeListViewListener() {
           @Override
           public void onOpened(int position, boolean toRight) {
-          }
-  
-          @Override
-          public void onClosed(int position, boolean fromRight) {
-          }
-  
-          @Override
-          public void onListChanged() {
-          }
-  
-          @Override
-          public void onMove(int position, float x) {
-          }
-  
-          @Override
-          public void onStartOpen(int position, int action, boolean right) {
-              candidatelistview.openAnimate(position); //when you touch front view it will open
+        	  candidatelistview.openAnimate(position); //when you touch front view it will open
               
               MingleApplication currentUser = ((MingleApplication) parent.getApplication());
               String user_uid = currentUser.getCandidate(position);
@@ -83,6 +67,23 @@ public class CandidateFragment extends Fragment {
        		  chat_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
               chat_intent.putExtra(ChatroomActivity.USER_UID, currentUser.getMingleUser(user_uid).getUid());
               curActivity.startActivity(chat_intent);
+          }
+  
+          @Override
+          public void onClosed(int position, boolean fromRight) {
+          }
+  
+          @Override
+          public void onListChanged() {
+          }
+  
+          @Override
+          public void onMove(int position, float x) {
+          }
+  
+          @Override
+          public void onStartOpen(int position, int action, boolean right) {
+              
               
               
               

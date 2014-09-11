@@ -44,6 +44,8 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 	  public final static String HANDLE_VOTE_RESULT = "ly.nativeapp.mingle.HANDLE_VOTE_RESULT";	//Indicator of vote complete
 	  public final static String INIT_INFO = "ly.nativeapp.mingle.INIT_INFO";				//Intent data to pass on when init info request returns
 	  public final static String SET_INIT_INFO = "ly.nativeapp.mingle.SET_INIT_INFO";		//Indicator of get init info complete
+	  public final static String RANK_INFO = "ly.nativeapp.mingle.RANK_INFO";				//Intent data to pass on when rank info request returns
+	  public final static String SET_RANK_INFO = "ly.nativeapp.mingle.SET_RANK_INFO";		//Indicator of get rank info complete
 
     private String server_url;				//URL of server
     private MingleApplication app;
@@ -184,6 +186,45 @@ public class HttpHelper extends AsyncTask<String, MingleUser, Integer>  {
 				}
     		
     		}
+    	}).start();
+    }
+    
+    public void getRank(String uid){
+    	String baseURL = server_url;
+    	baseURL += "get_rank?";
+    	baseURL += "uid=" + uid;
+    	
+    	final String cpy = baseURL;
+    	new Thread(new Runnable() {
+    		public void run() {
+
+    			HttpClient client = new DefaultHttpClient();
+    	        HttpGet poster = new HttpGet(cpy);
+    	        HttpResponse response = null;
+				try {
+					response = client.execute(poster);
+				} catch (ClientProtocolException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					//handle http error
+					Intent dispatcher = new Intent(app, ProfileActivity.class);
+					dispatcher.setAction(HANDLE_HTTP_ERROR);
+					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
+					e.printStackTrace();
+				}
+				
+				//Save question
+					
+					
+					Intent dispatcher = new Intent(app, ProfileActivity.class);
+					dispatcher.putExtra(RANK_INFO,HttpResponseBody(response).toString());
+					dispatcher.setAction(SET_RANK_INFO);
+					LocalBroadcastManager.getInstance(app).sendBroadcast(dispatcher); 
+				
+			
+    		}    		
     	}).start();
     }
     

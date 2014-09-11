@@ -10,7 +10,18 @@
         android:layout_height="match_parent"
          android:padding="10dp"
         android:background="@drawable/toast_frame"
-        />
+        >
+        <TextView
+            android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:text="@string/chatting_start_string"
+            />
+        
+        </RelativeLayout>
         
 	<LinearLayout
             android:orientation="vertical"
@@ -43,7 +54,6 @@
 		                android:layout_marginBottom="1dp"
 		                android:layout_alignTop="@+id/user_name"
 		                android:layout_alignBottom="@+id/user_name"
-		                android:src="@drawable/numberpic"
 		                android:id="@+id/member_num_icon"/>
 			        
 			         

@@ -165,14 +165,13 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     private void addPhotoAndDisplay() {
     	ImageView imageView = FindAppropriateImageView();
 		imageView.setScaleType(ScaleType.FIT_XY);
-    	app.addPhotoPath(photoPath);
     	Bitmap rescaled = rescaledBitmap(imageView);
-    	System.out.println("SIZE !!! " + Integer.valueOf(rescaled.getWidth()));
     	int face_num = findFaces(rescaled);
     	if(face_num <= 0) {
     		// No Faces Found
     		displayFaceNotFoundDialog();
     	} else {
+    		app.addPhotoPath(photoPath);
     		updatePhotoViewOpt(imageView);
     		imageView.setImageBitmap(rescaled);
     	}

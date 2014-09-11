@@ -3,6 +3,7 @@ package ly.nativeapp.mingle;
 import java.util.List;
 
 
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -49,6 +50,7 @@ public class ChoiceAdapter extends ArrayAdapter {
       	  holder.new_msg_num = (TextView)row.findViewById(R.id.new_msg_num);
           holder.user_name.setTypeface(app.koreanBoldTypeFace);
       	  holder.num_pic = (ImageView)row.findViewById(R.id.choice_member_num);
+      	holder.number_icon = (ImageView)row.findViewById(R.id.choice_member_num_icon);
       	  row.setTag(holder);
         } else {
       	  holder = (NewsHolder)row.getTag();
@@ -65,8 +67,9 @@ public class ChoiceAdapter extends ArrayAdapter {
         else holder.new_msg_num.setVisibility(View.GONE);
         holder.user_pic.setImageDrawable(choice.getPic(-1));
         
-
-  	  holder.num_pic.setImageResource(app.memberNumRsId(choice.getNum()));
+        if(choice.getSex().equals("M")) holder.number_icon.setImageResource(R.drawable.male_numberpic);
+        else holder.number_icon.setImageResource(R.drawable.female_numberpic);
+  	  holder.num_pic.setImageResource(app.memberNumRsId(choice.getNum(),choice.getSex()));
   	  
         
         return row;
@@ -75,6 +78,7 @@ public class ChoiceAdapter extends ArrayAdapter {
 
     
     static class NewsHolder{
+    	ImageView number_icon;
     	ImageView num_pic;
   	  TextView msg_view;
   	  TextView user_name;
