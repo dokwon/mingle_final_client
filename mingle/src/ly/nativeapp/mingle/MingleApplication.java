@@ -91,7 +91,7 @@ public class MingleApplication extends Application {
 		  public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
 		  @Override
 		  public void onActivityResumed(Activity activity) {
-			  if(wasInBackground){
+			  if(wasInBackground && !(activity instanceof MainActivity)){
 
 				  if(my_user != null && my_user.getUid() != null && !my_user.getUid().equals("")) {
 					  connectHelper.checkUidValidity(my_user.getUid());
@@ -610,7 +610,7 @@ public class MingleApplication extends Application {
 	    		else rval = R.drawable.female_membercount5;
 	    		break;
 	    	case 6:
-	    		if(sex.equals("M")) rval = R.drawable.female_membercount6;
+	    		if(sex.equals("M")) rval = R.drawable.male_membercount6;
 	    		else rval = R.drawable.female_membercount6;
 	    		break;
     		

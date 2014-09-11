@@ -145,7 +145,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	     	return temp;
     }
     
-    
+    /*
     private void displayFaceNotFoundDialog() {
 		AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this)
 			.setTitle(R.string.no_face_recognized_title)
@@ -160,13 +160,18 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			});
 		popupBuilder.show();
 
-    }
+    }*/
     
     private void addPhotoAndDisplay() {
     	ImageView imageView = FindAppropriateImageView();
 		imageView.setScaleType(ScaleType.FIT_XY);
     	Bitmap rescaled = rescaledBitmap(imageView);
-    	int face_num = findFaces(rescaled);
+    	
+    	app.addPhotoPath(photoPath);
+		updatePhotoViewOpt(imageView);
+		imageView.setImageBitmap(rescaled);
+		
+		/*int face_num = findFaces(rescaled);
     	if(face_num <= 0) {
     		// No Faces Found
     		displayFaceNotFoundDialog();
@@ -174,7 +179,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     		app.addPhotoPath(photoPath);
     		updatePhotoViewOpt(imageView);
     		imageView.setImageBitmap(rescaled);
-    	}
+    	}*/
     }
     	
     // Helper method to retrieve the filepath of selected image
@@ -583,7 +588,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     private boolean deviceHasCropUtility(int size) { 
     	return size > 0;
     }
-    
+    /*
     public int findFaces(Bitmap faceBitmap) {
     	int MAX_FACES = 6;
     	 FaceDetector fd;
@@ -599,7 +604,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
     	 }
     	System.out.println("Returned!!!!" + Integer.valueOf(count));
     	return count;
-    }
+    }*/
     
     private void performCrop(Uri picUri) {
     	// Initialize intent

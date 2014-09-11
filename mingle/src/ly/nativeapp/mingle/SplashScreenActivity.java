@@ -99,18 +99,18 @@ public class SplashScreenActivity extends Activity {
         } else {
             finish();
         }
-        
-        //Now move on to next phase
-		//Create default MyUser object. Will be modified later.
-		app.createDefaultMyUser();
-		app.connectHelper.getInitInfo();
-		
+        		
 	}
 	
 	@Override
 	protected void onResume(){
 		super.onResume();
-    }
+
+		//Now move on to next phase
+		//Create default MyUser object. Will be modified later.
+		app.createDefaultMyUser();
+		app.connectHelper.getInitInfo();
+	}
 	
 	private void buildApplication(){
 		if(AppOnFirstTime()) {
