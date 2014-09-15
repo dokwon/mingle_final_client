@@ -259,6 +259,7 @@ int dimen option_margin 0x7f08001c
 int dimen photo_margin 0x7f08001d
 int dimen photo_view_size 0x7f080017
 int dimen profile_activity_margin 0x7f080032
+int dimen profile_corner_round 0x7f080036
 int dimen question_logo_size 0x7f080033
 int dimen small_margin 0x7f080020
 int dimen tab1_icon_height 0x7f08002b
@@ -268,7 +269,7 @@ int dimen tab2_icon_width 0x7f08002c
 int dimen tab3_icon_height 0x7f08002f
 int dimen tab3_icon_width 0x7f08002e
 int dimen title_bar_height 0x7f080016
-int dimen vote_cell_width 0x7f080036
+int dimen vote_cell_width 0x7f080037
 int dimen vote_corner_round 0x7f080034
 int dimen vote_corner_round_small 0x7f080035
 int drawable ab_solid_shadow_holo 0x7f020000

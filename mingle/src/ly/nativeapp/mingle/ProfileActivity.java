@@ -89,20 +89,24 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
         
 	}
 	
+	private int corner_round; 
+	
 	
 	public void onResume() {
 		super.onResume();
+		
 		
 		Intent intent = getIntent();
         String uid = intent.getExtras().getString(ProfileActivity.PROFILE_UID);
         String type = intent.getExtras().getString(ProfileActivity.PROFILE_TYPE);
         
         app = ((MingleApplication) this.getApplication());
+        corner_round = (int) app.getResources().getDimension(R.dimen.profile_corner_round);
         int id = GcmIntentService.getNotificationId(uid);
         if(id != -1)
        	 		((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancel(id);
         
-        if(type.equals("preview") || type.equals("setting")) user = app.getMyUser();
+        if(type.equals("preview") || type.equals("setting") || uid.equals(app.getMyUser().getUid())) user = app.getMyUser();
         else user = app.getMingleUser(uid);
         photo_num = user.getPhotoNum();
                  
@@ -113,16 +117,15 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
         	 @SuppressLint("NewApi")
         	 @SuppressWarnings("deprecation")
         	 @Override
-        	  public void onGlobalLayout() {        	   
+        	  public void onGlobalLayout() {        	 
+        		 
         	   for(int i = 0; i < photo_num; i++){
       	       	 LinearLayout single_photo_layout = (LinearLayout) inflater
       	                .inflate(R.layout.single_photo, null);
       	       	 
       	       	 ResizableImageView photo_view = (ResizableImageView) single_photo_layout.findViewById(R.id.photoView);
       	       	 Drawable photo_drawable = user.getPic(i);
-      	       	 int corner_round = 70;
-      	       	 if(!(Integer.valueOf(android.os.Build.VERSION.SDK_INT) >= 14 && ViewConfiguration.get(temp).hasPermanentMenuKey())) 
-      	        	corner_round = 22;
+      	       	 
       	        photo_view.setImageDrawable(ImageRounder.getProfileRoundedDrawable(temp,photo_drawable, corner_round));
       	       	 viewFlipper.addView(single_photo_layout);
               }
@@ -304,15 +307,15 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
     	}
     };
     
+    
+    
+    
     public void updateView(int index){
     	if(index != viewFlipper.getDisplayedChild()) return;
     	LinearLayout curr_layout = (LinearLayout) viewFlipper.getCurrentView();
 		ResizableImageView photo_view = (ResizableImageView) curr_layout.findViewById(R.id.photoView);
 
 		Drawable pic_to_update = user.getPic(index);
-		int corner_round = 70;
-        if(!(Integer.valueOf(android.os.Build.VERSION.SDK_INT) >= 14 && ViewConfiguration.get(this).hasPermanentMenuKey())) 
-        	corner_round = 22;
 		photo_view.setImageDrawable(ImageRounder.getProfileRoundedDrawable(this,pic_to_update, corner_round));
     }
     

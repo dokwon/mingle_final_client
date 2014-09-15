@@ -18,6 +18,7 @@ public class ImageRounder{
 	
 	
 	public static Drawable getProfileRoundedDrawable(Activity context, Drawable drawable, int pixels) {
+		if(drawable == null || ((BitmapDrawable)drawable).getBitmap()== null) return drawable;
 		final int img_size = ImageRounder.getScreenWidth(context);
         Bitmap scaled = Bitmap.createScaledBitmap(((BitmapDrawable)drawable).getBitmap(),
         		img_size, img_size,
@@ -30,7 +31,7 @@ public class ImageRounder{
 	}
 	
 	public static Drawable getVoteRoundedDrawable(Activity context, Drawable drawable, int pixels, int width, int height) {
-		
+		if(drawable == null || ((BitmapDrawable)drawable).getBitmap()== null) return drawable;
         Bitmap scaled = Bitmap.createScaledBitmap(((BitmapDrawable)drawable).getBitmap(),
         		width, height,
         		true);
@@ -75,8 +76,6 @@ public class ImageRounder{
     			context.getResources().getDimensionPixelSize(R.dimen.small_margin) * 2 + 20;
     	return displaymetrics.widthPixels - totalMargin;
     }
-	
-	
 }
 
 

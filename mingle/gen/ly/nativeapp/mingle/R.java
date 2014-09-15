@@ -1476,6 +1476,7 @@ containing a value of this type.
         public static final int photo_margin=0x7f08001d;
         public static final int photo_view_size=0x7f080017;
         public static final int profile_activity_margin=0x7f080032;
+        public static final int profile_corner_round=0x7f080036;
         public static final int question_logo_size=0x7f080033;
         public static final int small_margin=0x7f080020;
         public static final int tab1_icon_height=0x7f08002b;
@@ -1485,7 +1486,7 @@ containing a value of this type.
         public static final int tab3_icon_height=0x7f08002f;
         public static final int tab3_icon_width=0x7f08002e;
         public static final int title_bar_height=0x7f080016;
-        public static final int vote_cell_width=0x7f080036;
+        public static final int vote_cell_width=0x7f080037;
         public static final int vote_corner_round=0x7f080034;
         public static final int vote_corner_round_small=0x7f080035;
     }

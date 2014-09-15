@@ -41,12 +41,14 @@ public class MingleApplication extends Application {
 	public static final int PHOTO_COMPRESS_FACTOR = 2;
 
 	public final static String UPDATE_MSG_LIST = "ly.nativeapp.mingle.UPDATE_MSG_LIST";
+	private static final String server_url = "http://ec2-54-64-20-181.ap-northeast-1.compute.amazonaws.com:8080";
     public Typeface koreanTypeFace;
     public Typeface koreanBoldTypeFace;
     public int blankProfileImage;
     public int blankProfileImageSmall;
     private String theme_of_the_day;
     private String question_of_the_day;
+    public MingleApplication app;
 	
     public HttpHelper connectHelper;
     public Socket socketHelper;
@@ -82,6 +84,7 @@ public class MingleApplication extends Application {
     
   @Override
   public void onCreate() {
+	  app = this;
 	  registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks(){
 		  @Override
 		  public void onActivityStopped(Activity activity) {}
@@ -94,6 +97,9 @@ public class MingleApplication extends Application {
 			  if(wasInBackground && !(activity instanceof MainActivity)){
 
 				  if(my_user != null && my_user.getUid() != null && !my_user.getUid().equals("")) {
+					  if(connectHelper == null){
+						  connectHelper = new HttpHelper(server_url, app);
+					  }
 					  connectHelper.checkUidValidity(my_user.getUid());
 				  }
 				  
@@ -572,6 +578,8 @@ public class MingleApplication extends Application {
         candidates.clear();
         choices.clear();
         pop_users.clear();
+        morePopList();
+        moreCandidate();
     	
         ((NotificationManager)this.getSystemService(NOTIFICATION_SERVICE)).cancelAll();
     	GcmIntentService.clearNotificationData();
